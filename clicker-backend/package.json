@@ -1,0 +1,23 @@
+{
+  "scripts": {
+    "start": "node ./src/app.js"
+  },
+  "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "@koa/router": "^12.0.1",
+    "@types/koa": "^2.15.0",
+    "dotenv": "^16.4.5",
+    "koa": "^2.15.3",
+    "koa-bodyparser": "^4.4.1",
+    "koa-router": "^12.0.1",
+    "koa-websocket": "^7.0.0",
+    "mongoose": "^8.4.3",
+    "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7",
+    "styled-components": "^6.1.11",
+    "telegraf": "^4.16.3",
+    "typeorm": "^0.3.20"
+  },
+  "type": "module"
+}

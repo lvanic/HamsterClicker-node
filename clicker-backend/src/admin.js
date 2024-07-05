@@ -1,0 +1,111 @@
+import { Task, User, AppSettings } from './models.js';
+
+export const getAppSettings = async () => {
+  const appSettings = await AppSettings.find({});
+
+  if (!appSettings.length || appSettings.length === 0) {
+    console.error("[FATAL] App settings not found");
+    return {};
+  }
+
+  return appSettings[0];
+}
+
+export const registerAdminRoutes = (router) => {
+  router.get("/admin/settings", async (ctx) => {
+    const settings = await getAppSettings();
+    ctx.body = settings;
+  });
+
+  router.post("/admin/settings", async (ctx) => {
+    const settings = await getAppSettings();
+    const newSettings = ctx.request.body;
+
+    settings.energyPerSecond = newSettings.energyPerSecond;
+    settings.rewardPerClick = newSettings.rewardPerClick;
+    settings.fullEnergyBoostPerDay = newSettings.fullEnergyBoostPerDay;
+    settings.dailyReward = newSettings.dailyReward;
+    settings.referralReward = newSettings.referralReward;
+
+    await settings.save();
+    ctx.body = settings;
+  });
+
+  router.get("/admin/users", async (ctx) => {
+    const { take, skip, balanceSort } = ctx.query;
+    const users = await User.find()
+      .sort({ balance: balanceSort === "desc" ? -1 : 1 })
+      .skip(skip)
+      .limit(take);
+    const usersCount = await User.countDocuments({});
+
+    ctx.body = {
+      data: users,
+      skip,
+      take,
+      total: usersCount,
+    };
+  });
+
+  router.get("/admin/users/:id", async (ctx) => {
+    const user = await User.findById(ctx.params.id);
+    ctx.body = user;
+  });
+
+  router.get("/admin/tasks", async (ctx) => {
+    const filter = ctx.query.filter;
+    let query = {};
+
+    if (filter === "active") {
+      query = { active: true };
+    } else if (filter === "non-active") {
+      query = { active: false };
+    }
+
+    const tasks = await Task.find(query);
+    ctx.body = tasks.map(task => ({
+      id: task.id,
+      name: task.name,
+      description: task.description,
+      type: task.type,
+      rewardAmount: task.rewardAmount,
+      avatarUrl: task.avatarUrl,
+      active: task.active,
+    }));
+  });
+
+  router.post("/admin/tasks/:id/deactivate", async (ctx) => {
+    const task = await Task.findById(ctx.params.id);
+    task.active = false;
+    await task.save();
+    ctx.body = task;
+  });
+
+  router.post("/admin/tasks/:id/activate", async (ctx) => {
+    const task = await Task.findById(ctx.params.id);
+    task.active = true;
+    await task.save();
+    ctx.body = task;
+  });
+
+
+  router.post("/admin/tasks", async (ctx) => {
+    console.log(ctx.request);
+    const task = Task.create({
+      name: ctx.request.body.name,
+      type: ctx.request.body.type,
+      activateUrl: ctx.request.body.activateUrl,
+      description: ctx.request.body.description,
+      rewardAmount: ctx.request.body.rewardAmount,
+      avatarUrl: ctx.request.body.avatarUrl,
+      active: true,
+    });
+
+    ctx.body = task;
+  });
+
+  router.get("/admin/tasks/:id", async (ctx) => {
+    const task = await Task.findById(ctx.params.id);
+    ctx.body = task;
+  });
+}
