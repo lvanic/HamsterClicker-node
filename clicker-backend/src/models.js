@@ -44,3 +44,12 @@ const appSettingsSchema = new mongoose.Schema({
   referralReward: Number,
 });
 export const AppSettings = mongoose.model("AppSettings", appSettingsSchema);
+
+const leagueSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  avatarUrl: String,
+  minBalance: Number,
+  maxBalance: Number,
+});
+export const League = mongoose.model("League", leagueSchema);

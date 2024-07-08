@@ -1,4 +1,4 @@
-import { User } from "../../../common/models";
+import { User } from "../models";
 import { getTelegramUser, webAppVibrate } from "../services/telegramService";
 import { usePageLoading } from "./usePageLoading";
 import { useSettings } from "./useSettings";

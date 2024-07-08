@@ -22,4 +22,12 @@ export interface Task {
   type: string;
   activaterUrl: string;
 }
-//   connectedWallet: String,
+
+export interface League {
+  id: string;
+  name: string;
+  description: string;
+  avatarUrl: string;
+  minBalance: number;
+  maxBalance: number;
+}

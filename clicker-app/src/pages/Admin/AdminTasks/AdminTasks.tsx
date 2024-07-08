@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Task } from "../../../../../common/models";
+import { Task } from "../../../models";
 import { getConfig } from "../../../utils/config";
 import { Link } from "react-router-dom";
 

@@ -88,7 +88,6 @@ export const registerAdminRoutes = (router) => {
     ctx.body = task;
   });
 
-
   router.post("/admin/tasks", async (ctx) => {
     console.log(ctx.request);
     const task = Task.create({
@@ -107,5 +106,27 @@ export const registerAdminRoutes = (router) => {
   router.get("/admin/tasks/:id", async (ctx) => {
     const task = await Task.findById(ctx.params.id);
     ctx.body = task;
+  });
+
+  router.get("/admin/leagues", async (ctx) => {
+    const leagues = await League.find({});
+    ctx.body = leagues;
+  });
+
+  router.post("/admin/leagues", async (ctx) => {
+    const league = await League.create({
+      name: ctx.request.body.name,
+      description: ctx.request.body.description,
+      avatarUrl: ctx.request.body.avatarUrl,
+      minBalance: ctx.request.body.minBalance,
+      maxBalance: ctx.request.body.maxBalance,
+    });
+
+    ctx.body = league;
+  });
+
+  router.delete("/admin/leagues/:id", async (ctx) => {
+    const league = await League.findById(ctx.params.id);
+    await league.remove();
   });
 }

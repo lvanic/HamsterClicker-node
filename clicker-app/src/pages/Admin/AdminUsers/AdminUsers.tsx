@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getConfig } from "../../../utils/config";
-import { User } from "../../../../../common/models";
+import { User } from "../../../models";
 
 const { adminApiUrl } = getConfig();
 

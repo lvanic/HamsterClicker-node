@@ -8,7 +8,7 @@ import React, {
   useLayoutEffect,
 } from "react";
 import { useWebSocket } from "../hooks/useWebsocket";
-import { User } from "../../../common/models";
+import { User } from "../models";
 import { WebSocketContext } from "./WebsocketContext";
 import { useLocation } from "react-router-dom";
 import { getTelegramUser } from "../services/telegramService";
