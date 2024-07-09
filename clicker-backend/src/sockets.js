@@ -1,4 +1,4 @@
-import { Click, User, Task } from "./models.js";
+import { Click, User, Task, League } from "./models.js";
 import { getAppSettings } from "./admin.js";
 
 export const handleSocketConnection = async (socket) => {
@@ -117,6 +117,9 @@ export const registerEvents = (io) => {
       return;
     }
 
+    const userLeague = await League.findOne({ minBalance: { $lte: user.balance }, maxBalance: { $gte: user.balance } });
+    const userPlaceInLeague = await Users.find({balance: { $lte: userLeague.maxBalance, $gte: user.balance }}).count();
+
     const userData = {
       tgId: user.tgId,
       avatarUrl: user.avatarUrl,
@@ -130,9 +133,23 @@ export const registerEvents = (io) => {
       fullEnergyActivates: user.fullEnergyActivates,
       referrals: user.referrals,
       completedTasks: user.completedTasks,
+      userPlaceInLeague: userPlaceInLeague + 1,
+      league: { id: userLeague._id, ...userLeague },
     };
 
     io.emit("user", userData);
+  });
+
+  io.on("getLeagueInfo", async (leagueId, topUsersCount) => {
+    const league = await League.findOne({ _id: leagueId });
+    const usersInLeague = await Users.find({balance: { $lte: league.maxBalance, $gte: league.minBalance }}).count();
+    const topUsersInLeague = await Users.find({balance: { $lte: league.maxBalance, $gte: league.minBalance }}).sort({ balance: 1 }).limit(topUsersCount);
+
+    io.emit("league", {
+      league: { id: league._id, ...league },
+      usersInLeague,
+      topUsersInLeague,
+    });
   });
 
   io.on("getTasks", async () => {
@@ -150,7 +167,6 @@ export const registerEvents = (io) => {
     if (!user) {
       return;
     }
-    console.log(user);
 
     if (boostName === "fullEnergyBoost") {
       if (

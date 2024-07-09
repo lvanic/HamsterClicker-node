@@ -31,3 +31,11 @@ export interface League {
   minBalance: number;
   maxBalance: number;
 }
+
+export interface Business {
+  id: string;
+  name: string;
+  description: string;
+  avatarUrl: string;
+  rewardPerHour: number;
+}

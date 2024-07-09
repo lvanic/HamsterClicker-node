@@ -53,3 +53,12 @@ const leagueSchema = new mongoose.Schema({
   maxBalance: Number,
 });
 export const League = mongoose.model("League", leagueSchema);
+
+const businessSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  avatarUrl: String,
+  rewardPerHour: Number,
+  isDeleted: Boolean,
+});
+export const Business = mongoose.model("Business", businessSchema);

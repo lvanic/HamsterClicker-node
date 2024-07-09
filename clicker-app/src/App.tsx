@@ -21,6 +21,11 @@ import {
   AdminUsers,
   AdminRoute,
   AddTask,
+  AdminLeagues,
+  AdminAddLeague,
+  AdminBusinesses,
+  AdminAddBusiness,
+  AdminEditBusiness,
 } from "./pages/Admin";
 import { LeagueTop } from "./pages/LeagueTop/LeagueTop";
 
@@ -73,6 +78,11 @@ function App() {
                   <Route index element={<AdminSettings />} />
                   <Route path="tasks" element={<AdminTasks />} />
                   <Route path="tasks/add" element={<AddTask />} />
+                  <Route path="leagues" element={<AdminLeagues />} />
+                  <Route path="leagues/add" element={<AdminAddLeague />} />
+                  <Route path="businesses" element={<AdminBusinesses />} />
+                  <Route path="businesses/add" element={<AdminAddBusiness />} />
+                  <Route path="businesses/edit/:id" element={<AdminEditBusiness />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="settings" element={<AdminSettings />} />
                 </Route>

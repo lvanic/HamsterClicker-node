@@ -45,10 +45,7 @@ export const AdminLeagues = () => {
         ADD LEAGUE
       </Link>
 
-      <div
-        className="flex flex-col space-y-2"
-        style={{ maxHeight: "80vh", overflow: "scroll" }}
-      >
+      <div className="flex flex-col space-y-2 overflow-y-hidden max-h-[80vh]">
         {leagues.map((league) => (
           <div
             key={league.id}

@@ -1,4 +1,4 @@
-import { Task, User, AppSettings } from './models.js';
+import { Task, User, AppSettings, League, Business } from './models.js';
 
 export const getAppSettings = async () => {
   const appSettings = await AppSettings.find({});
@@ -128,5 +128,45 @@ export const registerAdminRoutes = (router) => {
   router.delete("/admin/leagues/:id", async (ctx) => {
     const league = await League.findById(ctx.params.id);
     await league.remove();
+  });
+
+
+  router.get("/admin/businesses", async (ctx) => {
+    const businesses = await Business.find({});
+    ctx.body = businesses.map(business => ({ id: business.id, ...business.toObject() }));
+  });
+
+  router.get("/admin/businesses/:id", async (ctx) => {
+    const business = await Business.findById(ctx.params.id);
+    ctx.body = business;
+  });
+
+  router.post("/admin/businesses", async (ctx) => {
+    const business = await Business.create({
+      name: ctx.request.body.name,
+      description: ctx.request.body.description,
+      avatarUrl: ctx.request.body.avatarUrl,
+      rewardPerHour: ctx.request.body.rewardPerHour,
+    });
+
+    ctx.body = business;
+  });
+
+  router.delete("/admin/businesses/:id", async (ctx) => {
+    const business = await Business.findById(ctx.params.id);
+    business.isDeleted = true;
+    await business.save();
+  });
+
+  router.put("/admin/businesses/:id", async (ctx) => {
+    const business = await Business.findById(ctx.params.id);
+    business.name = ctx.request.body.name;
+    business.description = ctx.request.body.description;
+    business.avatarUrl = ctx.request.body.avatarUrl;
+    business.rewardPerHour = ctx.request.body.rewardPerHour;
+
+    await business.save();
+
+    ctx.body = business;
   });
 }

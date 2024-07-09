@@ -19,41 +19,41 @@ let config = process.env;
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 
 const main = async () => {
-  bot.start(async (ctx) => {
-    try {
-      const [, refId] = ctx.message.text.split("ref_");
-      const tgUserId = ctx.message.chat.id;
-      console.log({ refId, tgUserId });
+  // bot.start(async (ctx) => {
+  //   try {
+  //     const [, refId] = ctx.message.text.split("ref_");
+  //     const tgUserId = ctx.message.chat.id;
+  //     console.log({ refId, tgUserId });
 
-      const existingUser = await User.findOne({ tgId: tgUserId });
-      if (!existingUser) {
-        const user = new User({
-          tgId: tgUserId,
-          tgUsername: ctx.message.from.username,
-          firstName: ctx.message.from.first_name,
-          lastName: ctx.message.from.last_name,
-          balance: 0,
-          energy: 1000,
-        });
+  //     const existingUser = await User.findOne({ tgId: tgUserId });
+  //     if (!existingUser) {
+  //       const user = new User({
+  //         tgId: tgUserId,
+  //         tgUsername: ctx.message.from.username,
+  //         firstName: ctx.message.from.first_name,
+  //         lastName: ctx.message.from.last_name,
+  //         balance: 0,
+  //         energy: 1000,
+  //       });
 
-        if (!!refId) {
-          const refUser = await User.findOne({ tgId: refId });
-          if (refUser) {
-            const appSettings = await getAppSettings();
-            refUser.referrals.push(user);
-            refUser.balance += appSettings.referralReward;
-            await refUser.save();
-          }
-        }
+  //       if (!!refId) {
+  //         const refUser = await User.findOne({ tgId: refId });
+  //         if (refUser) {
+  //           const appSettings = await getAppSettings();
+  //           refUser.referrals.push(user);
+  //           refUser.balance += appSettings.referralReward;
+  //           await refUser.save();
+  //         }
+  //       }
 
-        await user.save();
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  });
+  //       await user.save();
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // });
 
-  bot.launch();
+  // bot.launch();
   await mongoose.connect(config.MONGO_DB);
 
   const appSettings = await AppSettings.find({});
