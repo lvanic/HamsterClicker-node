@@ -56,6 +56,7 @@ export const AdminEditBusiness = () => {
         setAvatarUrl(business.avatarUrl);
         setRewardPerHour(business.rewardPerHour);
         setRefsToUnlock(business.refsToUnlock);
+        setPrice(business.price);
       } else {
         navigate("/admin/businesses");
       }
