@@ -114,6 +114,12 @@ export const registerAdminRoutes = (router) => {
   });
 
   router.post("/admin/leagues", async (ctx) => {
+    if (ctx.request.body.minBalance > ctx.request.body.maxBalance) {
+      ctx.status = 400;
+      ctx.body = "Min balance must be less than max balance";
+      return;
+    }
+
     const league = await League.create({
       name: ctx.request.body.name,
       description: ctx.request.body.description,
@@ -147,6 +153,7 @@ export const registerAdminRoutes = (router) => {
       description: ctx.request.body.description,
       avatarUrl: ctx.request.body.avatarUrl,
       rewardPerHour: ctx.request.body.rewardPerHour,
+      refsToUnlock: ctx.request.body.refsToUnlock,
     });
 
     ctx.body = business;
@@ -164,6 +171,8 @@ export const registerAdminRoutes = (router) => {
     business.description = ctx.request.body.description;
     business.avatarUrl = ctx.request.body.avatarUrl;
     business.rewardPerHour = ctx.request.body.rewardPerHour;
+    business.refsToUnlock = ctx.request.body.refsToUnlock;
+    business.price = ctx.request.body.price;
 
     await business.save();
 

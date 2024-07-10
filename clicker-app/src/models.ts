@@ -38,4 +38,6 @@ export interface Business {
   description: string;
   avatarUrl: string;
   rewardPerHour: number;
+  refsToUnlock: number;
+  price: number;
 }
