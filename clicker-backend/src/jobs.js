@@ -1,0 +1,52 @@
+import { Business, User } from './models.js';
+
+const BUSINESS_UPDATE_IN_SECOND = 1;
+const ENERGY_RECOVER_IN_SECOND = 5;
+
+export const runEnergyRecover = () => {
+  setInterval(async () => {
+    const users = await User.find({ energy: { $lt: 1000 } });
+    try {
+      await Promise.all(users.map((user) => {
+        return User.findOneAndUpdate({ tgId: user.tgId }, {
+          $inc : { 'energy' : 1}
+        });
+      }));
+    } catch {}
+    console.log("Energy recovered for users:", users.map((user) => `${user.tgId}: ${user.energy}`).join('\n'));
+  }, ENERGY_RECOVER_IN_SECOND * 1000);
+}
+
+export const runBusinesses = () => {
+  setInterval(async () => {
+    const businesses = await Business.find({});
+    const usersWithBusinesses = await User.find({
+      'businesses.0': { $exists: true }
+    }).exec();
+
+    console.log("Updating businesses... Found users with businesses: ", usersWithBusinesses.length);
+
+    const updatePromises = usersWithBusinesses.map(user => {
+      const totalReward = user.businesses.reduce((sum, bId) => {
+        const business = businesses.find(b => b._id.toString() === bId.toString());
+        if (!business) {
+          console.error("[FATAL]: Detected user with business that doesn't exist.");
+          return sum;
+        }
+
+        const normalizedReward = business.rewardPerHour * BUSINESS_UPDATE_IN_SECOND / 3600;
+
+        return sum + normalizedReward
+      }, 0);
+
+      return User.findOneAndUpdate(
+        { _id: user._id },
+        {
+          $inc: { balance: totalReward },
+        }
+      );
+    });
+
+    await Promise.all(updatePromises);
+  }, BUSINESS_UPDATE_IN_SECOND * 1000);
+}

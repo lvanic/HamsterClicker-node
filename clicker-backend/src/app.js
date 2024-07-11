@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 import { registerAdminRoutes } from "./admin.js";
 import { handleSocketConnection } from "./sockets.js";
 import { mongoose } from "mongoose";
-import { runEnergyRecover } from "./energyRecover.js";
+import { runEnergyRecover, runBusinesses } from "./jobs.js";
 import dotenv from "dotenv";
 import { getAppSettings } from "./admin.js";
 import { User, AppSettings } from "./models.js";
@@ -117,6 +117,7 @@ const main = async () => {
   });
 
   runEnergyRecover();
+  runBusinesses();
 
   const port = 3001;
   server.listen(port, () => {
