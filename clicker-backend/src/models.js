@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   fullEnergyActivates: Number,
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
+  businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
 });
 export const User = mongoose.model("User", userSchema);
 
@@ -57,8 +58,10 @@ export const League = mongoose.model("League", leagueSchema);
 const businessSchema = new mongoose.Schema({
   name: String,
   description: String,
+  price: Number,
   avatarUrl: String,
   rewardPerHour: Number,
+  refsToUnlock: Number,
   isDeleted: Boolean,
 });
 export const Business = mongoose.model("Business", businessSchema);

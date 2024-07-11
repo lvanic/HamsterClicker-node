@@ -1,4 +1,4 @@
-import { Click, User, Task, League } from "./models.js";
+import { Click, User, Task, League, Business } from "./models.js";
 import { getAppSettings } from "./admin.js";
 
 export const handleSocketConnection = async (socket) => {
@@ -111,7 +111,9 @@ export const registerEvents = (io) => {
 
   io.on("getUser", async (userId) => {
     const tgUserId = Number(userId);
-    const user = await User.findOne({ tgId: tgUserId }).populate("referrals");
+    const user = await User.findOne({ tgId: tgUserId })
+      .populate("referrals")
+      .populate("businesses");
 
     if (!user) {
       return;
@@ -121,18 +123,10 @@ export const registerEvents = (io) => {
     const userPlaceInLeague = await Users.find({balance: { $lte: userLeague.maxBalance, $gte: user.balance }}).count();
 
     const userData = {
-      tgId: user.tgId,
-      avatarUrl: user.avatarUrl,
-      tgUsername: user.tgUsername,
-      balance: user.balance,
-      energy: user.energy,
-      lastOnlineTimestamp: user.lastOnlineTimestamp,
-      connectedWallet: user.connectedWallet,
-      lastDailyRewardTimestamp: user.lastDailyRewardTimestamp,
-      lastFullEnergyTimestamp: user.lastFullEnergyTimestamp,
-      fullEnergyActivates: user.fullEnergyActivates,
-      referrals: user.referrals,
-      completedTasks: user.completedTasks,
+      id: user._id,
+      ...user,
+      referrals: user.referrals.map(r => ({ id: r._id, ...r })),
+      businesses: user.businesses.map(b => ({ id: b._id, ...b })),
       userPlaceInLeague: userPlaceInLeague + 1,
       league: { id: userLeague._id, ...userLeague },
     };
@@ -150,6 +144,35 @@ export const registerEvents = (io) => {
       usersInLeague,
       topUsersInLeague,
     });
+  });
+
+  io.on("getBusinessesToBuy", async (userTgId) => {
+    const user = await User.findOne({ tgId: userTgId });
+    const businesses = await Business.find({ isDeleted: false });
+    const availableBusinesses = businesses.filter((b) => !user.businesses.includes(b._id));
+
+    io.emit("businesses", availableBusinesses);
+  });
+
+  io.on("buyBusiness", async (userTgId, businessId) => {
+    const user = await User.findOne({ tgId: userTgId });
+    const business = await Business.findById(businessId);
+
+    if (!user) {
+      return;
+    }
+
+    if (business.refsToUnlock > user.businesses.length) {
+      return;
+    }
+
+    if (business.price > user.balance) {
+      return;
+    }
+
+    user.balance -= business.price;
+    user.businesses.push(business._id);
+    await user.save();
   });
 
   io.on("getTasks", async () => {

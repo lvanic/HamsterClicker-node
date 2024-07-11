@@ -9,6 +9,8 @@ export const AdminEditBusiness = () => {
   const [description, setDescription] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [rewardPerHour, setRewardPerHour] = useState(0);
+  const [refsToUnlock, setRefsToUnlock] = useState(0);
+  const [price, setPrice] = useState(0);
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -27,7 +29,9 @@ export const AdminEditBusiness = () => {
         name,
         description,
         avatarUrl,
-        rewardPerHour
+        rewardPerHour,
+        refsToUnlock,
+        price,
       }),
     });
 
@@ -51,6 +55,8 @@ export const AdminEditBusiness = () => {
         setDescription(business.description);
         setAvatarUrl(business.avatarUrl);
         setRewardPerHour(business.rewardPerHour);
+        setRefsToUnlock(business.refsToUnlock);
+        setPrice(business.price);
       } else {
         navigate("/admin/businesses");
       }
@@ -89,6 +95,22 @@ export const AdminEditBusiness = () => {
         className="bg-slate-50 py-1 px-4 w-full outline-none"
         onChange={(e) => setRewardPerHour(Number(e.target.value))}
         value={rewardPerHour}
+      />
+
+      <input
+        type="number"
+        placeholder="Refs to unlock"
+        className="bg-slate-50 py-1 px-4 w-full outline-none"
+        onChange={(e) => setRefsToUnlock(Number(e.target.value))}
+        value={refsToUnlock}
+      />
+
+      <input
+        type="number"
+        placeholder="Price"
+        className="bg-slate-50 py-1 px-4 w-full outline-none"
+        onChange={(e) => setPrice(Number(e.target.value))}
+        value={price}
       />
 
       <button className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
