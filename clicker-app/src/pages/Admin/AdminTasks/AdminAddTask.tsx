@@ -5,7 +5,7 @@ const { adminApiUrl } = getConfig();
 
 export const AddTask = () => {
   const [name, setName] = useState("");
-  const [type, setType] = useState<"telegram" | "link">("telegram");
+  const [type, setType] = useState<"telegram" | "link" | "twitter-subscribe">("telegram");
   const [activateUrl, setActivateUrl] = useState("");
   const [description, setDescription] = useState("");
   const [rewardAmount, setRewardAmount] = useState(0);
@@ -53,8 +53,9 @@ export const AddTask = () => {
         className="bg-slate-50 py-1 px-3 w-full outline-none"
         onChange={(e) => setType(e.target.value.toString() as "telegram" | "link")}
       >
-        <option value="first" selected>Telegram subscribe</option>
-        <option value="second">Link navigation</option>
+        <option value="telegram" selected>Telegram subscribe</option>
+        <option value="link">Link navigation</option>
+        <option value="twitter-subscribe">Twitter subscribe</option>
       </select>
 
       <input
