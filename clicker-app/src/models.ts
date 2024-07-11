@@ -10,6 +10,9 @@ export interface User {
   lastDailyRewardTimestamp: number;
   lastFullEnergyTimestamp: number;
   fullEnergyActivates: number;
+  league: League;
+  userPlaceInLeague: number;
+  businesses: Business[];
 }
 
 export interface Task {

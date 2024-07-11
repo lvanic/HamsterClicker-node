@@ -173,6 +173,9 @@ export const registerEvents = (io) => {
     user.balance -= business.price;
     user.businesses.push(business._id);
     await user.save();
+
+    io.emit('businessBought', { success: true, business });
+
   });
 
   io.on("getTasks", async () => {

@@ -1,10 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useUser } from "../../hooks/useUser";
+import { useWebSocket } from "../../hooks/useWebsocket";
+import { League, User } from "../../models";
 
 export const LeagueTop = () => {
+  const { user } = useUser();
+  const { webSocket } = useWebSocket();
+  const [league, setLeague] = useState<League| null>(null);
+  const [usersInLeague, setUsersInLeague] = useState(0);
+  const [topUsersInLeague, setTopUsersInLeague] = useState([]);
+
+  useEffect(() => {
+    if (webSocket) {
+      webSocket.emit("getLeagueInfo", user?.league.id, 10);
+
+      webSocket.on("league", (data) => {
+        setLeague(data.league);
+        setUsersInLeague(data.usersInLeague);
+        setTopUsersInLeague(data.topUsersInLeague);
+      });
+
+      return () => {
+        webSocket.off("league");
+      };
+    }
+  }, [webSocket, user?.league.id]);
+
   return (
     <div className="font-sans p-5 rounded-lg max-w-md mx-auto shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Top League</h2>
-      <table className="w-full">
+      <h2 className="text-2xl font-bold mb-4">{league ? league.name : "Top League"}</h2>
+      <p>{league ? league.description : "Loading league information..."}</p>
+      <p>Total users in league: {usersInLeague}</p>
+      <table className="w-full mt-4">
         <thead>
           <tr className="bg-gray-200 text-gray-700">
             <th className="py-2 px-4 text-left">Rank</th>
@@ -13,22 +40,21 @@ export const LeagueTop = () => {
           </tr>
         </thead>
         <tbody>
-          {/* Placeholder data */}
-          <tr className="bg-white hover:bg-gray-100 transition-colors">
-            <td className="py-2 px-4">1</td>
-            <td className="py-2 px-4">Team A</td>
-            <td className="py-2 px-4 text-right">100</td>
-          </tr>
-          <tr className="bg-white hover:bg-gray-100 transition-colors">
-            <td className="py-2 px-4">2</td>
-            <td className="py-2 px-4">Team B</td>
-            <td className="py-2 px-4 text-right">90</td>
-          </tr>
-          <tr className="bg-white hover:bg-gray-100 transition-colors">
-            <td className="py-2 px-4">3</td>
-            <td className="py-2 px-4">Team C</td>
-            <td className="py-2 px-4 text-right">80</td>
-          </tr>
+          {topUsersInLeague.length > 0 ? (
+            topUsersInLeague.map((user : User, index) => (
+              <tr key={user.tgId} className="bg-white hover:bg-gray-100 transition-colors">
+                <td className="py-2 px-4">{index + 1}</td>
+                <td className="py-2 px-4">{user.tgUsername || user.firstName}</td>
+                <td className="py-2 px-4 text-right">{user.balance}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={3} className="py-2 px-4 text-center">
+                No users in league
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

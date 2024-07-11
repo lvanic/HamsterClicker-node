@@ -1,7 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../hooks/useUser";
 
 export const League = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
+  if (!user) {
+    return <div />;
+  }
   return (
     <div
       onClick={() => {
@@ -9,9 +14,9 @@ export const League = () => {
       }}
     >
       <div style={{ display: "flex", alignItems: "center" }}>
-        <span>Silver</span>
+        <span>{user?.league.name}</span>
         <span style={{ marginLeft: "8px" }}>➡️</span>
-        <span style={{ marginLeft: "8px" }}>Уровень 2/10</span>
+        {/* <span style={{ marginLeft: "8px" }}>Level {user?.balance / user?.league.maxBalance }</span> */}
       </div>
       <div
         style={{
@@ -22,7 +27,11 @@ export const League = () => {
         }}
       >
         <div
-          style={{ height: "100%", width: "50%", backgroundColor: "#ffd700" }}
+          style={{
+            height: "100%",
+            width: (user?.league.maxBalance / user?.balance) * 10,
+            backgroundColor: "#ffd700",
+          }}
         />
       </div>
     </div>
