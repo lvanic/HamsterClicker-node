@@ -198,7 +198,7 @@ export const registerEvents = (io) => {
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
     const availableBusinesses =
-      user.businesses.length === 0
+      user.businesses == null
         ? businesses
         : businesses.filter((b) => !user.businesses.includes(b._id));
     io.emit("businesses", availableBusinesses);
