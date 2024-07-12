@@ -33,7 +33,11 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const handleGetUser = (userData: any) => {
     console.log(userData);
 
-    setUser(userData);
+    setUser({
+      ...userData._doc,
+      league: { ...userData.league._doc, id: userData.league.id },
+      userPlaceInLeague: userData.userPlaceInLeague,
+    });
   };
 
   useLayoutEffect(() => {

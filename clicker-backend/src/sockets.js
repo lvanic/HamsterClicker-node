@@ -197,10 +197,10 @@ export const registerEvents = (io) => {
   io.on("getBusinessesToBuy", async (userTgId) => {
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
-    const availableBusinesses = businesses.filter(
-      (b) => !user.businesses.includes(b._id)
-    );
-
+    const availableBusinesses =
+      user.businesses.length === 0
+        ? businesses
+        : businesses.filter((b) => !user.businesses.includes(b._id));
     io.emit("businesses", availableBusinesses);
   });
 
