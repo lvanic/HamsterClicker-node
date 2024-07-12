@@ -15,6 +15,8 @@ export const Businesses = () => {
 
       webSocket.on('businesses', (data) => {
         setBusinesses(data);
+        console.log(data);
+        
       });
 
       webSocket.on('businessBought', (data) => {

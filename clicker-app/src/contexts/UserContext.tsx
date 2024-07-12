@@ -31,6 +31,8 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const { webSocket } = useWebSocket();
 
   const handleGetUser = (userData: any) => {
+    console.log(userData);
+
     setUser(userData);
   };
 

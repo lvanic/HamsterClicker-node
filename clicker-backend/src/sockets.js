@@ -147,7 +147,7 @@ export const registerEvents = (io) => {
     const tgUserId = Number(userId);
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
-      .populate("businesses");
+      .populate("businesses").toObject();
 
     if (!user) {
       return;
@@ -184,7 +184,7 @@ export const registerEvents = (io) => {
     const topUsersInLeague = await User.find({
       balance: { $lte: league.maxBalance, $gte: league.minBalance },
     })
-      .sort({ balance: 1 })
+      .sort({ balance: -1 })
       .limit(topUsersCount);
 
     io.emit("league", {

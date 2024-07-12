@@ -66,6 +66,15 @@ export const Layout = () => {
           <AiOutlineAim size={24} className="mb-1" />
           <span className="text-xs">Boosts</span>
         </Link>
+        <Link
+          to="/businesses"
+          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+        >
+          <AiOutlineAim size={24} className="mb-1" />
+          <span className="text-xs">Businesses</span>
+        </Link>
       </nav>
     </>
   );

@@ -28,6 +28,7 @@ import {
   AdminEditBusiness,
 } from "./pages/Admin";
 import { LeagueTop } from "./pages/LeagueTop/LeagueTop";
+import { Businesses } from "./pages/Businesses/Businesses";
 
 function switchSwipeDown(enable: boolean) {
   window.Telegram.WebApp.expand();
@@ -66,6 +67,7 @@ function App() {
                   <Route path="tasks" element={<Tasks />} />
                   <Route path="boosts" element={<Boosts />} />
                   <Route path="league" element={<LeagueTop />} />
+                  <Route path="businesses" element={<Businesses />} />
                   <Route
                     path="maintenance-notice"
                     element={<MaintenanceNotice />}
@@ -82,7 +84,10 @@ function App() {
                   <Route path="leagues/add" element={<AdminAddLeague />} />
                   <Route path="businesses" element={<AdminBusinesses />} />
                   <Route path="businesses/add" element={<AdminAddBusiness />} />
-                  <Route path="businesses/edit/:id" element={<AdminEditBusiness />} />
+                  <Route
+                    path="businesses/edit/:id"
+                    element={<AdminEditBusiness />}
+                  />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="settings" element={<AdminSettings />} />
                 </Route>
