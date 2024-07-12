@@ -147,7 +147,7 @@ export const registerEvents = (io) => {
     const tgUserId = Number(userId);
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
-      .populate("businesses").toObject();
+      .populate("businesses");
 
     if (!user) {
       return;
