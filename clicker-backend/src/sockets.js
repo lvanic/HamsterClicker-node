@@ -160,7 +160,7 @@ export const registerEvents = (io) => {
       minBalance: { $lte: user.balance },
       maxBalance: { $gte: user.balance },
     });
-    const userPlaceInLeague = await Users.find({
+    const userPlaceInLeague = await User.find({
       balance: { $lte: userLeague.maxBalance, $gte: user.balance },
     }).count();
 
