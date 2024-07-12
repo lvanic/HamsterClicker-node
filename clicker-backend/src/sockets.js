@@ -197,9 +197,12 @@ export const registerEvents = (io) => {
   io.on("getBusinessesToBuy", async (userTgId) => {
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
+    console.log("All businesses:", businesses);
+
     const availableBusinesses = businesses.filter(
       (b) => !user.businesses.some(userBusinessId => userBusinessId.equals(b._id))
     );
+    console.log("Available businesses:", availableBusinesses);
 
     io.emit("businesses", availableBusinesses);
   });
