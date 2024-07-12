@@ -41,7 +41,7 @@ export const Businesses = () => {
     <div className="font-sans p-5 rounded-lg max-w-md mx-auto shadow-md">
       <h2 className="text-2xl font-bold mb-4">Available Businesses</h2>
       {message && <p>{message}</p>}
-      <ul className="space-y-4">
+      <ul className="space-y-4"  style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}>
         {businesses.map((business) => (
           <li key={business.id} className="p-4 bg-white rounded shadow">
             <div className="flex justify-between items-center">

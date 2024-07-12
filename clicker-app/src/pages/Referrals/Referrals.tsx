@@ -11,7 +11,7 @@ export const Referrals = () => {
       <ReferralLink />
       <ul
         className="list-none p-0"
-        style={{ maxHeight: "70vh", overflow: "scroll" }}
+        style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}
       >
         {referrals?.map((referral, index) => (
           <li

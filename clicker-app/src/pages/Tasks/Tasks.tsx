@@ -66,7 +66,7 @@ export const Tasks = () => {
   };
 
   const handleOpenLink = () => {
-    if (selectedTask.type !== "telegram" && selectedTask.completed == false) {
+    if (selectedTask.type !== "telegram" && tasks[selectedTask._id] == false) {
       const tgUserId = getTelegramUser().id;
       webSocket?.emit(
         "checkTaskStatus",
@@ -93,7 +93,7 @@ export const Tasks = () => {
       ) : (
         <ul
           className="list-none p-0"
-          style={{ maxHeight: "80vh", overflow: "scroll" }}
+          style={{ maxHeight: window.innerHeight - 84, overflowY: "scroll" }}
         >
           {tasks.map((task: any) => (
             <li

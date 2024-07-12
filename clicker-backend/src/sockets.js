@@ -31,7 +31,7 @@ export const registerEvents = (io) => {
         }
       );
       await user.save();
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
 
@@ -92,7 +92,44 @@ export const registerEvents = (io) => {
       } else {
         io.emit("taskStatus", { id: task.id, finished: false });
       }
-      //if (task.type == "link")
+    } else if (task.type == "twitter") {
+
+      // const Twit = require("twit");
+      // const T = new Twit({
+      //   consumer_key: "your-consumer-key",
+      //   consumer_secret: "your-consumer-secret",
+      //   access_token: "your-access-token",
+      //   access_token_secret: "your-access-token-secret",
+      //   timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
+      // });
+      // const checkIfUserFollows = async (sourceUser, targetUser) => {
+      //   try {
+      //     const result = await T.get("friendships/show", {
+      //       source_screen_name: sourceUser,
+      //       target_screen_name: targetUser,
+      //     });
+      //     const following = result.data.relationship.source.following;
+      //     return following;
+      //   } catch (error) {
+      //     console.error("Error checking friendship:", error);
+      //     throw error;
+      //   }
+      // };
+
+      // const sourceUser = "sourceUserName";
+      // const targetUser = "targetUserName";
+      // checkIfUserFollows(sourceUser, targetUser)
+      //   .then((isFollowing) => {
+      //     if (isFollowing) {
+      //       console.log(`${sourceUser} is following ${targetUser}`);
+      //     } else {
+      //       console.log(`${sourceUser} is not following ${targetUser}`);
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error:", error);
+      //   });
+
     } else {
       user.completedTasks.push(task);
 
@@ -119,14 +156,19 @@ export const registerEvents = (io) => {
       return;
     }
 
-    const userLeague = await League.findOne({ minBalance: { $lte: user.balance }, maxBalance: { $gte: user.balance } });
-    const userPlaceInLeague = await Users.find({balance: { $lte: userLeague.maxBalance, $gte: user.balance }}).count();
+    const userLeague = await League.findOne({
+      minBalance: { $lte: user.balance },
+      maxBalance: { $gte: user.balance },
+    });
+    const userPlaceInLeague = await Users.find({
+      balance: { $lte: userLeague.maxBalance, $gte: user.balance },
+    }).count();
 
     const userData = {
       id: user._id,
       ...user,
-      referrals: user.referrals.map(r => ({ id: r._id, ...r })),
-      businesses: user.businesses.map(b => ({ id: b._id, ...b })),
+      referrals: user.referrals.map((r) => ({ id: r._id, ...r })),
+      businesses: user.businesses.map((b) => ({ id: b._id, ...b })),
       userPlaceInLeague: userPlaceInLeague + 1,
       league: { id: userLeague._id, ...userLeague },
     };
@@ -136,8 +178,14 @@ export const registerEvents = (io) => {
 
   io.on("getLeagueInfo", async (leagueId, topUsersCount) => {
     const league = await League.findOne({ _id: leagueId });
-    const usersInLeague = await Users.find({balance: { $lte: league.maxBalance, $gte: league.minBalance }}).count();
-    const topUsersInLeague = await Users.find({balance: { $lte: league.maxBalance, $gte: league.minBalance }}).sort({ balance: 1 }).limit(topUsersCount);
+    const usersInLeague = await Users.find({
+      balance: { $lte: league.maxBalance, $gte: league.minBalance },
+    }).count();
+    const topUsersInLeague = await Users.find({
+      balance: { $lte: league.maxBalance, $gte: league.minBalance },
+    })
+      .sort({ balance: 1 })
+      .limit(topUsersCount);
 
     io.emit("league", {
       league: { id: league._id, ...league },
@@ -149,7 +197,9 @@ export const registerEvents = (io) => {
   io.on("getBusinessesToBuy", async (userTgId) => {
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
-    const availableBusinesses = businesses.filter((b) => !user.businesses.includes(b._id));
+    const availableBusinesses = businesses.filter(
+      (b) => !user.businesses.includes(b._id)
+    );
 
     io.emit("businesses", availableBusinesses);
   });
@@ -174,12 +224,11 @@ export const registerEvents = (io) => {
     user.businesses.push(business._id);
     await user.save();
 
-    io.emit('businessBought', { success: true, business });
-
+    io.emit("businessBought", { success: true, business });
   });
 
   io.on("getTasks", async () => {
-    const tasks = await Task.find({ active: true});
+    const tasks = await Task.find({ active: true });
     io.emit("tasks", tasks);
   });
 
@@ -220,7 +269,10 @@ export const registerEvents = (io) => {
             $inc: { balance: appSettings.dailyReward },
           }
         );
-        io.emit("boostActivated", `You received a daily reward of ${appSettings.dailyReward} coins`);
+        io.emit(
+          "boostActivated",
+          `You received a daily reward of ${appSettings.dailyReward} coins`
+        );
       }
     }
 
