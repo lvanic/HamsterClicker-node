@@ -177,11 +177,11 @@ export const registerEvents = (io) => {
   io.on("getLeagueInfo", async (leagueId, topUsersCount) => {
     const league = await League.findOne({ _id: leagueId });
 
-    const usersInLeague = await Users.find({
+    const usersInLeague = await User.countDocuments({
       balance: { $lte: league.maxBalance, $gte: league.minBalance },
-    }).count();
-    
-    const topUsersInLeague = await Users.find({
+    });
+
+    const topUsersInLeague = await User.find({
       balance: { $lte: league.maxBalance, $gte: league.minBalance },
     })
       .sort({ balance: 1 })
