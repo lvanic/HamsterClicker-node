@@ -93,7 +93,6 @@ export const registerEvents = (io) => {
         io.emit("taskStatus", { id: task.id, finished: false });
       }
     } else if (task.type == "twitter") {
-
       // const Twit = require("twit");
       // const T = new Twit({
       //   consumer_key: "your-consumer-key",
@@ -115,7 +114,6 @@ export const registerEvents = (io) => {
       //     throw error;
       //   }
       // };
-
       // const sourceUser = "sourceUserName";
       // const targetUser = "targetUserName";
       // checkIfUserFollows(sourceUser, targetUser)
@@ -129,7 +127,6 @@ export const registerEvents = (io) => {
       //   .catch((error) => {
       //     console.error("Error:", error);
       //   });
-
     } else {
       user.completedTasks.push(task);
 
@@ -160,9 +157,10 @@ export const registerEvents = (io) => {
       minBalance: { $lte: user.balance },
       maxBalance: { $gte: user.balance },
     });
-    const userPlaceInLeague = await User.find({
+
+    const userPlaceInLeague = await User.countDocuments({
       balance: { $lte: userLeague.maxBalance, $gte: user.balance },
-    }).count();
+    });
 
     const userData = {
       id: user._id,
@@ -178,9 +176,11 @@ export const registerEvents = (io) => {
 
   io.on("getLeagueInfo", async (leagueId, topUsersCount) => {
     const league = await League.findOne({ _id: leagueId });
+
     const usersInLeague = await Users.find({
       balance: { $lte: league.maxBalance, $gte: league.minBalance },
     }).count();
+    
     const topUsersInLeague = await Users.find({
       balance: { $lte: league.maxBalance, $gte: league.minBalance },
     })
