@@ -57,7 +57,9 @@ export const registerEvents = (io) => {
       return;
     }
 
-    if (user.completedTasks.includes((ut) => ut.toString() == task.id.toString())) {
+    if (
+      user.completedTasks.includes((ut) => ut.toString() == task.id.toString())
+    ) {
       return;
     }
 
@@ -195,11 +197,16 @@ export const registerEvents = (io) => {
   });
 
   io.on("getBusinessesToBuy", async (userTgId) => {
+    console.log(userTgId);
+    
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
 
     const availableBusinesses = businesses.filter(
-      (b) => !user.businesses.some(userBusinessId => userBusinessId.toString() == b._id.toString())
+      (b) =>
+        !user.businesses.some(
+          (userBusinessId) => userBusinessId.toString() == b._id.toString()
+        )
     );
     console.log(availableBusinesses);
 
