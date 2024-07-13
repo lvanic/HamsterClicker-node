@@ -210,7 +210,7 @@ export const registerEvents = (io) => {
         )
     );
     console.log(availableBusinesses);
-    const newAvailableBusinesses = availableBusinesses = {
+    const newAvailableBusinesses = {
       id: availableBusinesses._id,
       ...availableBusinesses,
     };
