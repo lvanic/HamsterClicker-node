@@ -208,10 +208,10 @@ export const registerEvents = (io) => {
     );
     const newAvailableBusinesses = availableBusinesses.map((b) => ({
       id: b._id,
-      ...b,
+      ...b_doc,
     }));
     console.log(newAvailableBusinesses);
-    io.emit("businesses", availableBusinesses);
+    io.emit("businesses", newAvailableBusinesses);
   });
 
   io.on("buyBusiness", async (data) => {
