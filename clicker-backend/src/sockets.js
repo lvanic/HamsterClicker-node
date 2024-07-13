@@ -214,7 +214,11 @@ export const registerEvents = (io) => {
     io.emit("businesses", availableBusinesses);
   });
 
-  io.on("buyBusiness", async (userTgId, businessId) => {
+  io.on("buyBusiness", async (data) => {
+    const parsedData = JSON.parse(data);
+    const userTgId = parsedData.userTgId;
+    const businessId = parsedData.businessId;
+    
     console.log(userTgId, businessId);
     const user = await User.findOne({ tgId: userTgId });
     const business = await Business.findById(businessId);
