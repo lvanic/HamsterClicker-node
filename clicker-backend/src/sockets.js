@@ -207,13 +207,7 @@ export const registerEvents = (io) => {
         )
     );
 
-    io.emit(
-      "businesses",
-      availableBusinesses.map((b) => ({
-        id: b._id,
-        ...b,
-      }))
-    );
+    io.emit("businesses", availableBusinesses);
   });
 
   io.on("buyBusiness", async (data) => {

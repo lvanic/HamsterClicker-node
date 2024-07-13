@@ -16,8 +16,12 @@ export const Businesses = () => {
       webSocket.emit("getBusinessesToBuy", user?.tgId);
 
       webSocket.on("businesses", (data) => {
-        setBusinesses(data);
-        console.log(data);
+        const parsedData = data.map((b: any) => ({
+          id: b._id,
+          ...b,
+        }));
+        setBusinesses(parsedData);
+        console.log(parsedData);
       });
 
       webSocket.on("businessBought", (data) => {
