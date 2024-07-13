@@ -197,7 +197,6 @@ export const registerEvents = (io) => {
   });
 
   io.on("getBusinessesToBuy", async (userTgId) => {
-
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
 
@@ -238,8 +237,8 @@ export const registerEvents = (io) => {
     user.balance -= business.price;
     user.businesses.push(business._id);
     await user.save();
-
-    io.emit("businessBought", { success: true, business });
+    const newBusiness = { id: business.id, ...business };
+    io.emit("businessBought", { success: true, newBusiness });
   });
 
   io.on("getTasks", async () => {

@@ -24,7 +24,9 @@ export const Businesses = () => {
         if (data.success) {
           setMessage(`You have successfully bought ${data.business.name}`);
           setBusinesses((prev) =>
-            prev.filter((b) => b.id !== data.business.id)
+            prev.map((b) =>
+              b.id === data.business.id ? { ...b, owned: true } : b
+            )
           );
         } else {
           setMessage("Failed to buy business");
@@ -39,12 +41,12 @@ export const Businesses = () => {
   }, [webSocket, user?.tgId]);
 
   const buyBusiness = (businessId: string) => {
-    let request = JSON.stringify([
-      user?.tgId,
-      businessId,
-    ]);
-    
+    let request = JSON.stringify([user?.tgId, businessId]);
     webSocket?.emit("buyBusiness", request);
+  };
+
+  const isBusinessOwned = (businessId: string) => {
+    return user?.businesses.some((b) => b.id === businessId);
   };
 
   return (
@@ -55,25 +57,35 @@ export const Businesses = () => {
         className="space-y-4"
         style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}
       >
-        {businesses.map((business) => (
-          <li key={business.id} className="p-4 bg-white rounded shadow">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-xl font-bold">{business.name}</h3>
-                <p>{business.description}</p>
-                <p>Price: {business.price}</p>
-                <p>Reward per hour: {business.rewardPerHour}</p>
-                <p>Refs to unlock: {business.refsToUnlock}</p>
+        {businesses.map((business) => {
+          const owned = isBusinessOwned(business.id);
+          return (
+            <li
+              key={business.id}
+              className={`p-4 rounded shadow ${
+                owned ? "bg-gray-300" : "bg-white"
+              }`}
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-bold">{business.name}</h3>
+                  <p>{business.description}</p>
+                  <p>Price: {business.price}</p>
+                  <p>Reward per hour: {business.rewardPerHour}</p>
+                  <p>Refs to unlock: {business.refsToUnlock}</p>
+                </div>
+                {!owned && (
+                  <button
+                    onClick={() => buyBusiness(business.id)}
+                    className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
+                  >
+                    Buy
+                  </button>
+                )}
               </div>
-              <button
-                onClick={() => buyBusiness(business.id)}
-                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Buy
-              </button>
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
