@@ -18,7 +18,7 @@ export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
           paddingTop: "0px",
         }}
       >
-        {clickCount}
+        {Math.floor(clickCount)}
       </div>
     </div>
   );

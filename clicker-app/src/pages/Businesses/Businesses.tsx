@@ -24,9 +24,7 @@ export const Businesses = () => {
         if (data.success) {
           setMessage(`You have successfully bought ${data.business.name}`);
           setBusinesses((prev) =>
-            prev.map((b) =>
-              b.id === data.business.id ? { ...b, owned: true } : b
-            )
+            prev.filter((b) => b.id !== data.business.id)
           );
         } else {
           setMessage("Failed to buy business");
@@ -42,11 +40,8 @@ export const Businesses = () => {
 
   const buyBusiness = (businessId: string) => {
     let request = JSON.stringify([user?.tgId, businessId]);
-    webSocket?.emit("buyBusiness", request);
-  };
 
-  const isBusinessOwned = (businessId: string) => {
-    return user?.businesses.some((b) => b.id === businessId);
+    webSocket?.emit("buyBusiness", request);
   };
 
   return (
@@ -57,35 +52,40 @@ export const Businesses = () => {
         className="space-y-4"
         style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}
       >
-        {businesses.map((business) => {
-          const owned = isBusinessOwned(business.id);
-          return (
-            <li
-              key={business.id}
-              className={`p-4 rounded shadow ${
-                owned ? "bg-gray-300" : "bg-white"
-              }`}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="text-xl font-bold">{business.name}</h3>
-                  <p>{business.description}</p>
-                  <p>Price: {business.price}</p>
-                  <p>Reward per hour: {business.rewardPerHour}</p>
-                  <p>Refs to unlock: {business.refsToUnlock}</p>
-                </div>
-                {!owned && (
-                  <button
-                    onClick={() => buyBusiness(business.id)}
-                    className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
-                  >
-                    Buy
-                  </button>
-                )}
+        {businesses.map((business) => (
+          <li key={business.id} className="p-4 bg-white rounded shadow">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold">{business.name}</h3>
+                <p>{business.description}</p>
+                <p>Price: {business.price}</p>
+                <p>Reward per hour: {business.rewardPerHour}</p>
+                <p>Refs to unlock: {business.refsToUnlock}</p>
               </div>
-            </li>
-          );
-        })}
+              <button
+                onClick={() => buyBusiness(business.id)}
+                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Buy
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <h2 className="text-2xl font-bold mb-4">Purchased Businesses</h2>
+      <ul>
+        {user?.businesses.map((business) => (
+          <li key={business.id} className="p-4 bg-white rounded shadow">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold">{business.name}</h3>
+                <p>{business.description}</p>
+                <p>Price: {business.price}</p>
+                <p>Reward per hour: {business.rewardPerHour}</p>
+              </div>
+            </div>
+          </li>
+        ))}
       </ul>
     </div>
   );
