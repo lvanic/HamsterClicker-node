@@ -10,7 +10,9 @@ export const Businesses = () => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (webSocket) {
+    if (webSocket && user) {
+      console.log(user?.tgId);
+      
       webSocket.emit('getBusinessesToBuy', user?.tgId);
 
       webSocket.on('businesses', (data) => {
