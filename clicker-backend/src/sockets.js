@@ -206,11 +206,7 @@ export const registerEvents = (io) => {
           (userBusinessId) => userBusinessId.toString() == b._id.toString()
         )
     );
-    const newAvailableBusinesses = availableBusinesses.map((b) => ({
-      id: b._id,
-      ...b,
-    }));
-    console.log(newAvailableBusinesses);
+
     io.emit(
       "businesses",
       availableBusinesses.map((b) => ({
