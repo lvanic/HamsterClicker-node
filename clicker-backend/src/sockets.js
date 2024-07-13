@@ -197,11 +197,9 @@ export const registerEvents = (io) => {
   });
 
   io.on("getBusinessesToBuy", async (userTgId) => {
-    console.log(userTgId);
 
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
-    console.log(businesses);
 
     const availableBusinesses = businesses.filter(
       (b) =>
@@ -209,13 +207,12 @@ export const registerEvents = (io) => {
           (userBusinessId) => userBusinessId.toString() == b._id.toString()
         )
     );
-    console.log(availableBusinesses);
-    const newAvailableBusinesses = {
-      id: availableBusinesses._id,
-      ...availableBusinesses,
-    };
+    const newAvailableBusinesses = availableBusinesses.map((b) => ({
+      id: b._id,
+      ...b,
+    }));
     console.log(newAvailableBusinesses);
-    io.emit("businesses", availableBusinesses);
+    io.emit("businesses", newAvailableBusinesses);
   });
 
   io.on("buyBusiness", async (data) => {
