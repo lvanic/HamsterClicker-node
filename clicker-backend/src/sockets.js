@@ -215,6 +215,7 @@ export const registerEvents = (io) => {
   });
 
   io.on("buyBusiness", async (userTgId, businessId) => {
+    console.log(userTgId, businessId);
     const user = await User.findOne({ tgId: userTgId });
     const business = await Business.findById(businessId);
 
