@@ -199,8 +199,9 @@ export const registerEvents = (io) => {
     const businesses = await Business.find({ isDeleted: false });
 
     const availableBusinesses = businesses.filter(
-      (b) => !user.businesses.some(userBusinessId => userBusinessId.toString()  == b._id.toString())
+      (b) => !user.businesses.some(userBusinessId => userBusinessId.toString() == b._id.toString())
     );
+    console.log(availableBusinesses);
 
     io.emit("businesses", availableBusinesses);
   });
