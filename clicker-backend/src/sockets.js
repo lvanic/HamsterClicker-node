@@ -214,8 +214,8 @@ export const registerEvents = (io) => {
       id: availableBusinesses._id,
       ...availableBusinesses,
     };
-
-    io.emit("businesses", newAvailableBusinesses);
+    console.log(newAvailableBusinesses);
+    io.emit("businesses", availableBusinesses);
   });
 
   io.on("buyBusiness", async (data) => {
