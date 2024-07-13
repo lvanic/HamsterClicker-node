@@ -210,6 +210,10 @@ export const registerEvents = (io) => {
         )
     );
     console.log(availableBusinesses);
+    availableBusinesses = {
+      id: availableBusinesses._id,
+      ...availableBusinesses,
+    };
 
     io.emit("businesses", availableBusinesses);
   });

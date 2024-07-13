@@ -39,10 +39,11 @@ export const Businesses = () => {
   }, [webSocket, user?.tgId]);
 
   const buyBusiness = (businessId: string) => {
-    let request = JSON.stringify({
-      userTgId: user?.tgId,
-      businessId: businessId,
-    });
+    let request = JSON.stringify([
+      user?.tgId,
+      businessId,
+    ]);
+    
     webSocket?.emit("buyBusiness", request);
   };
 
