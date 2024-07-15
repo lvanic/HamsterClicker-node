@@ -7,11 +7,11 @@ export const Referrals = () => {
   const referrals = user?.referrals;
 
   return (
-    <div className="font-sans p-5 rounded-lg max-w-md mx-auto shadow-md">
+    <div className="font-sans p-5 rounded-lg max-w-md mx-auto">
       <ReferralLink />
       <ul
         className="list-none p-0"
-        style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}
+        style={{ maxHeight: window.innerHeight - 144, overflowY: "scroll" }}
       >
         {referrals?.map((referral, index) => (
           <li

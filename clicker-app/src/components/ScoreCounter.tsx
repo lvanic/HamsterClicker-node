@@ -6,10 +6,10 @@ export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",
-        // fontFamily: "cursive",
+        alignItems: "center",
       }}
     >
-      <img src="./img/sisechka_coin.png" className="w-20 h-20" />
+      <img src="./img/egg.png" className="h-12 mr-2" />
       <div
         style={{
           fontSize: "50px",

@@ -7,32 +7,32 @@ export const League = () => {
   if (!user) {
     return <div />;
   }
+
   return (
     <div
       onClick={() => {
         navigate("/league");
       }}
+      style={{ display: "flex", alignItems: "center" }}
+      className="ml-6 pb-6"
     >
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <span>{user?.league.name}</span>
-        <span style={{ marginLeft: "8px" }}>➡️</span>
-        {/* <span style={{ marginLeft: "8px" }}>Level {user?.balance / user?.league.maxBalance }</span> */}
-      </div>
       <div
         style={{
           height: "8px",
           width: "100%",
           backgroundColor: "#e0e0e0",
-          marginTop: "8px",
         }}
+        className="rounded-xl"
       >
         <div
           style={{
             height: "100%",
-            width: (user?.league.maxBalance / user?.balance) * 10,
-            backgroundColor: "#ffd700",
+            width: (user?.balance / user?.league.maxBalance) * 100 + "%",
+            backgroundColor: "#FF5064",
           }}
+          className="rounded-xl"
         />
+        <div>Coins for UP {user?.league.maxBalance}</div>
       </div>
     </div>
   );

@@ -3,12 +3,14 @@ import { useClick } from "../../hooks/useClick";
 import NumberSign from "../../components/NumberSign";
 import { EnergyProgress } from "../../components/EnergyProgress";
 import { ScoreCounter } from "../../components/ScoreCounter";
-import TonButton from "../../components/TonButton";
+import TonButton from "../../components/TonButton/TonButton";
 import { useUser } from "../../hooks/useUser";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { useSkeletonLoading } from "../../hooks/useSkeletonLoading";
 import { ClickerSkeleton } from "./ClickerSkeleton";
 import { League } from "../../components/League";
+import { BoostButton } from "../../components/BoostButton";
+import "./Clicker.css"; // Создайте и импортируйте CSS файл
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -101,6 +103,7 @@ export const Clicker: React.FC = () => {
       });
     }
   };
+
   return (
     <div
       className="text-center p-4 relative flex flex-col items-center"
@@ -110,15 +113,15 @@ export const Clicker: React.FC = () => {
         <ClickerSkeleton />
       ) : (
         <>
+          <BoostButton />
           <div className="flex flex-row mb-4">
+            <ScoreCounter clickCount={clickCount} />
             <League />
-            <TonButton/>
           </div>
-          <ScoreCounter clickCount={clickCount} />
-          <div>
+          <div className="gradient-border-container">
             <img
               ref={imgRef}
-              src="./img/sisechka.png"
+              src={user?.league.avatarUrl}
               //@ts-ignore
               onTouchStart={handleTouchStart}
               //@ts-ignore
@@ -129,13 +132,13 @@ export const Clicker: React.FC = () => {
               onTouchCancel={handleTouchEnd}
               onClick={handleClickEvent}
               onContextMenu={handleContextMenu}
-              className={`text-lg border-none filter drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2))
+              className={`text-lg border-none filter drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) rounded-full p-4
                 ${
                   imageClicked
                     ? "transform scale-90 transition-transform duration-75 ease-in-out"
                     : ""
                 }`}
-              alt="sisechka"
+              alt="egg"
             />
           </div>
           <EnergyProgress energyCount={energyCount} />

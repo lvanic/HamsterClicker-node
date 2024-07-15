@@ -1,0 +1,14 @@
+.gradient-border-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+    padding: 10px;
+    background: linear-gradient(338.35deg, #BF9543 17.33%, #D4C437 42.12%, #BF9543 65.14%);
+  }
+  
+  .gradient-border-container img {
+    display: block;
+    border-radius: 50%;
+    background: white;
+  }
+  

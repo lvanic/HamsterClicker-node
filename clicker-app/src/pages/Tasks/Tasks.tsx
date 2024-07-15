@@ -86,7 +86,7 @@ export const Tasks = () => {
   };
 
   return (
-    <div className="font-sans p-5 rounded-lg max-w-md mx-auto shadow-md">
+    <div className="font-sans p-5 rounded-lg max-w-md mx-auto">
       <ToastContainer />
       {isDataLoading ? (
         <TaskSkeleton />

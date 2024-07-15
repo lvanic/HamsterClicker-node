@@ -3,6 +3,9 @@ import { useWebSocket } from "../../hooks/useWebsocket";
 import { useUser } from "../../hooks/useUser";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BoostButton } from "../../components/BoostButton";
+import { RestoreSvg } from "./RestoreSvg";
+import { MassTapSvg } from "./MassTapSvg";
 
 export const Boosts = () => {
   const { webSocket } = useWebSocket();
@@ -57,30 +60,80 @@ export const Boosts = () => {
     }
     return user?.fullEnergyActivates || 0;
   }, [user]);
+  //            onClick={() => activateBoost("dailyReward")}
+  //            onClick={() => activateBoost("fullEnergyBoost")}
+  //            Full Energy Boost {3 - fullEnergyActivates}/3
 
   return (
-    <div className="font-sans p-5 rounded-lg max-w-md mx-auto shadow-md">
+    <div className="font-sans p-5 rounded-lg max-w-md mx-auto">
       <ToastContainer />
-      <ul className="list-none p-0">
-        <li className="mb-4">
-          <button
-            onClick={() => activateBoost("dailyReward")}
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-75 disabled:bg-green-900"
-            disabled={dailyDisabled}
+      <div className="mt-4">
+        <div className="flex justify-center w-full mb-8">
+          <div className="w-min">
+            <BoostButton />
+          </div>
+        </div>
+        <div className="flex justify-around">
+          <div
+            style={{
+              width: "-webkit-fill-available",
+            }}
+            className="flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2"
           >
-            Daily Reward
-          </button>
-        </li>
-        <li className="mb-4">
-          <button
-            onClick={() => activateBoost("fullEnergyBoost")}
-            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700 disabled:opacity-75 disabled:bg-green-900"
-            disabled={energyDisabled}
+            <div className="flex justify-center h-0">
+              <div
+                className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"
+                style={{
+                  top: "-50px",
+                  boxShadow: "0px 0px 25.56px 0px #438EFE",
+                }}
+              >
+                <RestoreSvg />
+              </div>
+            </div>
+            <div className="flex justify-center mb-2 mt-5">Restore taps</div>
+            <div className="flex justify-center text-xl mb-1">
+              {3 - fullEnergyActivates}/3
+            </div>
+            <button
+              className="p-1 rounded-lg"
+              style={{
+                background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+              }}
+            >
+              Restore
+            </button>
+          </div>
+          <div
+            style={{
+              width: "-webkit-fill-available",
+            }}
+            className="flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2"
           >
-            Full Energy Boost {3 - fullEnergyActivates}/3
-          </button>
-        </li>
-      </ul>
+            <div className="flex justify-center h-0">
+              <div
+                className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"
+                style={{
+                  top: "-50px",
+                  boxShadow: "0px 0px 25.56px 0px #438EFE",
+                }}
+              >
+                <MassTapSvg />
+              </div>
+            </div>
+            <div className="flex justify-center mb-2 mt-5">Mass tap</div>
+            <div className="flex justify-center text-xl mb-1">3 lvl</div>
+            <button
+              className="p-1 rounded-lg"
+              style={{
+                background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+              }}
+            >
+              Improve
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

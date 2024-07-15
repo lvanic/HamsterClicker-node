@@ -29,6 +29,7 @@ import {
 } from "./pages/Admin";
 import { LeagueTop } from "./pages/LeagueTop/LeagueTop";
 import { Businesses } from "./pages/Businesses/Businesses";
+import { Airdrop } from "./pages/Airdrop/Airdrop";
 
 function switchSwipeDown(enable: boolean) {
   window.Telegram.WebApp.expand();
@@ -68,6 +69,7 @@ function App() {
                   <Route path="boosts" element={<Boosts />} />
                   <Route path="league" element={<LeagueTop />} />
                   <Route path="businesses" element={<Businesses />} />
+                  <Route path="airdrop" element={<Airdrop />} />
                   <Route
                     path="maintenance-notice"
                     element={<MaintenanceNotice />}

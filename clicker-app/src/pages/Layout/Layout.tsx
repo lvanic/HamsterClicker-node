@@ -13,6 +13,10 @@ import { getPlatform } from "../../services/telegramService";
 import QRCode from "react-qr-code";
 import { getConfig } from "../../utils/config";
 import QRCodeComponent from "../../components/QrCodeComponent";
+import { BusinessSvg } from "./BusinessSvg";
+import { FriendSvg } from "./FriendSvg";
+import { EarnSvg } from "./EarnSvg";
+import { EggSvg } from "./EggSvg";
 
 export const Layout = () => {
   const { isPageLoading } = usePageLoading();
@@ -29,7 +33,16 @@ export const Layout = () => {
   return (
     <>
       <Outlet />
-      <nav className="fixed bottom-0 left-0 w-full bg-opacity-30 bg-gray-800 border-t border-gray-700 flex justify-around py-2 shadow-lg">
+      <nav className="fixed bottom-0 left-0 w-full bg-opacity-30 bg-gray-800 border-t border-gray-700 flex justify-around py-2 shadow-lg flex items-center justify-center">
+        <Link
+          to="/businesses"
+          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+        >
+          <BusinessSvg />
+          <span className="text-xs">Ferms</span>
+        </Link>
         <Link
           to="/"
           className="text-white text-center flex flex-col items-center text-sm transition duration-300"
@@ -37,7 +50,7 @@ export const Layout = () => {
           onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
         >
           <AiOutlineHome size={24} className="mb-1" />
-          <span className="text-xs">Home</span>
+          <span className="text-xs">Tap</span>
         </Link>
         <Link
           to="/referrals"
@@ -45,8 +58,8 @@ export const Layout = () => {
           onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
         >
-          <AiOutlineUser size={24} className="mb-1" />
-          <span className="text-xs">Referrals</span>
+          <FriendSvg />
+          <span className="text-xs">Friends</span>
         </Link>
         <Link
           to="/tasks"
@@ -54,26 +67,17 @@ export const Layout = () => {
           onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
         >
-          <AiOutlineCheckCircle size={24} className="mb-1" />
-          <span className="text-xs">Tasks</span>
+          <EarnSvg />
+          <span className="text-xs">Earn</span>
         </Link>
         <Link
-          to="/boosts"
+          to="/airdrop"
           className="text-white text-center flex flex-col items-center text-sm transition duration-300"
           onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
         >
-          <AiOutlineAim size={24} className="mb-1" />
-          <span className="text-xs">Boosts</span>
-        </Link>
-        <Link
-          to="/businesses"
-          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
-        >
-          <AiOutlineAim size={24} className="mb-1" />
-          <span className="text-xs">Businesses</span>
+          <EggSvg />
+          <span className="text-xs">Airdrop</span>
         </Link>
       </nav>
     </>
