@@ -8,6 +8,7 @@ export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
         justifyContent: "center",
         alignItems: "center",
       }}
+      className="w-full"
     >
       <img src="./img/egg.png" className="h-12 mr-2" />
       <div

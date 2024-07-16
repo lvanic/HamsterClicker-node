@@ -114,7 +114,7 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
           <BoostButton />
-          <div className="flex flex-row mb-4">
+          <div className="flex flex-row justify-center items-center w-full mb-4">
             <ScoreCounter clickCount={clickCount} />
             <League />
           </div>

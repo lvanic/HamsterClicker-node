@@ -2,12 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useWebSocket } from "../../hooks/useWebsocket";
 import { Business } from "../../models";
+import { MediumEggSvg } from "./MediumEggSvg";
+import { LargerEggSvg } from "./LargerEggSvg";
+import "./Businesses.css";
+import { SmallEggSvg } from "../../components/SmallEggSvg";
+import { EggSvg } from "../Layout/EggSvg";
+import { BuyBusiness } from "./BuyBusiness";
 
 export const Businesses = () => {
   const { user } = useUser();
   const { webSocket } = useWebSocket();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [message, setMessage] = useState("");
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedBusiness, setSelectedBusiness] = useState<Business>();
 
   useEffect(() => {
     if (webSocket && user) {
@@ -44,39 +52,86 @@ export const Businesses = () => {
 
   const buyBusiness = (businessId: string) => {
     let request = JSON.stringify([user?.tgId, businessId]);
-
     webSocket?.emit("buyBusiness", request);
+    setModalOpen(false);
   };
 
   return (
-    <div className="font-sans p-5 rounded-lg max-w-md mx-auto shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Available Businesses</h2>
-      {message && <p>{message}</p>}
-      <ul
-        className="space-y-4"
-        style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}
+    <div className="p-5 rounded-lg max-w-md mx-auto">
+      {/* {message && <p>{message}</p>} */}
+      <div
+        className="absolute h-28 mx-5 rounded-b-xl"
+        style={{
+          background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+          left: "0px",
+          width: "-webkit-fill-available",
+        }}
       >
-        {businesses.map((business) => (
-          <li key={business.id} className="p-4 bg-white rounded shadow">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-xl font-bold">{business.name}</h3>
-                <p>{business.description}</p>
-                <p>Price: {business.price}</p>
-                <p>Reward per hour: {business.rewardPerHour}</p>
-                <p>Refs to unlock: {business.refsToUnlock}</p>
+        <div className="text-center mt-4">My balance</div>
+        <div className="flex justify-center items-center">
+          <LargerEggSvg />
+          <div className="text-5xl ml-2">{Math.floor(user?.balance || 0)}</div>
+        </div>
+      </div>
+      <div className="mt-32 mb-4 flex justify-between">
+        <div className="bg-[#323232] p-3 rounded-xl mr-1">
+          <div>Profit per tap</div>
+          <div className="flex justify-center items-center">
+            <MediumEggSvg />
+            <div className="text-3xl ml-2">+3</div>
+          </div>
+        </div>
+        <div className="bg-[#323232] p-3 rounded-xl mx-1">
+          <div>Coins for up</div>
+          <div className="flex justify-center items-center">
+            <div className="text-3xl">{user?.league.maxBalance}</div>
+          </div>
+        </div>
+        <div className="bg-[#323232] p-3 rounded-xl ml-1">
+          <div>Profit per hour</div>
+          <div className="flex justify-center items-center">
+            <MediumEggSvg />
+            <div className="text-3xl ml-2">1072</div>
+          </div>
+        </div>
+      </div>
+      <div style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}>
+        <div className="businesses-container">
+          {businesses.map((business) => (
+            <div
+              key={business.id}
+              className="business-item"
+              onClick={() => {
+                setSelectedBusiness(business);
+                setModalOpen(true);
+              }}
+            >
+              <div className="flex justify-left items-center p-2 pb-2">
+                <img
+                  src={business.avatarUrl}
+                  className="rounded-full w-8 h-8 mr-2"
+                />
+                <div>
+                  <h3 style={{ fontSize: 10.2 }}>{business.name}</h3>
+                  <div style={{ fontSize: 8 }} className="mt-2">
+                    Reward per hour:
+                    <div style={{ fontSize: 16.2 }}>
+                      {business.rewardPerHour}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => buyBusiness(business.id)}
-                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Buy
-              </button>
+              <div className="bg-[#5C5C5C] w-full h-10 rounded-xl flex items-center justify-center">
+                <EggSvg />
+                <div className="ml-1" style={{ fontSize: 16.2 }}>
+                  {business.price}
+                </div>
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
-      <h2 className="text-2xl font-bold mb-4">Purchased Businesses</h2>
+          ))}
+        </div>
+      </div>
+      {/* <h2 className="text-2xl font-bold mb-4">Purchased Businesses</h2>
       <ul>
         {user?.businesses.map((business) => (
           <li key={business.id} className="p-4 bg-white rounded shadow">
@@ -90,7 +145,17 @@ export const Businesses = () => {
             </div>
           </li>
         ))}
-      </ul>
+      </ul> */}
+
+      {isModalOpen && selectedBusiness && (
+        <BuyBusiness
+          business={selectedBusiness}
+          onBuyBusiness={buyBusiness}
+          onClose={() => {
+            setModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -39,10 +39,10 @@ export const AdminAddBusiness = () => {
       setIsError(true);
       setErrorText(await response.text());
     }
-  }
+  };
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 text-black">
       <input
         type="text"
         placeholder="Business name"
@@ -84,12 +84,23 @@ export const AdminAddBusiness = () => {
         onChange={(e) => setPrice(Number(e.target.value))}
       />
 
-      <button className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
+      <button
+        className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono"
+        onClick={handleSubmit}
+      >
         CONFIRM
       </button>
 
-      {isSuccess && <div className="bg-green-400 text-center text-white">Successfully added</div>}
-      {isError && <div className="bg-red-600 text-center text-white">Error occurred. {errorText}</div>}
+      {isSuccess && (
+        <div className="bg-green-400 text-center text-white">
+          Successfully added
+        </div>
+      )}
+      {isError && (
+        <div className="bg-red-600 text-center text-white">
+          Error occurred. {errorText}
+        </div>
+      )}
     </div>
   );
 };
