@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   lastDailyRewardTimestamp: Number,
   lastFullEnergyTimestamp: Number,
   fullEnergyActivates: Number,
+  clickPower: Number,
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],

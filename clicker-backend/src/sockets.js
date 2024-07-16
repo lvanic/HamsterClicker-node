@@ -1,12 +1,8 @@
 import { Click, User, Task, League, Business } from "./models.js";
 import { getAppSettings } from "./admin.js";
 
-export const handleSocketConnection = async (socket) => {
-  registerEvents(socket);
-};
-
-export const registerEvents = (io) => {
-  io.on("clickEvent", async (data) => {
+export const initSocketsLogic = (io) => ({
+  clickEvent: async (data) => {
     const parsedData = JSON.parse(data);
     // console.log("clickEvent: ", parsedData["time_stamp"]);
     const tgUserId = parsedData["user_id"];
@@ -41,9 +37,8 @@ export const registerEvents = (io) => {
       timestamp,
     });
     await click.save();
-  });
-
-  io.on("checkTaskStatus", async (data) => {
+  },
+  checkTaskStatus: async (data) => {
     const parsedData = JSON.parse(data);
     const [tgUserId, taskId] = parsedData;
 
@@ -143,9 +138,8 @@ export const registerEvents = (io) => {
       io.emit("taskStatus", { id: task.id, finished: true });
       io.emit("user", user);
     }
-  });
-
-  io.on("getUser", async (userId) => {
+  },
+  getUser: async (userId) => {
     const tgUserId = Number(userId);
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
@@ -164,19 +158,23 @@ export const registerEvents = (io) => {
       balance: { $lte: userLeague.maxBalance, $gte: user.balance },
     });
 
+    const totalIncomePerHour = user.businesses.reduce((sum, b) => {
+      return sum + b.rewardPerHour;
+    }, 0);
+
     const userData = {
       id: user._id,
-      ...user,
+      ...user.toObject(),
       referrals: user.referrals.map((r) => ({ id: r._id, ...r })),
       businesses: user.businesses.map((b) => ({ id: b._id, ...b })),
       userPlaceInLeague: userPlaceInLeague + 1,
-      league: { id: userLeague._id, ...userLeague },
+      totalIncomePerHour,
+      league: { id: userLeague._id, ...userLeague.toObject() },
     };
 
     io.emit("user", userData);
-  });
-
-  io.on("getLeagueInfo", async (leagueId, topUsersCount) => {
+  },
+  getLeagueInfo: async (leagueId, topUsersCount) => {
     const league = await League.findOne({ _id: leagueId });
 
     const usersInLeague = await User.countDocuments({
@@ -194,9 +192,8 @@ export const registerEvents = (io) => {
       usersInLeague,
       topUsersInLeague,
     });
-  });
-
-  io.on("getBusinessesToBuy", async (userTgId) => {
+  },
+  getBusinessesToBuy: async (userTgId) => {
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
 
@@ -208,9 +205,8 @@ export const registerEvents = (io) => {
     );
 
     io.emit("businesses", availableBusinesses);
-  });
-
-  io.on("buyBusiness", async (data) => {
+  },
+  buyBusiness: async (data) => {
     const parsedData = JSON.parse(data);
     const [userTgId, businessId] = parsedData;
 
@@ -235,14 +231,12 @@ export const registerEvents = (io) => {
     await user.save();
     const newBusiness = { id: business.id, ...business };
     io.emit("businessBought", { success: true, newBusiness });
-  });
-
-  io.on("getTasks", async () => {
+  },
+  getTasks: async () => {
     const tasks = await Task.find({ active: true });
     io.emit("tasks", tasks);
-  });
-
-  io.on("activateBoost", async (data) => {
+  },
+  activateBoost: async (data) => {
     const parsedData = JSON.parse(data);
     const [tgUserId, boostName] = parsedData;
 
@@ -289,5 +283,22 @@ export const registerEvents = (io) => {
     await user.save();
 
     io.emit("user", user);
-  });
+  },
+});
+
+export const handleSocketConnection = async (socket) => {
+  registerEvents(socket);
+};
+
+export const registerEvents = (io) => {
+  const socketsLogic = initSocketsLogic(io);
+
+  io.on("clickEvent", socketsLogic.clickEvent);
+  io.on("checkTaskStatus", socketsLogic.checkTaskStatus);
+  io.on("getUser", socketsLogic.getUser);
+  io.on("getLeagueInfo", socketsLogic.getLeagueInfo);
+  io.on("getBusinessesToBuy", socketsLogic.getBusinessesToBuy);
+  io.on("buyBusiness", socketsLogic.buyBusiness);
+  io.on("getTasks", socketsLogic.getTasks);
+  io.on("activateBoost", socketsLogic.activateBoost);
 };
