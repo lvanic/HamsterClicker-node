@@ -1,3 +1,5 @@
+import { useSettings } from "../hooks/useSettings";
+
 export const EnergyProgress = ({ energyCount }: { energyCount: number }) => {
   return (
     <div
@@ -33,7 +35,7 @@ export const EnergyProgress = ({ energyCount }: { energyCount: number }) => {
           }}
           className="ml-4"
         >
-          {energyCount}
+          {energyCount}/1000
         </div>
       </div>
     </div>

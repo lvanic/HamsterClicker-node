@@ -25,8 +25,6 @@ const LoadingProvider: FC<LoadingProviderProps> = ({ children }) => {
   const [isPageLoading, setIsLoading] = useState<boolean>(false);
 
   const setPageLoading = useCallback((loading: boolean) => {
-    console.log("Setting page loading to", loading);
-
     setIsLoading(loading);
   }, []);
 

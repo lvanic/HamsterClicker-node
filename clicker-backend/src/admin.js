@@ -1,4 +1,4 @@
-import { Task, User, AppSettings, League, Business } from './models.js';
+import { Task, User, AppSettings, League, Business } from "./models.js";
 
 export const getAppSettings = async () => {
   const appSettings = await AppSettings.find({});
@@ -9,7 +9,7 @@ export const getAppSettings = async () => {
   }
 
   return appSettings[0];
-}
+};
 
 export const registerAdminRoutes = (router) => {
   router.get("/admin/settings", async (ctx) => {
@@ -63,7 +63,7 @@ export const registerAdminRoutes = (router) => {
     }
 
     const tasks = await Task.find(query);
-    ctx.body = tasks.map(task => ({
+    ctx.body = tasks.map((task) => ({
       id: task.id,
       name: task.name,
       description: task.description,
@@ -136,10 +136,12 @@ export const registerAdminRoutes = (router) => {
     await league.remove();
   });
 
-
   router.get("/admin/businesses", async (ctx) => {
     const businesses = await Business.find({});
-    ctx.body = businesses.map(business => ({ id: business.id, ...business.toObject() }));
+    ctx.body = businesses.map((business) => ({
+      id: business.id,
+      ...business.toObject(),
+    }));
   });
 
   router.get("/admin/businesses/:id", async (ctx) => {
@@ -154,6 +156,7 @@ export const registerAdminRoutes = (router) => {
       avatarUrl: ctx.request.body.avatarUrl,
       rewardPerHour: ctx.request.body.rewardPerHour,
       refsToUnlock: ctx.request.body.refsToUnlock,
+      isDeleted: false,
     });
 
     ctx.body = business;
@@ -178,4 +181,4 @@ export const registerAdminRoutes = (router) => {
 
     ctx.body = business;
   });
-}
+};

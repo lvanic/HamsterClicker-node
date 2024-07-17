@@ -25,7 +25,6 @@ export const Tasks = () => {
             const isCompleted = user?.completedTasks.some(
               (completedTask: any) => completedTask === task._id
             );
-            console.log(task._id, isCompleted);
 
             return { ...task, completed: isCompleted };
           });
@@ -37,8 +36,6 @@ export const Tasks = () => {
 
       webSocket.on("taskStatus", (data) => {
         const { id, finished } = data;
-        console.log(id, finished);
-
         setTasks((prevTasks: any) =>
           prevTasks.map((task: any) =>
             task._id === id ? { ...task, completed: finished } : task

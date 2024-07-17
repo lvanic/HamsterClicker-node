@@ -12,6 +12,8 @@ import { League } from "../../components/League";
 import { BoostButton } from "../../components/BoostButton";
 import "./Clicker.css"; // Создайте и импортируйте CSS файл
 import { Statistics } from "../../components/Statistics";
+import { useSettings } from "../../hooks/useSettings";
+import { LevelStatus } from "../../components/LevelStatus";
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -27,7 +29,6 @@ export const Clicker: React.FC = () => {
   const isSkeletonLoading = useSkeletonLoading();
 
   const handleTouchStart = (event: TouchEvent) => {
-    event.preventDefault();
     const newTouches = new Set<number>(
       Array.from(event.touches, (touch) => touch.identifier)
     );
@@ -71,9 +72,7 @@ export const Clicker: React.FC = () => {
     }
   };
 
-  const handleTouchMove = (event: TouchEvent) => {
-    event.preventDefault();
-  };
+  const handleTouchMove = (event: TouchEvent) => {};
 
   const handleTouchEnd = (event: TouchEvent) => {
     event.preventDefault();
@@ -115,11 +114,12 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
           <BoostButton />
-          <div className="flex flex-row justify-center items-center w-full mb-4">
+          <div className="flex flex-row justify-center items-center w-full mt-1 mb-2">
             <ScoreCounter clickCount={clickCount} />
             <League />
+            <LevelStatus />
           </div>
-          <div className="gradient-border-container">
+          <div className="gradient-border-container mb-4 w-11/12">
             <img
               ref={imgRef}
               src={user?.league.avatarUrl}
@@ -150,6 +150,7 @@ export const Clicker: React.FC = () => {
               x={position.x}
               y={position.y}
               id={position.id}
+              rewardPerClick={user?.clickPower || 0}
               onAnimationEnd={handleAnimationEnd}
             />
           ))}

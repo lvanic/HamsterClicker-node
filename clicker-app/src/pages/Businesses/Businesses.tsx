@@ -19,7 +19,6 @@ export const Businesses = () => {
 
   useEffect(() => {
     if (webSocket && user) {
-      console.log(user?.tgId);
 
       webSocket.emit("getBusinessesToBuy", user?.tgId);
 
@@ -29,7 +28,6 @@ export const Businesses = () => {
           ...b,
         }));
         setBusinesses(parsedData);
-        console.log(parsedData);
       });
 
       webSocket.on("businessBought", (data) => {
@@ -57,7 +55,7 @@ export const Businesses = () => {
   };
 
   return (
-    <div className="p-5 rounded-lg max-w-md mx-auto">
+    <div className="p-5 pt-0 rounded-lg max-w-md mx-auto">
       {/* {message && <p>{message}</p>} */}
       <div
         className="absolute h-28 mx-5 rounded-b-xl"

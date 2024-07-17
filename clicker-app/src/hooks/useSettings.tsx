@@ -12,13 +12,14 @@ export const useSettings = () => {
   const [startClickUpgradeCost, setStartClickUpgradeCost] = useState(0);
   const [maxClickLevel, setMaxClickLevel] = useState(0);
 
-  useEffect(() => {
+  useEffect(() => {    
     fetchSettings();
   }, []);
 
   const fetchSettings = async () => {
     const response = await fetch(`${adminApiUrl}/admin/settings`);
     const settings = await response.json();
+
     setEnergyPerSecond(settings.energyPerSecond);
     setRewardPerClick(settings.rewardPerClick);
     setFullEnergyBoostPerDay(settings.fullEnergyBoostPerDay);

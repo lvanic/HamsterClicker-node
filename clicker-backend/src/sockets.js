@@ -165,7 +165,7 @@ export const initSocketsLogic = (io) => ({
     console.log(totalIncomePerHour);
     const userData = {
       id: user._id,
-      ...user,
+      ...user.toObject(),
       referrals: user.referrals.map((r) => ({ id: r._id, ...r })),
       businesses: user.businesses.map((b) => ({ id: b._id, ...b })),
       clickPower: user.clickPower,

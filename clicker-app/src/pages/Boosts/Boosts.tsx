@@ -33,13 +33,11 @@ export const Boosts = () => {
     }
   };
 
-  const dailyDisabled = useMemo(() => {
-    if (user) {
-      return Date.now() - user.lastDailyRewardTimestamp < 1000 * 60 * 60 * 24;
-    } else {
-      return true;
+  const improveClick = () => {
+    if (webSocket) {
+      webSocket.emit("upgradeClick", user?.tgId);
     }
-  }, [user]);
+  };
 
   const energyDisabled = useMemo(() => {
     if (user) {
@@ -60,6 +58,14 @@ export const Boosts = () => {
     }
     return user?.fullEnergyActivates || 0;
   }, [user]);
+
+  // const dailyDisabled = useMemo(() => {
+  //   if (user) {
+  //     return Date.now() - user.lastDailyRewardTimestamp < 1000 * 60 * 60 * 24;
+  //   } else {
+  //     return true;
+  //   }
+  // }, [user]);
   //            onClick={() => activateBoost("dailyReward")}
   //            onClick={() => activateBoost("fullEnergyBoost")}
   //            Full Energy Boost {3 - fullEnergyActivates}/3
@@ -96,6 +102,8 @@ export const Boosts = () => {
               {3 - fullEnergyActivates}/3
             </div>
             <button
+              disabled={energyDisabled}
+              onClick={() => activateBoost("fullEnergyBoost")}
               className="p-1 rounded-lg"
               style={{
                 background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
@@ -122,8 +130,11 @@ export const Boosts = () => {
               </div>
             </div>
             <div className="flex justify-center mb-2 mt-5">Mass tap</div>
-            <div className="flex justify-center text-xl mb-1">3 lvl</div>
+            <div className="flex justify-center text-xl mb-1">
+              {user?.clickPower} lvl
+            </div>
             <button
+              onClick={improveClick}
               className="p-1 rounded-lg"
               style={{
                 background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",

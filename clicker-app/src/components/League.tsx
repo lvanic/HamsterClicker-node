@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
+import { formatNumber } from "../utils/formatNumber";
 
 export const League = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export const League = () => {
     >
       <div
         style={{
-          height: "8px",
+          height: "5px",
           width: "100%",
           backgroundColor: "#e0e0e0",
         }}
@@ -32,7 +33,9 @@ export const League = () => {
           }}
           className="rounded-xl"
         />
-        <div>Coins for UP {user?.league.maxBalance}</div>
+        <div className="text-xs mt-2">
+          Coins for UP {formatNumber(user?.league.maxBalance)}
+        </div>
       </div>
     </div>
   );

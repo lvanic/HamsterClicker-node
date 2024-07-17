@@ -21,7 +21,6 @@ import { EggSvg } from "./EggSvg";
 export const Layout = () => {
   const { isPageLoading } = usePageLoading();
   const platform = useMemo(() => getPlatform(), [getPlatform]);
-  console.log(platform);
 
   // if (platform !== "ios" && platform !== "android") {
   //   return <QRCodeComponent />;

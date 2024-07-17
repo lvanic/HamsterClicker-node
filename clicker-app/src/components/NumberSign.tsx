@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useSettings } from "../hooks/useSettings";
 
 interface NumberSignProps {
   x: number;
   y: number;
   id: number;
+  rewardPerClick: number;
   onAnimationEnd: (id: number) => void;
 }
 
@@ -11,11 +13,13 @@ const NumberSign: React.FC<NumberSignProps> = ({
   x,
   y,
   id,
+  rewardPerClick,
   onAnimationEnd,
 }) => {
   const [opacity, setOpacity] = useState(1);
   const [signSize, setSignSize] = useState(Math.floor(Math.random() * 10) + 30);
   const [transform, setTransform] = useState(0);
+
   useEffect(() => {
     let start: number | null = null;
     const duration = 1000;
@@ -57,7 +61,7 @@ const NumberSign: React.FC<NumberSignProps> = ({
         transition: "opacity 2s, transform 2s",
       }}
     >
-      +
+      +{rewardPerClick}
     </div>
   );
 };
