@@ -162,7 +162,6 @@ export const initSocketsLogic = (io) => ({
       return sum + b.rewardPerHour;
     }, 0);
 
-    console.log(totalIncomePerHour);
     const userData = {
       id: user._id,
       ...user.toObject(),

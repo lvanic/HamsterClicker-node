@@ -8,6 +8,7 @@ import "./Businesses.css";
 import { SmallEggSvg } from "../../components/SmallEggSvg";
 import { EggSvg } from "../Layout/EggSvg";
 import { BuyBusiness } from "./BuyBusiness";
+import { formatNumber } from "../../utils/formatNumber";
 
 export const Businesses = () => {
   const { user } = useUser();
@@ -19,10 +20,11 @@ export const Businesses = () => {
 
   useEffect(() => {
     if (webSocket && user) {
-
       webSocket.emit("getBusinessesToBuy", user?.tgId);
 
       webSocket.on("businesses", (data) => {
+        console.log(data);
+        
         const parsedData = data.map((b: any) => ({
           id: b._id,
           ...b,
@@ -68,7 +70,9 @@ export const Businesses = () => {
         <div className="text-center mt-4">My balance</div>
         <div className="flex justify-center items-center">
           <LargerEggSvg />
-          <div className="text-5xl ml-2">{Math.floor(user?.balance || 0)}</div>
+          <div className="text-5xl ml-2">
+            {formatNumber(Math.floor(user?.balance || 0))}
+          </div>
         </div>
       </div>
       <div className="mt-32 mb-4 flex justify-between">
@@ -76,20 +80,24 @@ export const Businesses = () => {
           <div>Profit per tap</div>
           <div className="flex justify-center items-center">
             <MediumEggSvg />
-            <div className="text-3xl ml-2">+3</div>
+            <div className="text-3xl ml-2">+{user?.clickPower}</div>
           </div>
         </div>
         <div className="bg-[#323232] p-3 rounded-xl mx-1">
           <div>Coins for up</div>
           <div className="flex justify-center items-center">
-            <div className="text-3xl">{user?.league.maxBalance}</div>
+            <div className="text-3xl">
+              {formatNumber(user?.league.maxBalance || 100000)}
+            </div>
           </div>
         </div>
         <div className="bg-[#323232] p-3 rounded-xl ml-1">
           <div>Profit per hour</div>
           <div className="flex justify-center items-center">
             <MediumEggSvg />
-            <div className="text-3xl ml-2">1072</div>
+            <div className="text-3xl ml-2">
+              {formatNumber(user?.totalIncomePerHour || 0)}
+            </div>
           </div>
         </div>
       </div>

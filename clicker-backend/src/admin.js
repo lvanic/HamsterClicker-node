@@ -156,6 +156,7 @@ export const registerAdminRoutes = (router) => {
       avatarUrl: ctx.request.body.avatarUrl,
       rewardPerHour: ctx.request.body.rewardPerHour,
       refsToUnlock: ctx.request.body.refsToUnlock,
+      price: ctx.request.body.price,
       isDeleted: false,
     });
 

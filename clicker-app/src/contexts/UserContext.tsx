@@ -31,8 +31,10 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const { webSocket } = useWebSocket();
 
   const handleGetUser = (userData: any) => {
+    console.log(userData);
+    
     setUser({
-      ...userData._doc,
+      ...userData,
       totalIncomePerHour: userData.totalIncomePerHour,
       league: { ...userData.league._doc, id: userData.league.id },
       userPlaceInLeague: userData.userPlaceInLeague,
