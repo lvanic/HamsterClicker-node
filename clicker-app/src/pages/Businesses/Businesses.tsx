@@ -24,7 +24,7 @@ export const Businesses = () => {
 
       webSocket.on("businesses", (data) => {
         console.log(data);
-        
+
         const parsedData = data.map((b: any) => ({
           id: b._id,
           ...b,
@@ -60,14 +60,15 @@ export const Businesses = () => {
     <div className="p-5 pt-0 rounded-lg max-w-md mx-auto">
       {/* {message && <p>{message}</p>} */}
       <div
-        className="absolute h-28 mx-5 rounded-b-xl"
+        className="relative h-28 mx-5 rounded-b-xl pt-4"
         style={{
           background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
           left: "0px",
+          top: "0px",
           width: "-webkit-fill-available",
         }}
       >
-        <div className="text-center mt-4">My balance</div>
+        <div className="text-center">My balance</div>
         <div className="flex justify-center items-center">
           <LargerEggSvg />
           <div className="text-5xl ml-2">
@@ -75,7 +76,7 @@ export const Businesses = () => {
           </div>
         </div>
       </div>
-      <div className="mt-32 mb-4 flex justify-between">
+      <div className="mt-4 mb-4 flex justify-between">
         <div className="bg-[#323232] p-3 rounded-xl mr-1">
           <div>Profit per tap</div>
           <div className="flex justify-center items-center">
@@ -101,15 +102,21 @@ export const Businesses = () => {
           </div>
         </div>
       </div>
-      <div style={{ maxHeight: window.innerHeight - 104, overflowY: "scroll" }}>
+      <div style={{ maxHeight: window.innerHeight - 314, overflowY: "scroll" }}>
         <div className="businesses-container">
           {businesses.map((business) => (
             <div
               key={business.id}
-              className="business-item"
+              className={`business-item ${
+                (user?.referrals?.length || 0) < business.refsToUnlock
+                  ? "opacity-20"
+                  : "opacity-100"
+              }`}
               onClick={() => {
-                setSelectedBusiness(business);
-                setModalOpen(true);
+                if ((user?.referrals?.length || 0) >= business.refsToUnlock) {
+                  setSelectedBusiness(business);
+                  setModalOpen(true);
+                }
               }}
             >
               <div className="flex justify-left items-center p-2 pb-2">

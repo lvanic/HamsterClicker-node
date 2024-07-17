@@ -4,12 +4,7 @@ import { usePageLoading } from "./usePageLoading";
 import { useSettings } from "./useSettings";
 import { useUser } from "./useUser";
 import { useWebSocket } from "./useWebsocket";
-import {
-  useState,
-  useEffect,
-  useRef,
-  useLayoutEffect,
-} from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 
 interface ClickData {
   user_id: number;
@@ -49,10 +44,10 @@ export const useClick = () => {
 
         if (prev.energy > 0) {
           webAppVibrate();
-          updateCounts(prev.balance + 1, prev.energy - 1);
+          updateCounts(prev.balance + (user?.clickPower || 1), prev.energy - 1);
           return {
             ...prev,
-            balance: prev.balance + 1,
+            balance: prev.balance + (user?.clickPower || 1),
             energy: prev.energy - 1,
           };
         } else {
@@ -90,7 +85,7 @@ export const useClick = () => {
           return null;
         }
 
-        updateCounts(prev.balance + 1, prev.energy - 1);
+        updateCounts(prev.balance + (user?.clickPower||1), prev.energy - 1);
         return {
           ...prev,
           energy: Math.min(prev.energy + 1, 1000),
