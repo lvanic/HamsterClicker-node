@@ -11,6 +11,7 @@ import { ClickerSkeleton } from "./ClickerSkeleton";
 import { League } from "../../components/League";
 import { BoostButton } from "../../components/BoostButton";
 import "./Clicker.css"; // Создайте и импортируйте CSS файл
+import { Statistics } from "../../components/Statistics";
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -141,8 +142,8 @@ export const Clicker: React.FC = () => {
               alt="egg"
             />
           </div>
+          <Statistics />
           <EnergyProgress energyCount={energyCount} />
-
           {numberSignPositions.map((position) => (
             <NumberSign
               key={position.id}

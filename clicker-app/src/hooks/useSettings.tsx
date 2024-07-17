@@ -9,6 +9,8 @@ export const useSettings = () => {
   const [fullEnergyBoostPerDay, setFullEnergyBoostPerDay] = useState(0);
   const [dailyReward, setDailyReward] = useState(0);
   const [referralReward, setReferralReward] = useState(0);
+  const [startClickUpgradeCost, setStartClickUpgradeCost] = useState(0);
+  const [maxClickLevel, setMaxClickLevel] = useState(0);
 
   useEffect(() => {
     fetchSettings();
@@ -22,6 +24,8 @@ export const useSettings = () => {
     setFullEnergyBoostPerDay(settings.fullEnergyBoostPerDay);
     setDailyReward(settings.dailyReward);
     setReferralReward(settings.referralReward);
+    setStartClickUpgradeCost(settings.startClickUpgradeCost);
+    setMaxClickLevel(settings.maxClickLevel);
   };
 
   return {
@@ -30,5 +34,7 @@ export const useSettings = () => {
     fullEnergyBoostPerDay,
     dailyReward,
     rewardPerClick,
+    startClickUpgradeCost,
+    maxClickLevel,
   };
 };

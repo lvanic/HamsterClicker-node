@@ -13,6 +13,8 @@ export interface User {
   league: League;
   userPlaceInLeague: number;
   businesses: Business[];
+  clickPower: number;
+  totalIncomePerHour: number;
 }
 
 export interface Task {

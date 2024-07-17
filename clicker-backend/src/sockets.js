@@ -161,12 +161,13 @@ export const initSocketsLogic = (io) => ({
     const totalIncomePerHour = user.businesses.reduce((sum, b) => {
       return sum + b.rewardPerHour;
     }, 0);
-
+    console.log(totalIncomePerHour);
     const userData = {
       id: user._id,
       ...user.toObject(),
       referrals: user.referrals.map((r) => ({ id: r._id, ...r })),
       businesses: user.businesses.map((b) => ({ id: b._id, ...b })),
+      clickPower: user.clickPower,
       userPlaceInLeague: userPlaceInLeague + 1,
       totalIncomePerHour,
       league: { id: userLeague._id, ...userLeague.toObject() },
@@ -304,12 +305,15 @@ export const initSocketsLogic = (io) => ({
       return;
     }
 
-    await User.findOneAndUpdate({ tgId: user.tgId }, { $inc: { balance: -cost } });
+    await User.findOneAndUpdate(
+      { tgId: user.tgId },
+      { $inc: { balance: -cost } }
+    );
     user.clickPower += 1;
     await user.save();
 
     io.emit("user", user.toObject());
-  }
+  },
 });
 
 export const handleSocketConnection = async (socket) => {
@@ -327,4 +331,5 @@ export const registerEvents = (io) => {
   io.on("buyBusiness", socketsLogic.buyBusiness);
   io.on("getTasks", socketsLogic.getTasks);
   io.on("activateBoost", socketsLogic.activateBoost);
+  io.on("upgradeClick", socketsLogic.upgradeClick);
 };
