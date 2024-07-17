@@ -4,7 +4,6 @@ import { getAppSettings } from "./admin.js";
 export const initSocketsLogic = (io) => ({
   clickEvent: async (data) => {
     const parsedData = JSON.parse(data);
-    // console.log("clickEvent: ", parsedData["time_stamp"]);
     const tgUserId = parsedData["user_id"];
     const position = { x: parsedData.position.x, y: parsedData.position.y };
     const timestamp = parsedData["time_stamp"];
@@ -23,7 +22,7 @@ export const initSocketsLogic = (io) => ({
       await User.findOneAndUpdate(
         { tgId: tgUserId },
         {
-          $inc: { balance: 1, energy: -1 },
+          $inc: { balance: user.clickPower, energy: -1 },
         }
       );
       await user.save();
@@ -144,6 +143,7 @@ export const initSocketsLogic = (io) => ({
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
       .populate("businesses");
+    const appSettings = await getAppSettings();
 
     if (!user) {
       return;
@@ -284,6 +284,32 @@ export const initSocketsLogic = (io) => ({
 
     io.emit("user", user);
   },
+  upgradeClick: async (userId) => {
+    const user = await User.findOne({ tgId: userId });
+    if (!user) {
+      return;
+    }
+
+    const appSettings = await getAppSettings();
+    if (!appSettings) {
+      return;
+    }
+
+    if (user.clickPower >= appSettings.maxClickLevel) {
+      return;
+    }
+
+    const cost = appSettings.startClickUpgradeCost * 2 ** (user.clickPower - 1);
+    if (user.balance < cost) {
+      return;
+    }
+
+    await User.findOneAndUpdate({ tgId: user.tgId }, { $inc: { balance: -cost } });
+    user.clickPower += 1;
+    await user.save();
+
+    io.emit("user", user.toObject());
+  }
 });
 
 export const handleSocketConnection = async (socket) => {
