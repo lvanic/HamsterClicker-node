@@ -164,13 +164,13 @@ export const initSocketsLogic = (io) => ({
     console.log(totalIncomePerHour);
     const userData = {
       id: user._id,
-      ...user.toObject(),
+      ...user,
       referrals: user.referrals.map((r) => ({ id: r._id, ...r })),
       businesses: user.businesses.map((b) => ({ id: b._id, ...b })),
       clickPower: user.clickPower,
       userPlaceInLeague: userPlaceInLeague + 1,
       totalIncomePerHour,
-      league: { id: userLeague._id, ...userLeague.toObject() },
+      league: { id: userLeague._id, ...userLeague },
     };
 
     io.emit("user", userData);
