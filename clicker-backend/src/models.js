@@ -2,13 +2,12 @@ import { mongoose } from "mongoose";
 
 const userSchema = new mongoose.Schema({
   tgId: Number,
-  avatarUrl: String,
   tgUsername: String,
   firstName: String,
   lastName: String,
   balance: { type: Number, min: 0},
+  score: { type: Number, min: 0},
   energy: { type: Number, min: 0, max: 1000},
-  lastOnlineTimestamp: Number,
   connectedWallet: String,
   lastDailyRewardTimestamp: Number,
   lastFullEnergyTimestamp: Number,
@@ -53,8 +52,8 @@ const leagueSchema = new mongoose.Schema({
   name: String,
   description: String,
   avatarUrl: String,
-  minBalance: Number,
-  maxBalance: Number,
+  minScore: Number,
+  maxScore: Number,
 });
 export const League = mongoose.model("League", leagueSchema);
 

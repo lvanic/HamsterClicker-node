@@ -1,6 +1,5 @@
 export interface User {
   tgId: number;
-  avatarUrl: string;
   firstName: string;
   tgUsername: string;
   balance: number;
@@ -33,8 +32,8 @@ export interface League {
   name: string;
   description: string;
   avatarUrl: string;
-  minBalance: number;
-  maxBalance: number;
+  minScore: number;
+  maxScore: number;
 }
 
 export interface Business {

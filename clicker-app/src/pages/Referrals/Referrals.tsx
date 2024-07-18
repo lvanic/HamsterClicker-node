@@ -10,8 +10,7 @@ export const Referrals = () => {
   const { user, setUser } = useUser();
   const referrals = user?.referrals;
   const { referralReward } = useSettings();
-  console.log(referrals);
-  
+
   return (
     <div className="font-sans p-12 rounded-lg max-w-md mx-auto">
       <div className="text-center text-xl">
@@ -42,7 +41,6 @@ export const Referrals = () => {
             className="p-3 my-2 rounded-md flex items-center shadow-sm"
           >
             <img
-              src={referral.avatarUrl}
               alt={referral.firstName}
               className="rounded-full w-12 h-12 mr-3"
             />

@@ -33,6 +33,7 @@ const main = async () => {
           firstName: ctx.message.from.first_name,
           lastName: ctx.message.from.last_name,
           balance: 0,
+          score: 0,
           energy: 1000,
           clickPower: 1,
         });

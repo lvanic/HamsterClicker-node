@@ -42,8 +42,8 @@ export const useClick = () => {
           return null;
         }
         if (
-          user?.league.maxBalance &&
-          prev.energy >= user?.league.maxBalance - 1
+          user?.league.maxScore &&
+          prev.energy >= user?.league.maxScore - 1
         ) {
           webSocket.emit("getUser", prev.tgId);
         }

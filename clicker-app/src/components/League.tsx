@@ -28,13 +28,13 @@ export const League = () => {
         <div
           style={{
             height: "100%",
-            width: (user?.balance / user?.league.maxBalance) * 100 + "%",
+            width: (user?.balance / user?.league.maxScore) * 100 + "%",
             backgroundColor: "#FF5064",
           }}
           className="rounded-xl"
         />
         <div className="text-xs mt-2">
-          Coins for UP {formatNumber(user?.league.maxBalance)}
+          Coins for UP {formatNumber(user?.league.maxScore)}
         </div>
       </div>
     </div>
