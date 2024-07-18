@@ -170,7 +170,7 @@ export const initSocketsLogic = (io) => ({
       clickPower: user.clickPower,
       userPlaceInLeague: userPlaceInLeague + 1,
       totalIncomePerHour,
-      league: { id: userLeague._id, ...userLeague.toObject() },
+      league: { id: userLeague._id, ...userLeague },
     };
 
     io.emit("user", userData);
