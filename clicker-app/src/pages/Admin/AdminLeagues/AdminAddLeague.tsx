@@ -7,8 +7,8 @@ export const AdminAddLeague = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [minBalance, setMinBalance] = useState(0);
-  const [maxBalance, setMaxBalance] = useState(0);
+  const [minScore, setminScore] = useState(0);
+  const [maxScore, setmaxScore] = useState(0);
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -24,8 +24,8 @@ export const AdminAddLeague = () => {
         name,
         description,
         avatarUrl,
-        minBalance,
-        maxBalance,
+        minScore,
+        maxScore,
       }),
     });
 
@@ -65,14 +65,14 @@ export const AdminAddLeague = () => {
         type="number"
         placeholder="Min balance"
         className="bg-slate-50 py-1 px-4 w-full outline-none"
-        onChange={(e) => setMinBalance(Number(e.target.value))}
+        onChange={(e) => setminScore(Number(e.target.value))}
       />
 
       <input
         type="number"
         placeholder="Max balance"
         className="bg-slate-50 py-1 px-4 w-full outline-none"
-        onChange={(e) => setMaxBalance(Number(e.target.value))}
+        onChange={(e) => setmaxScore(Number(e.target.value))}
       />
 
       <button className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>

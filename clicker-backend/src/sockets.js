@@ -22,7 +22,7 @@ export const initSocketsLogic = (io) => ({
       await User.findOneAndUpdate(
         { tgId: tgUserId },
         {
-          $inc: { balance: user.clickPower, energy: -1 },
+          $inc: { balance: user.clickPower, score: user.clickPower, energy: -1 },
         }
       );
       await user.save();
@@ -78,7 +78,7 @@ export const initSocketsLogic = (io) => ({
         await User.findOneAndUpdate(
           { tgId: user.tgId },
           {
-            $inc: { balance: task.rewardAmount },
+            $inc: { balance: task.rewardAmount, score: task.rewardAmount },
           }
         );
 
@@ -143,21 +143,19 @@ export const initSocketsLogic = (io) => ({
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
       .populate("businesses");
-    const appSettings = await getAppSettings();
 
     if (!user) {
       return;
     }
 
-    const userLeague = await League.findOne({
-      minBalance: { $lte: user.balance },
-      maxBalance: { $gte: user.balance },
-    });
-
+    const leagues = await League.find({});
+    const userLeague = leagues.find((league) => league.minScore <= user.score && league.maxScore >= user.score);
+    const userLevel = leagues
+      .sort((a, b) => a.minScore - b.minScore)
+      .findIndex(l => l._id.toString() === userLeague._id.toString()) + 1;
     const userPlaceInLeague = await User.countDocuments({
-      balance: { $lte: userLeague.maxBalance, $gte: user.balance },
+      balance: { $lte: userLeague.maxScore, $gte: user.balance },
     });
-
     const totalIncomePerHour = user.businesses.reduce((sum, b) => {
       return sum + b.rewardPerHour;
     }, 0);
@@ -171,6 +169,8 @@ export const initSocketsLogic = (io) => ({
       userPlaceInLeague: userPlaceInLeague + 1,
       totalIncomePerHour,
       league: { id: userLeague._id, ...userLeague },
+      userLevel,
+      maxLevel: leagues.length,
     };
 
     io.emit("user", userData);
@@ -179,11 +179,11 @@ export const initSocketsLogic = (io) => ({
     const league = await League.findOne({ _id: leagueId });
 
     const usersInLeague = await User.countDocuments({
-      balance: { $lte: league.maxBalance, $gte: league.minBalance },
+      balance: { $lte: league.maxScore, $gte: league.minScore },
     });
 
     const topUsersInLeague = await User.find({
-      balance: { $lte: league.maxBalance, $gte: league.minBalance },
+      balance: { $lte: league.maxScore, $gte: league.minScore },
     })
       .sort({ balance: -1 })
       .limit(topUsersCount);
@@ -210,28 +210,24 @@ export const initSocketsLogic = (io) => ({
   buyBusiness: async (data) => {
     const parsedData = JSON.parse(data);
     const [userTgId, businessId] = parsedData;
-
-    console.log(userTgId, businessId);
     const user = await User.findOne({ tgId: userTgId });
     const business = await Business.findById(businessId);
 
     if (!user) {
       return;
     }
-
     if (business.refsToUnlock > user.businesses.length) {
       return;
     }
-
     if (business.price > user.balance) {
       return;
     }
 
-    user.balance -= business.price;
-    user.businesses.push(business._id);
-    await user.save();
-    const newBusiness = { id: business.id, ...business };
-    io.emit("businessBought", { success: true, newBusiness });
+    await User.findOneAndUpdate(
+      { tgId: user.tgId },
+      { $inc: { balance: -business.price }, businesses: [...user.businesses, business._id] }
+    );
+    io.emit("businessBought", { success: true, business: { id: business._id, ...business.toObject() } });
   },
   getTasks: async () => {
     const tasks = await Task.find({ active: true });

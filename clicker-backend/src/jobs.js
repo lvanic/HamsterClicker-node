@@ -42,7 +42,7 @@ export const runBusinesses = () => {
       return User.findOneAndUpdate(
         { _id: user._id },
         {
-          $inc: { balance: totalReward },
+          $inc: { balance: totalReward, score: totalReward },
         }
       );
     });

@@ -114,7 +114,7 @@ export const registerAdminRoutes = (router) => {
   });
 
   router.post("/admin/leagues", async (ctx) => {
-    if (ctx.request.body.minBalance > ctx.request.body.maxBalance) {
+    if (ctx.request.body.minScore > ctx.request.body.maxScore) {
       ctx.status = 400;
       ctx.body = "Min balance must be less than max balance";
       return;
@@ -124,8 +124,8 @@ export const registerAdminRoutes = (router) => {
       name: ctx.request.body.name,
       description: ctx.request.body.description,
       avatarUrl: ctx.request.body.avatarUrl,
-      minBalance: ctx.request.body.minBalance,
-      maxBalance: ctx.request.body.maxBalance,
+      minScore: ctx.request.body.minScore,
+      maxScore: ctx.request.body.maxScore,
     });
 
     ctx.body = league;

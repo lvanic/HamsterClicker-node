@@ -88,7 +88,7 @@ export const Businesses = () => {
           <div>Coins for up</div>
           <div className="flex justify-center items-center">
             <div className="text-3xl">
-              {formatNumber(user?.league.maxBalance || 100000)}
+              {formatNumber(user?.league.maxScore || 100000)}
             </div>
           </div>
         </div>
