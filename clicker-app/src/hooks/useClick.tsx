@@ -41,7 +41,12 @@ export const useClick = () => {
         if (!prev) {
           return null;
         }
-
+        if (
+          user?.league.maxBalance &&
+          prev.energy >= user?.league.maxBalance - 1
+        ) {
+          webSocket.emit("getUser", prev.tgId);
+        }
         if (prev.energy > 0) {
           webAppVibrate();
           updateCounts(prev.balance + (user?.clickPower || 1), prev.energy - 1);
@@ -85,7 +90,7 @@ export const useClick = () => {
           return null;
         }
 
-        updateCounts(prev.balance + (user?.clickPower||1), prev.energy - 1);
+        updateCounts(prev.balance + (user?.clickPower || 1), prev.energy - 1);
         return {
           ...prev,
           energy: Math.min(prev.energy + 1, 1000),

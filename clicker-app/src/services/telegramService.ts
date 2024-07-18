@@ -39,7 +39,7 @@ export const getReferralLink = () => {
   if (user && botLink) {
     return `${botLink}/?start=ref_${user.id}`;
   }
-
+  return `${botLink}/?start=ref_${-1}`;
   throw new Error("user of botLink is not defined");
 };
 
