@@ -110,7 +110,7 @@ export const registerAdminRoutes = (router) => {
 
   router.get("/admin/leagues", async (ctx) => {
     const leagues = await League.find({});
-    ctx.body = leagues;
+    ctx.body = leagues.map((l) => ({ id: l._id, ...l.toObject() }));
   });
 
   router.post("/admin/leagues", async (ctx) => {
