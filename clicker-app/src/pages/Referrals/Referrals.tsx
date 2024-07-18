@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import { ReferralLink } from "../../components/ReferralLink";
 import { MediumEggSvg } from "../Businesses/MediumEggSvg";
 import { EggSvg } from "../Layout/EggSvg";
 import { LargerEggSvg } from "../Businesses/LargerEggSvg";
 import { useSettings } from "../../hooks/useSettings";
+import { Delimiter } from "./Delimiter";
+import { Reloader } from "./Reloader";
+import { useWebSocket } from "../../hooks/useWebsocket";
 
 export const Referrals = () => {
   const { user, setUser } = useUser();
   const referrals = user?.referrals;
   const { referralReward } = useSettings();
-  console.log(referrals);
-  
+  const { webSocket } = useWebSocket();
+  const [isReferralUpdate, setReferralUpdate] = useState(false);
+
+  const updateReferals = () => {
+    setReferralUpdate(true);
+    webSocket?.emit("getUser", user?.tgId);
+    setTimeout(() => {
+      setReferralUpdate(false);
+    }, 3000);
+  };
+
   return (
     <div className="font-sans p-12 rounded-lg max-w-md mx-auto">
       <div className="text-center text-xl">
@@ -33,25 +45,37 @@ export const Referrals = () => {
       </div>
       <ul
         className="list-none p-4 rounded-xl bg-[#383838]"
-        style={{ maxHeight: window.innerHeight - 344, overflowY: "scroll" }}
+        style={{ maxHeight: window.innerHeight - 464, overflowY: "scroll" }}
       >
-        <div>List of invited friends</div>
-        {referrals?.map((referral, index) => (
-          <li
-            key={referral.tgId}
-            className="p-3 my-2 rounded-md flex items-center shadow-sm"
-          >
-            <img
-              src={referral.avatarUrl}
-              alt={referral.firstName}
-              className="rounded-full w-12 h-12 mr-3"
-            />
-            <div className="text-white flex-1">
-              <div className="font-bold">{referral.firstName}</div>
-              <div className="text-gray-300">{referral.tgUsername}</div>
-            </div>
-          </li>
-        ))}
+        <div onClick={updateReferals} className="absolute right-0 mr-16">
+          <Reloader className={isReferralUpdate ? "animate-spin" : ""} />
+        </div>
+        <div className="text-center mb-2">List of invited friends</div>
+
+        {referrals?.length && referrals?.length > 0 ? (
+          referrals?.map((referral, index) => (
+            <>
+              <li
+                key={referral.tgId}
+                className="pl-3 pt-1 pb-1 pr-0 my-1 rounded-md flex items-center shadow-sm"
+              >
+                <div className="flex text-md justify-center items-center border-2 border-white rounded-full w-10 h-10 mr-2">
+                  {referral.firstName[0]}
+                </div>
+                <div className="flex flex-row">
+                  <div className="text-xs">{referral.firstName}</div>
+                  <div className="text-xs ml-2">@{referral.tgUsername}</div>
+                </div>
+              </li>
+              <Delimiter />
+            </>
+          ))
+        ) : (
+          <div className="flex flex-col justify-center items-center">
+            <div className="text-[#FD5463] text-xl">:(</div>
+            <div className="text-xs mt-2">You don't have invited friends</div>
+          </div>
+        )}
       </ul>
     </div>
   );
