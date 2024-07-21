@@ -17,6 +17,7 @@ import { BusinessSvg } from "./BusinessSvg";
 import { FriendSvg } from "./FriendSvg";
 import { EarnSvg } from "./EarnSvg";
 import { EggSvg } from "./EggSvg";
+import { HomeSvg } from "../../components/HomeSvg";
 
 export const Layout = () => {
   const { isPageLoading } = usePageLoading();
@@ -34,6 +35,15 @@ export const Layout = () => {
       <Outlet />
       <nav className="fixed bottom-0 left-0 w-full bg-opacity-30 bg-gray-800 border-t border-gray-700 flex justify-around py-2 shadow-lg flex items-center justify-center">
         <Link
+          to="/"
+          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+        >
+          <HomeSvg />
+          <span className="text-xs">Home</span>
+        </Link>
+        <Link
           to="/businesses"
           className="text-white text-center flex flex-col items-center text-sm transition duration-300"
           onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
@@ -41,15 +51,6 @@ export const Layout = () => {
         >
           <BusinessSvg />
           <span className="text-xs">Ferms</span>
-        </Link>
-        <Link
-          to="/"
-          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
-        >
-          <AiOutlineHome size={24} className="mb-1" />
-          <span className="text-xs">Tap</span>
         </Link>
         <Link
           to="/referrals"

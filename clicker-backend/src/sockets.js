@@ -152,7 +152,7 @@ export const initSocketsLogic = (io) => ({
     const userLeague = leagues.find((league) => league.minScore <= user.score && league.maxScore >= user.score);
     const userLevel = leagues
       .sort((a, b) => a.minScore - b.minScore)
-      .findIndex(l => l._id.toString() === userLeague._id.toString()) + 1;
+      .findIndex(l => l._id.toString() === userLeague.id.toString()) + 1;
     const userPlaceInLeague = await User.countDocuments({
       balance: { $lte: userLeague.maxScore, $gte: user.balance },
     });
