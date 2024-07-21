@@ -74,6 +74,7 @@ const main = async () => {
   const app = new Koa();
   const router = new Router();
   registerAdminRoutes(router);
+
   router.get("/app-settings", async (ctx) => {
     ctx.body = await getAppSettings();
   });
