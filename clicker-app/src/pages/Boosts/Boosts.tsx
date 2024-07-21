@@ -171,7 +171,8 @@ export const Boosts = () => {
           eggIcon={selectedBoost.eggIcon}
           title={selectedBoost.title}
           purchaseText={selectedBoost.purchaseText("")}
-          
+          onClose={() => {}}
+          description={selectedBoost.description}
         />
       )}
     </div>
