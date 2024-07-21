@@ -84,7 +84,6 @@ export const initSocketsLogic = (io) => ({
 
         await user.save();
         io.emit("taskStatus", { id: task.id, finished: true });
-        io.emit("user", user);
       } else {
         io.emit("taskStatus", { id: task.id, finished: false });
       }
@@ -135,7 +134,6 @@ export const initSocketsLogic = (io) => ({
 
       await user.save();
       io.emit("taskStatus", { id: task.id, finished: true });
-      io.emit("user", user);
     }
   },
   getUser: async (userId) => {
@@ -154,7 +152,7 @@ export const initSocketsLogic = (io) => ({
       .sort((a, b) => a.minScore - b.minScore)
       .findIndex(l => l._id.toString() === userLeague._id.toString()) + 1;
     const userPlaceInLeague = await User.countDocuments({
-      balance: { $lte: userLeague.maxScore, $gte: user.balance },
+      score: { $lte: userLeague.maxScore, $gte: user.score },
     });
     const totalIncomePerHour = user.businesses.reduce((sum, b) => {
       return sum + b.rewardPerHour;
@@ -168,7 +166,7 @@ export const initSocketsLogic = (io) => ({
       clickPower: user.clickPower,
       userPlaceInLeague: userPlaceInLeague + 1,
       totalIncomePerHour,
-      league: { id: userLeague._id, ...userLeague },
+      league: { id: userLeague._id, ...userLeague.toObject() },
       userLevel,
       maxLevel: leagues.length,
     };
@@ -278,8 +276,6 @@ export const initSocketsLogic = (io) => ({
     }
 
     await user.save();
-
-    io.emit("user", user);
   },
   upgradeClick: async (userId) => {
     const user = await User.findOne({ tgId: userId });
@@ -307,8 +303,66 @@ export const initSocketsLogic = (io) => ({
     );
     user.clickPower += 1;
     await user.save();
+  },
+  subscribeLiteSync: async (userId) => {
+    let lastUserInfo = await User.findOne({ tgId: userId });
+    if (!lastUserInfo) {
+      return;
+    }
 
-    io.emit("user", user);
+    const interval = setInterval(async () => {
+      const newUserInfo = await User.findOne({ tgId: userId });
+      let updatedInfo = {};
+
+      if (lastUserInfo.businesses.length !== newUserInfo.businesses.length) {
+        const businessIds = newUserInfo.businesses.filter(b => !lastUserInfo.businesses.includes(b));
+        updatedInfo.newBusinesses = await Business.find({ _id: { $in: businessIds } });
+      }
+
+      if (lastUserInfo.referrals.length !== newUserInfo.referrals.length) {
+        const referralIds = newUserInfo.referrals.filter(b => !lastUserInfo.referrals.includes(b));
+        updatedInfo.referrals = await User.find({ _id: { $in: referralIds } });
+      }
+
+      if (lastUserInfo.completedTasks.length !== newUserInfo.completedTasks.length) {
+        const completedTaskIds = newUserInfo.completedTasks.filter(b => !lastUserInfo.completedTasks.includes(b));
+        updatedInfo.completedTasks = await Task.find({ _id: { $in: completedTaskIds } });
+      }
+
+      if (lastUserInfo.clickPower !== newUserInfo.clickPower) {
+        updatedInfo.clickPower = newUserInfo.clickPower;
+      }
+
+      if (lastUserInfo.lastDailyRewardTimestamp !== newUserInfo.lastDailyRewardTimestamp) {
+        updatedInfo.lastDailyRewardTimestamp = newUserInfo.lastDailyRewardTimestamp;
+      }
+
+      if (lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates) {
+        updatedInfo.fullEnergyActivates = newUserInfo.fullEnergyActivates;
+      }
+
+      if (lastUserInfo.lastFullEnergyTimestamp !== newUserInfo.lastFullEnergyTimestamp) {
+        updatedInfo.lastFullEnergyTimestamp = newUserInfo.lastFullEnergyTimestamp;
+      }
+
+      const userLeague = await League.findOne({ minScore: { $lte: newUserInfo.score }, maxScore: { $gte: newUserInfo.score } });
+      const userPlaceInLeague = await User.countDocuments({
+        balance: { $lte: userLeague.maxScore, $gte: newUserInfo.score },
+      });
+      lastUserInfo = newUserInfo;
+
+      io.emit("liteSync", {
+        ...updatedInfo,
+        balance: newUserInfo.balance,
+        score: newUserInfo.score,
+        energy: newUserInfo.energy,
+        userPlaceInLeague,
+      });
+    }, 1000);
+
+    io.on("disconnect", () => {
+      clearInterval(interval);
+    });
   },
 });
 
@@ -328,4 +382,5 @@ export const registerEvents = (io) => {
   io.on("getTasks", socketsLogic.getTasks);
   io.on("activateBoost", socketsLogic.activateBoost);
   io.on("upgradeClick", socketsLogic.upgradeClick);
+  io.on("subscribeLiteSync", socketsLogic.subscribeLiteSync);
 };

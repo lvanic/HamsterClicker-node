@@ -165,15 +165,6 @@ export const Boosts = () => {
           </div>
         </div>
       </div>
-      {isModalOpen && selectedBoost && (
-        <BoostModal
-          Icon={selectedBoost.Icon}
-          eggIcon={selectedBoost.eggIcon}
-          title={selectedBoost.title}
-          purchaseText={selectedBoost.purchaseText("")}
-          
-        />
-      )}
     </div>
   );
 };
