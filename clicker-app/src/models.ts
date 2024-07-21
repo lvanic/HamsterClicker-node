@@ -3,6 +3,7 @@ export interface User {
   firstName: string;
   tgUsername: string;
   balance: number;
+  score: number;
   energy: number;
   referrals: User[];
   completedTasks: Task[];
@@ -14,6 +15,8 @@ export interface User {
   businesses: Business[];
   clickPower: number;
   totalIncomePerHour: number;
+  userLevel: number;
+  maxLevel: number;
 }
 
 export interface Task {

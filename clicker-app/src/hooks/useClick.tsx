@@ -25,7 +25,7 @@ export const useClick = () => {
   );
   const energyIncrementInterval = useRef<NodeJS.Timeout | null>(null);
 
-  const updateCounts = (clicks: number, energy: number) => {
+  const updateCounts = (clicks: number, energy: number, score: number) => {
     setClickCount(clicks);
     setEnergyCount(energy);
   };
@@ -41,17 +41,19 @@ export const useClick = () => {
         if (!prev) {
           return null;
         }
-        if (
-          user?.league.maxScore &&
-          prev.energy >= user?.league.maxScore - 1
-        ) {
+        if (user?.league.maxScore && user.score >= user?.league.maxScore - 1) {
           webSocket.emit("getUser", prev.tgId);
         }
         if (prev.energy > 0) {
           webAppVibrate();
-          updateCounts(prev.balance + (user?.clickPower || 1), prev.energy - 1);
+          updateCounts(
+            prev.balance + (user?.clickPower || 1),
+            prev.energy - 1,
+            prev.score + (user?.clickPower || 1)
+          );
           return {
             ...prev,
+            score: prev.score + (user?.clickPower || 1),
             balance: prev.balance + (user?.clickPower || 1),
             energy: prev.energy - 1,
           };
@@ -66,7 +68,7 @@ export const useClick = () => {
 
   const handleGetUser = (userData: User) => {
     setPageLoading(false);
-    updateCounts(userData.balance, userData.energy);
+    updateCounts(userData.balance, userData.energy, userData.score);
   };
 
   useLayoutEffect(() => {
@@ -90,7 +92,11 @@ export const useClick = () => {
           return null;
         }
 
-        updateCounts(prev.balance + (user?.clickPower || 1), prev.energy - 1);
+        updateCounts(
+          prev.balance + (user?.clickPower || 1),
+          prev.energy - 1,
+          prev.score + (user?.clickPower || 1)
+        );
         return {
           ...prev,
           energy: Math.min(prev.energy + 1, 1000),

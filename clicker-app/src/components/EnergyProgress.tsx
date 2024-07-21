@@ -9,7 +9,7 @@ export const EnergyProgress = ({ energyCount }: { energyCount: number }) => {
         alignItems: "center",
         justifyContent: "center",
       }}
-      className="mt-4"
+      className="mt-2"
     >
       <div className="w-3/4 bg-[#FD5463] flex p-2 rounded items-center content-center justify-center">
         <svg

@@ -14,6 +14,7 @@ import "./Clicker.css"; // Создайте и импортируйте CSS фа
 import { Statistics } from "../../components/Statistics";
 import { useSettings } from "../../hooks/useSettings";
 import { LevelStatus } from "../../components/LevelStatus";
+import { DailyOffer } from "../../components/DailyOffer";
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -106,7 +107,7 @@ export const Clicker: React.FC = () => {
 
   return (
     <div
-      className="text-center p-4 relative flex flex-col items-center"
+      className="text-center p-4 pt-0 relative flex flex-col items-center"
       onScroll={(e) => e.preventDefault()}
     >
       {isSkeletonLoading ? (
@@ -114,12 +115,15 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
           <BoostButton />
-          <div className="flex flex-row justify-center items-center w-full mt-1 mb-2">
+          <div className="flex flex-row justify-center items-center w-full mt-1 mb-1">
             <ScoreCounter clickCount={clickCount} />
             <League />
             <LevelStatus />
           </div>
-          <div className="gradient-border-container mb-4 w-11/12">
+          <div className="mb-2">
+            <DailyOffer />
+          </div>
+          <div className="gradient-border-container mb-4 w-10/12">
             <img
               ref={imgRef}
               src={user?.league.avatarUrl}

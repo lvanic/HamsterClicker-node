@@ -6,10 +6,41 @@ import "react-toastify/dist/ReactToastify.css";
 import { BoostButton } from "../../components/BoostButton";
 import { RestoreSvg } from "./RestoreSvg";
 import { MassTapSvg } from "./MassTapSvg";
+import { BoostModal } from "./BoostModal";
+
+type Boost = {
+  Icon: any;
+  title: string;
+  description: string;
+  additionalInfo?: (level: string) => string;
+  eggIcon: boolean;
+  purchaseText: (nextCost: string) => string;
+};
+
+const boosts: Boost[] = [
+  {
+    Icon: RestoreSvg,
+    title: "Restore taps",
+    description: "Restore your taps and continue mining!",
+    eggIcon: false,
+    purchaseText: (nextCost: string) => "Get it for free",
+  },
+  {
+    Icon: MassTapSvg,
+    title: "Mass tap",
+    description: "Increases the amount of currency per click",
+    additionalInfo: (level: string) => `Adds +1 tap for ${level} lvl`,
+    eggIcon: true,
+    purchaseText: (nextCost: string) => `Upgrade for ${nextCost} coins`,
+  },
+];
 
 export const Boosts = () => {
   const { webSocket } = useWebSocket();
   const { user } = useUser();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedBoost, setSelectedBoost] = useState<Boost | null>(null);
+
   const [showNotification, setShowNotification] = useState(false);
   const [notificationText, setNotificationText] = useState("");
 
@@ -58,17 +89,6 @@ export const Boosts = () => {
     }
     return user?.fullEnergyActivates || 0;
   }, [user]);
-
-  // const dailyDisabled = useMemo(() => {
-  //   if (user) {
-  //     return Date.now() - user.lastDailyRewardTimestamp < 1000 * 60 * 60 * 24;
-  //   } else {
-  //     return true;
-  //   }
-  // }, [user]);
-  //            onClick={() => activateBoost("dailyReward")}
-  //            onClick={() => activateBoost("fullEnergyBoost")}
-  //            Full Energy Boost {3 - fullEnergyActivates}/3
 
   return (
     <div className="font-sans p-5 rounded-lg max-w-md mx-auto">
@@ -145,6 +165,15 @@ export const Boosts = () => {
           </div>
         </div>
       </div>
+      {isModalOpen && selectedBoost && (
+        <BoostModal
+          Icon={selectedBoost.Icon}
+          eggIcon={selectedBoost.eggIcon}
+          title={selectedBoost.title}
+          purchaseText={selectedBoost.purchaseText("")}
+          
+        />
+      )}
     </div>
   );
 };
