@@ -1,7 +1,6 @@
 import { initSocketsLogic } from '../sockets';
 import { mongoose } from "mongoose";
 import dotenv from "dotenv";
-import { User } from "../models";
 
 beforeAll(async () => {
     dotenv.config();
@@ -14,10 +13,18 @@ test('getUserInfo returns valid user info', async () => {
     const io = {emit: (topic, data) => {result = {topic, data}}};
     const socketsLogic = initSocketsLogic(io);
 
-    await socketsLogic.getUser(675977361);
+    await socketsLogic.getUser(571484499);
     console.log(result.data);
     expect(result.data).toBeDefined();
     expect(result.topic).toBe('user');
+});
+
+test('upgrade business works', async () => {
+    let result;
+    const io = {emit: (topic, data) => {result = {topic, data}}};
+    const socketsLogic = initSocketsLogic(io);
+
+    await socketsLogic.upgradeBusiness(571484499, '6697fbfbb11a70c448080b35');
 });
 
 // test('upgradeClick works', async () => {

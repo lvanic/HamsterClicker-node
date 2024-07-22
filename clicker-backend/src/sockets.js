@@ -87,41 +87,6 @@ export const initSocketsLogic = (io) => ({
       } else {
         io.emit("taskStatus", { id: task.id, finished: false });
       }
-    } else if (task.type == "twitter") {
-      // const Twit = require("twit");
-      // const T = new Twit({
-      //   consumer_key: "your-consumer-key",
-      //   consumer_secret: "your-consumer-secret",
-      //   access_token: "your-access-token",
-      //   access_token_secret: "your-access-token-secret",
-      //   timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
-      // });
-      // const checkIfUserFollows = async (sourceUser, targetUser) => {
-      //   try {
-      //     const result = await T.get("friendships/show", {
-      //       source_screen_name: sourceUser,
-      //       target_screen_name: targetUser,
-      //     });
-      //     const following = result.data.relationship.source.following;
-      //     return following;
-      //   } catch (error) {
-      //     console.error("Error checking friendship:", error);
-      //     throw error;
-      //   }
-      // };
-      // const sourceUser = "sourceUserName";
-      // const targetUser = "targetUserName";
-      // checkIfUserFollows(sourceUser, targetUser)
-      //   .then((isFollowing) => {
-      //     if (isFollowing) {
-      //       console.log(`${sourceUser} is following ${targetUser}`);
-      //     } else {
-      //       console.log(`${sourceUser} is not following ${targetUser}`);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error:", error);
-      //   });
     } else {
       user.completedTasks.push(task);
 
@@ -155,7 +120,9 @@ export const initSocketsLogic = (io) => ({
       score: { $lte: userLeague.maxScore, $gte: user.score },
     });
     const totalIncomePerHour = user.businesses.reduce((sum, b) => {
-      return sum + b.rewardPerHour;
+      const businessUpgrade = user.businessUpgrades.find(bu => bu.businessId.toString() === b._id.toString());
+      const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+      return sum + b.rewardPerHour * 2.2 ** (businessLevel - 1);
     }, 0);
 
     const userData = {
@@ -196,14 +163,18 @@ export const initSocketsLogic = (io) => ({
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
 
-    const availableBusinesses = businesses.filter(
-      (b) =>
-        !user.businesses.some(
-          (userBusinessId) => userBusinessId.toString() == b._id.toString()
-        )
-    );
+    const finalBusinesses = businesses.map(b => {
+      const businessUpgrade = user.businessUpgrades.find(bu => bu.businessId.toString() === b._id.toString());
+      const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
 
-    io.emit("businesses", availableBusinesses);
+      return {
+        ...b.toObject(),
+        price: b.price * 2.2 ** (businessLevel - 1),
+        level: user.businesses.some(bu => bu.toString() == b._id.toString()) ? businessLevel : 0,
+      };
+    });
+
+    io.emit("businesses", finalBusinesses);
   },
   buyBusiness: async (data) => {
     const parsedData = JSON.parse(data);
@@ -364,6 +335,31 @@ export const initSocketsLogic = (io) => ({
       clearInterval(interval);
     });
   },
+  upgradeBusiness: async (userId, businessId) => {
+    const user = await User.findOne({ tgId: userId });
+    if (!user.businesses.some(b => b.toString() == businessId.toString())) {
+      console.warn(`User ${userId} tried to upgrade business ${businessId} but doesn't have it`);
+      return;
+    }
+
+    const business = await Business.findById(businessId);
+    const businessUpgrade = !!user.businessUpgrades
+      ? user.businessUpgrades.find(b => b.businessId.toString() == businessId.toString())
+      : null;
+
+    const newLevel = !! businessUpgrade ? businessUpgrade.level + 1 : 2;
+    const finalPrice = Math.round(business.price * 1.2 ** newLevel);
+    const otherUpgrades = user.businessUpgrades.filter(b => b.businessId.toString() != businessId.toString());
+
+    if (user.balance < finalPrice) {
+      return;
+    }
+
+    await User.findOneAndUpdate(
+      { tgId: user.tgId },
+      { $inc: { balance: -finalPrice }, businessUpgrades: [...otherUpgrades, { businessId, level: newLevel }] }
+    );
+  },
 });
 
 export const handleSocketConnection = async (socket) => {
@@ -383,4 +379,5 @@ export const registerEvents = (io) => {
   io.on("activateBoost", socketsLogic.activateBoost);
   io.on("upgradeClick", socketsLogic.upgradeClick);
   io.on("subscribeLiteSync", socketsLogic.subscribeLiteSync);
+  io.on("upgradeBusiness", socketsLogic.upgradeBusiness);
 };

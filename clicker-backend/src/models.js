@@ -1,5 +1,9 @@
 import { mongoose } from "mongoose";
 
+const businessUpgradeSchema = new mongoose.Schema({
+  businessId: String,
+  level: Number,
+});
 const userSchema = new mongoose.Schema({
   tgId: Number,
   tgUsername: String,
@@ -16,6 +20,7 @@ const userSchema = new mongoose.Schema({
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
+  businessUpgrades: [businessUpgradeSchema]
 });
 export const User = mongoose.model("User", userSchema);
 

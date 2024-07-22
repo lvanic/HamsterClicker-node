@@ -34,7 +34,10 @@ export const runBusinesses = () => {
           return sum;
         }
 
-        const normalizedReward = business.rewardPerHour * BUSINESS_UPDATE_IN_SECOND / 3600;
+        const businessUpgrade = user.businessUpgrades.find(bu => bu.businessId.toString() === business._id.toString());
+        const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+        const levelAdjustedReward = business.rewardPerHour * 2.2 ** (businessLevel - 1);
+        const normalizedReward = levelAdjustedReward * BUSINESS_UPDATE_IN_SECOND / 3600;
 
         return sum + normalizedReward
       }, 0);
