@@ -17,19 +17,13 @@ const userSchema = new mongoose.Schema({
   lastFullEnergyTimestamp: Number,
   fullEnergyActivates: Number,
   clickPower: Number,
+  lastOnlineTimestamp: Number,
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
   businessUpgrades: [businessUpgradeSchema]
 });
 export const User = mongoose.model("User", userSchema);
-
-const clickSchema = new mongoose.Schema({
-  user: userSchema,
-  timestamp: Number,
-  position: { x: Number, y: Number },
-});
-export const Click = mongoose.model("Click", clickSchema);
 
 const taskSchema = new mongoose.Schema({
   rewardAmount: Number,

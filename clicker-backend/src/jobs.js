@@ -20,13 +20,14 @@ export const runEnergyRecover = () => {
 export const runBusinesses = () => {
   setInterval(async () => {
     const businesses = await Business.find({});
-    const usersWithBusinesses = await User.find({
-      'businesses.0': { $exists: true }
+    const users = await User.find({
+      'businesses.0': { $exists: true },
+      lastOnlineTimestamp: { $lt: Date.now() - 1000 * 60 * 60 * 3 },
     }).exec();
 
-    console.log("Updating businesses... Found users with businesses: ", usersWithBusinesses.length);
+    console.log("Updating businesses... Found users with businesses: ", users.length);
 
-    const updatePromises = usersWithBusinesses.map(user => {
+    const updatePromises = users.map(user => {
       const totalReward = user.businesses.reduce((sum, bId) => {
         const business = businesses.find(b => b._id.toString() === bId.toString());
         if (!business) {

@@ -1,12 +1,10 @@
-import { Click, User, Task, League, Business } from "./models.js";
+import { User, Task, League, Business } from "./models.js";
 import { getAppSettings } from "./admin.js";
 
 export const initSocketsLogic = (io) => ({
   clickEvent: async (data) => {
     const parsedData = JSON.parse(data);
     const tgUserId = parsedData["user_id"];
-    const position = { x: parsedData.position.x, y: parsedData.position.y };
-    const timestamp = parsedData["time_stamp"];
 
     const user = await User.findOne({ tgId: tgUserId });
     if (user.balance === undefined || !user.energy === undefined) {
@@ -21,21 +19,12 @@ export const initSocketsLogic = (io) => ({
     try {
       await User.findOneAndUpdate(
         { tgId: tgUserId },
-        {
-          $inc: { balance: user.clickPower, score: user.clickPower, energy: -1 },
-        }
+        { $inc: { balance: user.clickPower, score: user.clickPower, energy: -1 }, lastOnlineTimestamp: new Date().getTime() }
       );
       await user.save();
     } catch (e) {
       console.error(e);
     }
-
-    const click = new Click({
-      user: { tgId: tgUserId },
-      position,
-      timestamp,
-    });
-    await click.save();
   },
   checkTaskStatus: async (data) => {
     const parsedData = JSON.parse(data);
@@ -139,6 +128,9 @@ export const initSocketsLogic = (io) => ({
     };
 
     io.emit("user", userData);
+    io.on("disconnect", async () => {
+      await User.findOneAndUpdate({ tgId: userId }, { lastOnlineTimestamp: new Date().getTime() });
+    });
   },
   getLeagueInfo: async (leagueId, topUsersCount) => {
     const league = await League.findOne({ _id: leagueId });
