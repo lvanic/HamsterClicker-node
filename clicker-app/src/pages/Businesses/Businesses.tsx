@@ -34,14 +34,7 @@ export const Businesses = () => {
       });
 
       webSocket.on("businessBought", (data) => {
-        if (data.success) {
-          setMessage(`You have successfully bought ${data.business.name}`);
-          setBusinesses((prev) =>
-            prev.filter((b) => b.id !== data.business.id)
-          );
-        } else {
-          setMessage("Failed to buy business");
-        }
+        webSocket.emit("getBusinessesToBuy", user?.tgId);
       });
 
       return () => {
@@ -150,21 +143,6 @@ export const Businesses = () => {
           ))}
         </div>
       </div>
-      {/* <h2 className="text-2xl font-bold mb-4">Purchased Businesses</h2>
-      <ul>
-        {user?.businesses.map((business) => (
-          <li key={business.id} className="p-4 bg-white rounded shadow">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-xl font-bold">{business.name}</h3>
-                <p>{business.description}</p>
-                <p>Price: {business.price}</p>
-                <p>Reward per hour: {business.rewardPerHour}</p>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul> */}
 
       {isModalOpen && selectedBusiness && (
         <BuyBusiness

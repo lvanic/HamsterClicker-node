@@ -219,7 +219,6 @@ export const initSocketsLogic = (io) => ({
     );
     io.emit("businessBought", {
       success: true,
-      business: { id: business._id, ...business.toObject() },
     });
   },
   getTasks: async () => {
@@ -417,6 +416,9 @@ export const initSocketsLogic = (io) => ({
         businessUpgrades: [...otherUpgrades, { businessId, level: newLevel }],
       }
     );
+    io.emit("businessBought", {
+      success: true,
+    });
   },
 });
 
