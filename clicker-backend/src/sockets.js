@@ -383,11 +383,14 @@ export const initSocketsLogic = (io) => ({
       clearInterval(interval);
     });
   },
-  upgradeBusiness: async (userId, businessId) => {
-    const user = await User.findOne({ tgId: userId });
+  upgradeBusiness: async (data) => {
+    const parsedData = JSON.parse(data);
+    const [userTgId, businessId] = parsedData;
+    
+    const user = await User.findOne({ tgId: userTgId });
     if (!user.businesses.some((b) => b.toString() == businessId.toString())) {
       console.warn(
-        `User ${userId} tried to upgrade business ${businessId} but doesn't have it`
+        `User ${userTgId} tried to upgrade business ${businessId} but doesn't have it`
       );
       return;
     }

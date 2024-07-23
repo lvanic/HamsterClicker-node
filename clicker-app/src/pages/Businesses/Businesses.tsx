@@ -46,7 +46,11 @@ export const Businesses = () => {
 
   const buyBusiness = (businessId: string) => {
     let request = JSON.stringify([user?.tgId, businessId]);
-    webSocket?.emit("buyBusiness", request);
+    if (businesses.find((x) => x.id == businessId)?.level == 0) {
+      webSocket?.emit("buyBusiness", request);
+    } else {
+      webSocket?.emit("upgradeBusiness", request);
+    }
     setModalOpen(false);
   };
 
