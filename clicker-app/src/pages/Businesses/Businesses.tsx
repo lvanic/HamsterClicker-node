@@ -129,7 +129,7 @@ export const Businesses = () => {
                   <div style={{ fontSize: 8 }} className="mt-2">
                     Reward per hour:
                     <div className="text-sm">
-                      {business.rewardPerHour}
+                      {formatNumber(business.rewardPerHour)}
                     </div>
                   </div>
                 </div>
@@ -141,7 +141,7 @@ export const Businesses = () => {
                 </div>
                 <div className="flex items-center">
                   <EggSvg className="h-6" />
-                  <div className="ml-1 text-sm" >
+                  <div className="ml-1 text-sm">
                     {formatNumber(business.price)}
                   </div>
                 </div>
