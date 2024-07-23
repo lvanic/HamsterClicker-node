@@ -22,7 +22,7 @@ export const runBusinesses = () => {
     const businesses = await Business.find({});
     const users = await User.find({
       'businesses.0': { $exists: true },
-      lastOnlineTimestamp: { $lt: Date.now() - 1000 * 60 * 60 * 3 },
+      lastOnlineTimestamp: { $gt: Date.now() - 1000 * 60 * 60 * 3 },
     }).exec();
 
     console.log("Updating businesses... Found users with businesses: ", users.length);
