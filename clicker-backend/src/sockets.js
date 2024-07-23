@@ -180,7 +180,7 @@ export const initSocketsLogic = (io) => ({
       const businessUpgrade = user.businessUpgrades.find(
         (bu) => bu.businessId.toString() === b._id.toString()
       );
-      const businessLevel = !!businessUpgrade ? businessUpgrade.level : 0;
+      const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
 
       return {
         ...b.toObject(),
