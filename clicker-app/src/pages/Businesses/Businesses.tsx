@@ -9,6 +9,7 @@ import { SmallEggSvg } from "../../components/SmallEggSvg";
 import { EggSvg } from "../Layout/EggSvg";
 import { BuyBusiness } from "./BuyBusiness";
 import { formatNumber } from "../../utils/formatNumber";
+import { VerticalDivider } from "../../components/VerticalDivider";
 
 export const Businesses = () => {
   const { user } = useUser();
@@ -58,7 +59,6 @@ export const Businesses = () => {
 
   return (
     <div className="p-5 pt-0 rounded-lg max-w-md mx-auto">
-      {/* {message && <p>{message}</p>} */}
       <div
         className="relative h-28 mx-5 rounded-b-xl pt-4"
         style={{
@@ -107,7 +107,7 @@ export const Businesses = () => {
           {businesses.map((business) => (
             <div
               key={business.id}
-              className={`business-item ${
+              className={`business-item  ${
                 (user?.referrals?.length || 0) < business.refsToUnlock
                   ? "opacity-20"
                   : "opacity-100"
@@ -128,16 +128,22 @@ export const Businesses = () => {
                   <h3 style={{ fontSize: 10.2 }}>{business.name}</h3>
                   <div style={{ fontSize: 8 }} className="mt-2">
                     Reward per hour:
-                    <div style={{ fontSize: 16.2 }}>
+                    <div className="text-sm">
                       {business.rewardPerHour}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-[#5C5C5C] w-full h-10 rounded-xl flex items-center justify-center">
-                <EggSvg />
-                <div className="ml-1" style={{ fontSize: 16.2 }}>
-                  {business.price}
+              <div className="bg-[#5C5C5C] w-full h-10 rounded-xl flex items-center justify-between px-2">
+                <div className="text-sm"> {business.level} lvl</div>
+                <div>
+                  <VerticalDivider />
+                </div>
+                <div className="flex items-center">
+                  <EggSvg className="h-6" />
+                  <div className="ml-1 text-sm" >
+                    {formatNumber(business.price)}
+                  </div>
                 </div>
               </div>
             </div>

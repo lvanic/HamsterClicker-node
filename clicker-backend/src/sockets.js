@@ -184,6 +184,7 @@ export const initSocketsLogic = (io) => ({
 
       return {
         ...b.toObject(),
+        rewardPerHour: b.rewardPerHour * 1.2 ** (businessLevel - 1),
         price: b.price * 2.2 ** (businessLevel - 1),
         level: user.businesses.some((bu) => bu.toString() == b._id.toString())
           ? businessLevel

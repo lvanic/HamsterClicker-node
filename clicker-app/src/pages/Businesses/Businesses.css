@@ -6,10 +6,13 @@
 }
 
 .business-item {
-  flex: 1 0 calc(33.333% - 2rem);
+  flex: 1 0 ;
   box-sizing: border-box;
   background-color: #323232;
   border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .modal {

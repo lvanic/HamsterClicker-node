@@ -47,4 +47,5 @@ export interface Business {
   rewardPerHour: number;
   refsToUnlock: number;
   price: number;
+  level: number;
 }
