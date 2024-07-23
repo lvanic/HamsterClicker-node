@@ -180,12 +180,12 @@ export const initSocketsLogic = (io) => ({
       const businessUpgrade = user.businessUpgrades.find(
         (bu) => bu.businessId.toString() === b._id.toString()
       );
-      const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+      const businessLevel = !!businessUpgrade ? businessUpgrade.level : 0;
 
       return {
         ...b.toObject(),
-        rewardPerHour: b.rewardPerHour * 2.2 ** (businessLevel - 1),
-        price: b.price * 1.2 ** (businessLevel - 1),
+        rewardPerHour: b.rewardPerHour * 2.2 ** businessLevel,
+        price: b.price * 1.2 ** businessLevel,
         level: user.businesses.some((bu) => bu.toString() == b._id.toString())
           ? businessLevel
           : 0,
@@ -386,7 +386,7 @@ export const initSocketsLogic = (io) => ({
   upgradeBusiness: async (data) => {
     const parsedData = JSON.parse(data);
     const [userTgId, businessId] = parsedData;
-    
+
     const user = await User.findOne({ tgId: userTgId });
     if (!user.businesses.some((b) => b.toString() == businessId.toString())) {
       console.warn(
