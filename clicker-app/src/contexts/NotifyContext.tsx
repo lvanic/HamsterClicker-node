@@ -1,8 +1,16 @@
 import { FC, ReactNode, createContext, useState } from "react";
+import { Notification } from "../components/Notification";
+
+export interface NotifyMessage {
+  message: string;
+  closeButton?: boolean;
+  status?: "ok" | "error" | "task" | "unknown";
+  className?: string;
+}
 
 interface NotifyContextProps {
-  notifyMessage: string | null;
-  setNotify: (message: string, closeButton: boolean) => void;
+  notify: NotifyMessage | null;
+  setNotify: (notify: NotifyMessage) => void;
 }
 
 const NotifyContext = createContext<NotifyContextProps | undefined>(undefined);
@@ -12,17 +20,17 @@ interface NotifyProviderProps {
 }
 
 const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
-  const [notifyMessage, setNotifyMessage] = useState<string | null>("Message");
+  const [notify, setNotifyMessage] = useState<NotifyMessage | null>(null);
 
-  const setNotify = (message: string, closeButton: boolean) => {
-    setNotifyMessage(message);
-    setTimeout(() => {
-      setNotifyMessage(null);
-    }, 3000);
+  const setNotify = (notify: NotifyMessage) => {
+    setNotifyMessage(notify);
+  };
+  const onClose = () => {
+    setNotifyMessage(null);
   };
   return (
-    <NotifyContext.Provider value={{ notifyMessage, setNotify }}>
-      {notifyMessage != null && <div>{notifyMessage}</div>}
+    <NotifyContext.Provider value={{ notify, setNotify }}>
+      {notify != null && <Notification notify={notify} onClose={onClose} />}
       {children}
     </NotifyContext.Provider>
   );

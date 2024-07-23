@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { useWebSocket } from "../../hooks/useWebsocket";
 import { useUser } from "../../hooks/useUser";
 import { ToastContainer, toast } from "react-toastify";
@@ -7,31 +7,37 @@ import { BoostButton } from "../../components/BoostButton";
 import { RestoreSvg } from "./RestoreSvg";
 import { MassTapSvg } from "./MassTapSvg";
 import { BoostModal } from "./BoostModal";
+import { useSettings } from "../../hooks/useSettings";
+import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 
 type Boost = {
+  id: number;
   Icon: any;
   title: string;
   description: string;
-  additionalInfo?: (level: string) => string;
+  additionalInfo?: (level: number) => string;
   eggIcon: boolean;
-  purchaseText: (nextCost: string) => string;
+  purchaseText: (nextCost: number) => string;
 };
 
 const boosts: Boost[] = [
   {
+    id: 0,
     Icon: RestoreSvg,
     title: "Restore taps",
+    additionalInfo: (level: number) => ``,
     description: "Restore your taps and continue mining!",
     eggIcon: false,
-    purchaseText: (nextCost: string) => "Get it for free",
+    purchaseText: (nextCost: number) => "Get it for free",
   },
   {
+    id: 1,
     Icon: MassTapSvg,
     title: "Mass tap",
     description: "Increases the amount of currency per click",
-    additionalInfo: (level: string) => `Adds +1 tap for ${level} lvl`,
+    additionalInfo: (level: number) => `Adds +1 tap for ${level} lvl`,
     eggIcon: true,
-    purchaseText: (nextCost: string) => `Upgrade for ${nextCost} coins`,
+    purchaseText: (nextCost: number) => `Upgrade for ${nextCost} coins`,
   },
 ];
 
@@ -40,14 +46,19 @@ export const Boosts = () => {
   const { user } = useUser();
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedBoost, setSelectedBoost] = useState<Boost | null>(null);
-
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationText, setNotificationText] = useState("");
+  const { startClickUpgradeCost } = useSettings();
+  const notifyContext = useContext(NotifyContext);
 
   useEffect(() => {
     if (webSocket) {
       const handleBoostActivated = (message: string) => {
-        toast.success(message);
+        const notify: NotifyMessage = {
+          status: "ok",
+          className: "h-72",
+          message: message,
+        };
+
+        notifyContext?.setNotify(notify);
       };
 
       webSocket.on("boostActivated", handleBoostActivated);
@@ -58,15 +69,36 @@ export const Boosts = () => {
     }
   }, [webSocket]);
 
-  const activateBoost = (boostName: string) => {
+  const activateFullEnergyBoost = () => {
     if (webSocket) {
-      webSocket.emit("activateBoost", JSON.stringify([user?.tgId, boostName]));
+      webSocket.emit(
+        "activateBoost",
+        JSON.stringify([user?.tgId, "fullEnergyBoost"])
+      );
     }
   };
 
   const improveClick = () => {
     if (webSocket) {
       webSocket.emit("upgradeClick", user?.tgId);
+    }
+    if (
+      startClickUpgradeCost * 2 ** ((user?.clickPower || 2) - 1) <=
+      (user?.balance || 0)
+    ) {
+      const notify: NotifyMessage = {
+        status: "ok",
+        className: "h-72",
+        message: "The power of your click has been enhanced",
+      };
+      notifyContext?.setNotify(notify);
+    } else {
+      const notify: NotifyMessage = {
+        status: "error",
+        className: "h-72",
+        message: "You don't have enough balance",
+      };
+      notifyContext?.setNotify(notify);
     }
   };
 
@@ -90,9 +122,11 @@ export const Boosts = () => {
     return user?.fullEnergyActivates || 0;
   }, [user]);
 
+  const onClose = () => {
+    setModalOpen(false);
+  };
   return (
-    <div className="font-sans p-5 rounded-lg max-w-md mx-auto">
-      <ToastContainer />
+    <div className="font-sans p-5 pt-0 rounded-lg max-w-md mx-auto">
       <div className="mt-4">
         <div className="flex justify-center w-full mb-8">
           <div className="w-min">
@@ -123,7 +157,10 @@ export const Boosts = () => {
             </div>
             <button
               disabled={energyDisabled}
-              onClick={() => activateBoost("fullEnergyBoost")}
+              onClick={() => {
+                setModalOpen(true);
+                setSelectedBoost(boosts[0]);
+              }}
               className="p-1 rounded-lg"
               style={{
                 background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
@@ -154,7 +191,10 @@ export const Boosts = () => {
               {user?.clickPower} lvl
             </div>
             <button
-              onClick={improveClick}
+              onClick={() => {
+                setModalOpen(true);
+                setSelectedBoost(boosts[1]);
+              }}
               className="p-1 rounded-lg"
               style={{
                 background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
@@ -170,8 +210,18 @@ export const Boosts = () => {
           Icon={selectedBoost.Icon}
           eggIcon={selectedBoost.eggIcon}
           title={selectedBoost.title}
-          purchaseText={selectedBoost.purchaseText("")}
-          onClose={() => {}}
+          purchaseText={selectedBoost.purchaseText(
+            startClickUpgradeCost * 2 ** ((user?.clickPower || 2) - 1)
+          )}
+          additionalInfo={
+            selectedBoost.additionalInfo
+              ? selectedBoost.additionalInfo((user?.clickPower || 1) + 1)
+              : undefined
+          }
+          onClose={onClose}
+          onPurchase={
+            selectedBoost.id == 0 ? activateFullEnergyBoost : improveClick
+          }
           description={selectedBoost.description}
         />
       )}

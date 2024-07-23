@@ -30,6 +30,7 @@ import {
 import { LeagueTop } from "./pages/LeagueTop/LeagueTop";
 import { Businesses } from "./pages/Businesses/Businesses";
 import { Airdrop } from "./pages/Airdrop/Airdrop";
+import { NotifyProvider } from "./contexts/NotifyContext";
 
 function switchSwipeDown(enable: boolean) {
   window.Telegram.WebApp.expand();
@@ -61,40 +62,49 @@ function App() {
         <LoadingProvider>
           <WebSocketProvider url={serverUrl} user_id={telegramUser?.id}>
             <UserProvider user_id={telegramUser.id}>
-              <Routes>
-                <Route path="/" loader={() => <Loader />} element={<Layout />}>
-                  <Route index element={<Clicker />} />
-                  <Route path="referrals" element={<Referrals />} />
-                  <Route path="tasks" element={<Tasks />} />
-                  <Route path="boosts" element={<Boosts />} />
-                  <Route path="league" element={<LeagueTop />} />
-                  <Route path="businesses" element={<Businesses />} />
-                  <Route path="airdrop" element={<Airdrop />} />
+              <NotifyProvider>
+                <Routes>
                   <Route
-                    path="maintenance-notice"
-                    element={<MaintenanceNotice />}
-                  />
-                </Route>
-                <Route
-                  path="/admin"
-                  element={<AdminRoute password={adminPassword} />}
-                >
-                  <Route index element={<AdminSettings />} />
-                  <Route path="tasks" element={<AdminTasks />} />
-                  <Route path="tasks/add" element={<AddTask />} />
-                  <Route path="leagues" element={<AdminLeagues />} />
-                  <Route path="leagues/add" element={<AdminAddLeague />} />
-                  <Route path="businesses" element={<AdminBusinesses />} />
-                  <Route path="businesses/add" element={<AdminAddBusiness />} />
+                    path="/"
+                    loader={() => <Loader />}
+                    element={<Layout />}
+                  >
+                    <Route index element={<Clicker />} />
+                    <Route path="referrals" element={<Referrals />} />
+                    <Route path="tasks" element={<Tasks />} />
+                    <Route path="boosts" element={<Boosts />} />
+                    <Route path="league" element={<LeagueTop />} />
+                    <Route path="businesses" element={<Businesses />} />
+                    <Route path="airdrop" element={<Airdrop />} />
+                    <Route
+                      path="maintenance-notice"
+                      element={<MaintenanceNotice />}
+                    />
+                  </Route>
                   <Route
-                    path="businesses/edit/:id"
-                    element={<AdminEditBusiness />}
-                  />
-                  <Route path="users" element={<AdminUsers />} />
-                  <Route path="settings" element={<AdminSettings />} />
-                </Route>
-                <Route path="*" element={<NoPage />} />
-              </Routes>
+                    path="/admin"
+                    element={<AdminRoute password={adminPassword} />}
+                  >
+                    <Route index element={<AdminSettings />} />
+                    <Route path="tasks" element={<AdminTasks />} />
+                    <Route path="tasks/add" element={<AddTask />} />
+                    <Route path="leagues" element={<AdminLeagues />} />
+                    <Route path="leagues/add" element={<AdminAddLeague />} />
+                    <Route path="businesses" element={<AdminBusinesses />} />
+                    <Route
+                      path="businesses/add"
+                      element={<AdminAddBusiness />}
+                    />
+                    <Route
+                      path="businesses/edit/:id"
+                      element={<AdminEditBusiness />}
+                    />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
+                  <Route path="*" element={<NoPage />} />
+                </Routes>
+              </NotifyProvider>
             </UserProvider>
           </WebSocketProvider>
         </LoadingProvider>

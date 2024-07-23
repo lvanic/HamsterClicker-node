@@ -26,6 +26,7 @@ interface LiteSyncData {
   newBusinesses?: Business[];
   referrals?: User[];
   completedTasks?: Task[];
+  energy: number;
   clickPower?: number;
   lastDailyRewardTimestamp?: number;
   fullEnergyActivates?: number;
@@ -51,7 +52,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   };
 
   const handleLiteSync = (data: LiteSyncData) => {
-    setUser((prev => {
+    setUser((prev) => {
       if (!prev) {
         return null;
       }
@@ -60,17 +61,24 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
         ...prev,
         businesses: [...prev.businesses, ...(data.newBusinesses || [])],
         referrals: [...prev.referrals, ...(data.referrals || [])],
-        completedTasks: [...prev.completedTasks, ...(data.completedTasks || [])],
+        completedTasks: [
+          ...prev.completedTasks,
+          ...(data.completedTasks || []),
+        ],
         clickPower: data.clickPower || prev.clickPower,
-        lastDailyRewardTimestamp: data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
+        lastDailyRewardTimestamp:
+          data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
         balance: data.balance,
         score: data.score,
+        energy: data.energy,
         userPlaceInLeague: data.userPlaceInLeague,
-        fullEnergyActivates: data.fullEnergyActivates || prev.fullEnergyActivates,
-        lastFullEnergyTimestamp: data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
+        fullEnergyActivates:
+          data.fullEnergyActivates || prev.fullEnergyActivates,
+        lastFullEnergyTimestamp:
+          data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
       } as User;
-    }));
-  }
+    });
+  };
 
   useEffect(() => {
     const tgUser = getTelegramUser();

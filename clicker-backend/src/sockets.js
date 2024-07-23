@@ -19,7 +19,14 @@ export const initSocketsLogic = (io) => ({
     try {
       await User.findOneAndUpdate(
         { tgId: tgUserId },
-        { $inc: { balance: user.clickPower, score: user.clickPower, energy: -1 }, lastOnlineTimestamp: new Date().getTime() }
+        {
+          $inc: {
+            balance: user.clickPower,
+            score: user.clickPower,
+            energy: -1,
+          },
+          lastOnlineTimestamp: new Date().getTime(),
+        }
       );
       await user.save();
     } catch (e) {
@@ -92,6 +99,12 @@ export const initSocketsLogic = (io) => ({
   },
   getUser: async (userId) => {
     const tgUserId = Number(userId);
+
+    await User.findOneAndUpdate(
+      { tgId: tgUserId },
+      { lastOnlineTimestamp: new Date().getTime() }
+    );
+
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
       .populate("businesses");
@@ -101,15 +114,20 @@ export const initSocketsLogic = (io) => ({
     }
 
     const leagues = await League.find({});
-    const userLeague = leagues.find((league) => league.minScore <= user.score && league.maxScore >= user.score);
-    const userLevel = leagues
-      .sort((a, b) => a.minScore - b.minScore)
-      .findIndex(l => l._id.toString() === userLeague._id.toString()) + 1;
+    const userLeague = leagues.find(
+      (league) => league.minScore <= user.score && league.maxScore >= user.score
+    );
+    const userLevel =
+      leagues
+        .sort((a, b) => a.minScore - b.minScore)
+        .findIndex((l) => l._id.toString() === userLeague._id.toString()) + 1;
     const userPlaceInLeague = await User.countDocuments({
       score: { $lte: userLeague.maxScore, $gte: user.score },
     });
     const totalIncomePerHour = user.businesses.reduce((sum, b) => {
-      const businessUpgrade = user.businessUpgrades.find(bu => bu.businessId.toString() === b._id.toString());
+      const businessUpgrade = user.businessUpgrades.find(
+        (bu) => bu.businessId.toString() === b._id.toString()
+      );
       const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
       return sum + b.rewardPerHour * 2.2 ** (businessLevel - 1);
     }, 0);
@@ -129,7 +147,10 @@ export const initSocketsLogic = (io) => ({
 
     io.emit("user", userData);
     io.on("disconnect", async () => {
-      await User.findOneAndUpdate({ tgId: userId }, { lastOnlineTimestamp: new Date().getTime() });
+      await User.findOneAndUpdate(
+        { tgId: userId },
+        { lastOnlineTimestamp: new Date().getTime() }
+      );
     });
   },
   getLeagueInfo: async (leagueId, topUsersCount) => {
@@ -155,14 +176,18 @@ export const initSocketsLogic = (io) => ({
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
 
-    const finalBusinesses = businesses.map(b => {
-      const businessUpgrade = user.businessUpgrades.find(bu => bu.businessId.toString() === b._id.toString());
+    const finalBusinesses = businesses.map((b) => {
+      const businessUpgrade = user.businessUpgrades.find(
+        (bu) => bu.businessId.toString() === b._id.toString()
+      );
       const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
 
       return {
         ...b.toObject(),
         price: b.price * 2.2 ** (businessLevel - 1),
-        level: user.businesses.some(bu => bu.toString() == b._id.toString()) ? businessLevel : 0,
+        level: user.businesses.some((bu) => bu.toString() == b._id.toString())
+          ? businessLevel
+          : 0,
       };
     });
 
@@ -186,9 +211,15 @@ export const initSocketsLogic = (io) => ({
 
     await User.findOneAndUpdate(
       { tgId: user.tgId },
-      { $inc: { balance: -business.price }, businesses: [...user.businesses, business._id] }
+      {
+        $inc: { balance: -business.price },
+        businesses: [...user.businesses, business._id],
+      }
     );
-    io.emit("businessBought", { success: true, business: { id: business._id, ...business.toObject() } });
+    io.emit("businessBought", {
+      success: true,
+      business: { id: business._id, ...business.toObject() },
+    });
   },
   getTasks: async () => {
     const tasks = await Task.find({ active: true });
@@ -278,37 +309,62 @@ export const initSocketsLogic = (io) => ({
       let updatedInfo = {};
 
       if (lastUserInfo.businesses.length !== newUserInfo.businesses.length) {
-        const businessIds = newUserInfo.businesses.filter(b => !lastUserInfo.businesses.includes(b));
-        updatedInfo.newBusinesses = await Business.find({ _id: { $in: businessIds } });
+        const businessIds = newUserInfo.businesses.filter(
+          (b) => !lastUserInfo.businesses.includes(b)
+        );
+        updatedInfo.newBusinesses = await Business.find({
+          _id: { $in: businessIds },
+        });
       }
 
       if (lastUserInfo.referrals.length !== newUserInfo.referrals.length) {
-        const referralIds = newUserInfo.referrals.filter(b => !lastUserInfo.referrals.includes(b));
+        const referralIds = newUserInfo.referrals.filter(
+          (b) => !lastUserInfo.referrals.includes(b)
+        );
         updatedInfo.referrals = await User.find({ _id: { $in: referralIds } });
       }
 
-      if (lastUserInfo.completedTasks.length !== newUserInfo.completedTasks.length) {
-        const completedTaskIds = newUserInfo.completedTasks.filter(b => !lastUserInfo.completedTasks.includes(b));
-        updatedInfo.completedTasks = await Task.find({ _id: { $in: completedTaskIds } });
+      if (
+        lastUserInfo.completedTasks.length !== newUserInfo.completedTasks.length
+      ) {
+        const completedTaskIds = newUserInfo.completedTasks.filter(
+          (b) => !lastUserInfo.completedTasks.includes(b)
+        );
+        updatedInfo.completedTasks = await Task.find({
+          _id: { $in: completedTaskIds },
+        });
       }
 
       if (lastUserInfo.clickPower !== newUserInfo.clickPower) {
         updatedInfo.clickPower = newUserInfo.clickPower;
       }
 
-      if (lastUserInfo.lastDailyRewardTimestamp !== newUserInfo.lastDailyRewardTimestamp) {
-        updatedInfo.lastDailyRewardTimestamp = newUserInfo.lastDailyRewardTimestamp;
+      if (
+        lastUserInfo.lastDailyRewardTimestamp !==
+        newUserInfo.lastDailyRewardTimestamp
+      ) {
+        updatedInfo.lastDailyRewardTimestamp =
+          newUserInfo.lastDailyRewardTimestamp;
       }
 
-      if (lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates) {
+      if (
+        lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates
+      ) {
         updatedInfo.fullEnergyActivates = newUserInfo.fullEnergyActivates;
       }
 
-      if (lastUserInfo.lastFullEnergyTimestamp !== newUserInfo.lastFullEnergyTimestamp) {
-        updatedInfo.lastFullEnergyTimestamp = newUserInfo.lastFullEnergyTimestamp;
+      if (
+        lastUserInfo.lastFullEnergyTimestamp !==
+        newUserInfo.lastFullEnergyTimestamp
+      ) {
+        updatedInfo.lastFullEnergyTimestamp =
+          newUserInfo.lastFullEnergyTimestamp;
       }
 
-      const userLeague = await League.findOne({ minScore: { $lte: newUserInfo.score }, maxScore: { $gte: newUserInfo.score } });
+      const userLeague = await League.findOne({
+        minScore: { $lte: newUserInfo.score },
+        maxScore: { $gte: newUserInfo.score },
+      });
       const userPlaceInLeague = await User.countDocuments({
         balance: { $lte: userLeague.maxScore, $gte: newUserInfo.score },
       });
@@ -329,19 +385,25 @@ export const initSocketsLogic = (io) => ({
   },
   upgradeBusiness: async (userId, businessId) => {
     const user = await User.findOne({ tgId: userId });
-    if (!user.businesses.some(b => b.toString() == businessId.toString())) {
-      console.warn(`User ${userId} tried to upgrade business ${businessId} but doesn't have it`);
+    if (!user.businesses.some((b) => b.toString() == businessId.toString())) {
+      console.warn(
+        `User ${userId} tried to upgrade business ${businessId} but doesn't have it`
+      );
       return;
     }
 
     const business = await Business.findById(businessId);
     const businessUpgrade = !!user.businessUpgrades
-      ? user.businessUpgrades.find(b => b.businessId.toString() == businessId.toString())
+      ? user.businessUpgrades.find(
+          (b) => b.businessId.toString() == businessId.toString()
+        )
       : null;
 
-    const newLevel = !! businessUpgrade ? businessUpgrade.level + 1 : 2;
+    const newLevel = !!businessUpgrade ? businessUpgrade.level + 1 : 2;
     const finalPrice = Math.round(business.price * 1.2 ** newLevel);
-    const otherUpgrades = user.businessUpgrades.filter(b => b.businessId.toString() != businessId.toString());
+    const otherUpgrades = user.businessUpgrades.filter(
+      (b) => b.businessId.toString() != businessId.toString()
+    );
 
     if (user.balance < finalPrice) {
       return;
@@ -349,7 +411,10 @@ export const initSocketsLogic = (io) => ({
 
     await User.findOneAndUpdate(
       { tgId: user.tgId },
-      { $inc: { balance: -finalPrice }, businessUpgrades: [...otherUpgrades, { businessId, level: newLevel }] }
+      {
+        $inc: { balance: -finalPrice },
+        businessUpgrades: [...otherUpgrades, { businessId, level: newLevel }],
+      }
     );
   },
 });
