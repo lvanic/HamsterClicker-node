@@ -3,6 +3,7 @@ import { mongoose } from "mongoose";
 const businessUpgradeSchema = new mongoose.Schema({
   businessId: String,
   level: Number,
+  timestamp: Number,
 });
 const userSchema = new mongoose.Schema({
   tgId: Number,

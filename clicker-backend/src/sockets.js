@@ -309,6 +309,8 @@ export const initSocketsLogic = (io) => ({
     const interval = setInterval(async () => {
       const newUserInfo = await User.findOne({ tgId: userId });
       let updatedInfo = {};
+      let isBusinessAdded = false;
+      let isBusinessUpgraded = false;
 
       if (lastUserInfo.businesses.length !== newUserInfo.businesses.length) {
         const businessIds = newUserInfo.businesses.filter(
@@ -317,6 +319,30 @@ export const initSocketsLogic = (io) => ({
         updatedInfo.newBusinesses = await Business.find({
           _id: { $in: businessIds },
         });
+        isBusinessAdded = true;
+      }
+
+      const newBusinessUpgrades = newUserInfo.businessUpgrades.filter((bu) => {
+        const match = lastUserInfo.businessUpgrades.find(b => b.businessId.toString() == bu.businessId.toString());
+        return !!match ? match.level != bu.level : true;
+      });
+      if (newBusinessUpgrades.length > 0) {
+        updatedInfo.businessUpgrades = newBusinessUpgrades;
+        isBusinessUpgraded = true;
+      }
+
+      if (isBusinessAdded || isBusinessUpgraded) {
+        const businesses = await Business.find({
+          _id: { $in: newUserInfo.businesses },
+        });
+        const totalIncomePerHour = businesses.reduce((sum, b) => {
+          const businessUpgrade = newUserInfo.businessUpgrades.find(
+            (bu) => bu.businessId.toString() === b._id.toString()
+          );
+          const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+          return sum + b.rewardPerHour * 2.2 ** (businessLevel - 1);
+        }, 0);
+        updatedInfo.totalIncomePerHour = totalIncomePerHour;
       }
 
       if (lastUserInfo.referrals.length !== newUserInfo.referrals.length) {
