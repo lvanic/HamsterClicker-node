@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
   lastFullEnergyTimestamp: Number,
   fullEnergyActivates: Number,
   clickPower: Number,
+  energyLevel: Number,
   lastOnlineTimestamp: Number,
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
@@ -45,6 +46,8 @@ const appSettingsSchema = new mongoose.Schema({
   referralReward: Number,
   maxClickLevel: Number,
   startClickUpgradeCost: Number,
+  maxEnergyLevel: Number,
+  startEnergyUpgradeCost: Number,
 });
 export const AppSettings = mongoose.model("AppSettings", appSettingsSchema);
 

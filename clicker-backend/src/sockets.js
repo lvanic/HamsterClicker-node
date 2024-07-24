@@ -107,7 +107,7 @@ export const initSocketsLogic = (io) => ({
 
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
-      .populate("businesses");
+      .populate("businesses")
 
     if (!user) {
       return;
@@ -136,13 +136,14 @@ export const initSocketsLogic = (io) => ({
       id: user._id,
       ...user.toObject(),
       referrals: user.referrals.map((r) => ({ id: r._id, ...r.toObject() })),
-      businesses: user.businesses.map((b) => ({ id: b._id, ...b.toObject() })),
       clickPower: user.clickPower,
       userPlaceInLeague: userPlaceInLeague + 1,
       totalIncomePerHour,
       league: { id: userLeague._id, ...userLeague.toObject() },
       userLevel,
       maxLevel: leagues.length,
+      energyLevel: user.energyLevel,
+      maxEnergy: 1000 + 500 * (user.energyLevel - 1),
     };
 
     io.emit("user", userData);
@@ -387,18 +388,18 @@ export const initSocketsLogic = (io) => ({
           newUserInfo.lastDailyRewardTimestamp;
       }
 
-      if (
-        lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates
-      ) {
+      if ( lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates) {
         updatedInfo.fullEnergyActivates = newUserInfo.fullEnergyActivates;
       }
 
-      if (
-        lastUserInfo.lastFullEnergyTimestamp !==
-        newUserInfo.lastFullEnergyTimestamp
-      ) {
+      if (lastUserInfo.lastFullEnergyTimestamp !==newUserInfo.lastFullEnergyTimestamp) {
         updatedInfo.lastFullEnergyTimestamp =
           newUserInfo.lastFullEnergyTimestamp;
+      }
+
+      if (lastUserInfo.energyLevel !== newUserInfo.energyLevel) {
+        updatedInfo.energyLevel = newUserInfo.energyLevel;
+        updatedInfo.maxEnergy = 1000 + 500 * (newUserInfo.energyLevel - 1);
       }
 
       const userLeague = await League.findOne({
@@ -467,6 +468,33 @@ export const initSocketsLogic = (io) => ({
       success: true,
     });
   },
+  upgradeEnergy: async (userId) => {
+    const user = await User.findOne({ tgId: userId });
+    if (!user) {
+      return;
+    }
+
+    const appSettings = await getAppSettings();
+    if (!appSettings) {
+      return;
+    }
+
+    if (user.energyLevel >= appSettings.maxEnergyLevel) {
+      return;
+    }
+
+    const cost = appSettings.startEnergyUpgradeCost * 2 ** (user.energyLevel - 1);
+    if (user.balance < cost) {
+      return;
+    }
+
+    await User.findOneAndUpdate(
+      { tgId: user.tgId },
+      { $inc: { balance: -cost } }
+    );
+    user.energyLevel += 1;
+    await user.save();
+  },
 });
 
 export const handleSocketConnection = async (socket) => {
@@ -487,4 +515,5 @@ export const registerEvents = (io) => {
   io.on("upgradeClick", socketsLogic.upgradeClick);
   io.on("subscribeLiteSync", socketsLogic.subscribeLiteSync);
   io.on("upgradeBusiness", socketsLogic.upgradeBusiness);
+  io.on("upgradeEnergy", socketsLogic.upgradeEnergy);
 };

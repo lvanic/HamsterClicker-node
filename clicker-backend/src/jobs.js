@@ -1,11 +1,25 @@
 import { Business, User } from './models.js';
 
 const BUSINESS_UPDATE_IN_SECOND = 1;
-const ENERGY_RECOVER_IN_SECOND = 5;
+const ENERGY_UPDATE_INTERVAL_IN_SECOND = 1;
 
 export const runEnergyRecover = () => {
   setInterval(async () => {
-    const users = await User.find({ energy: { $lt: 1000 } });
+    const users = await User.find({
+      $expr: {
+        $lt: [
+          "$energy",
+          {
+            $add: [
+              1000,
+              {
+                $multiply: [500, { $subtract: ["$energyLevel", 1] }]
+              }
+            ]
+          }
+        ]
+      }
+    });
     try {
       await Promise.all(users.map((user) => {
         return User.findOneAndUpdate({ tgId: user.tgId }, {
@@ -14,7 +28,7 @@ export const runEnergyRecover = () => {
       }));
     } catch {}
     console.log("Energy recovered for users:", users.map((user) => `${user.tgId}: ${user.energy}`).join('\n'));
-  }, ENERGY_RECOVER_IN_SECOND * 1000);
+  }, ENERGY_UPDATE_INTERVAL_IN_SECOND * 1000);
 }
 
 export const runBusinesses = () => {
