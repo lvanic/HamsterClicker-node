@@ -34,6 +34,8 @@ interface LiteSyncData {
   balance: number;
   score: number;
   userPlaceInLeague: number;
+  maxEnergy: number;
+  energyLevel: number;
 }
 
 const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
@@ -70,6 +72,8 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
         balance: data.balance,
         score: data.score,
+        energyLevel: data.energyLevel || prev.energyLevel,
+        maxEnergy: data.maxEnergy || prev.maxEnergy,
         energy: data.energy,
         userPlaceInLeague: data.userPlaceInLeague,
         fullEnergyActivates:

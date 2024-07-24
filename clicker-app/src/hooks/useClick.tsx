@@ -32,7 +32,7 @@ export const useClick = () => {
 
   const handleClick = (clickData: ClickData) => {
     if (webSocket && energyCount > 0) {
-      webSocket.emit("clickEvent", JSON.stringify(clickData));
+       webSocket.emit("clickEvent", JSON.stringify(clickData));
       if (!setUser) {
         return;
       }
@@ -77,39 +77,39 @@ export const useClick = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (energyIncrementInterval.current) {
-      clearInterval(energyIncrementInterval.current);
-    }
+  // useEffect(() => {
+  //   if (energyIncrementInterval.current) {
+  //     clearInterval(energyIncrementInterval.current);
+  //   }
 
-    energyIncrementInterval.current = setInterval(() => {
-      if (!setUser) {
-        return;
-      }
+  //   energyIncrementInterval.current = setInterval(() => {
+  //     if (!setUser) {
+  //       return;
+  //     }
 
-      setUser((prev) => {
-        if (!prev) {
-          return null;
-        }
+  //     setUser((prev) => {
+  //       if (!prev) {
+  //         return null;
+  //       }
 
-        updateCounts(
-          prev.balance + (user?.clickPower || 1),
-          prev.energy - 1,
-          prev.score + (user?.clickPower || 1)
-        );
-        return {
-          ...prev,
-          energy: Math.min(prev.energy + 1, 1000),
-        };
-      });
-    }, 5000);
+  //       updateCounts(
+  //         prev.balance + (user?.clickPower || 1),
+  //         prev.energy - 1,
+  //         prev.score + (user?.clickPower || 1)
+  //       );
+  //       return {
+  //         ...prev,
+  //         energy: Math.min(prev.energy + 1, 1000),
+  //       };
+  //     });
+  //   }, 5000);
 
-    return () => {
-      if (energyIncrementInterval.current) {
-        clearInterval(energyIncrementInterval.current);
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (energyIncrementInterval.current) {
+  //       clearInterval(energyIncrementInterval.current);
+  //     }
+  //   };
+  // }, []);
 
   return { handleClick, clickCount, energyCount };
 };

@@ -85,13 +85,27 @@ export const Boosts = () => {
   }, [webSocket]);
 
   const activateFullEnergyBoost = () => {
-    console.log(webSocket);
-
     if (webSocket) {
       webSocket.emit(
         "activateBoost",
         JSON.stringify([user?.tgId, "fullEnergyBoost"])
       );
+      
+      if (fullEnergyActivates < 3) {
+        const notify: NotifyMessage = {
+          status: "ok",
+          className: "h-72",
+          message: "The energy has been restored",
+        };
+        notifyContext?.setNotify(notify);
+      } else {
+        const notify: NotifyMessage = {
+          status: "error",
+          className: "h-72",
+          message: "You can't restore energy today",
+        };
+        notifyContext?.setNotify(notify);
+      }
     }
   };
 
@@ -167,6 +181,8 @@ export const Boosts = () => {
     setModalOpen(false);
   };
   const onPurchase = () => {
+    // onClose();
+
     switch (selectedBoost?.id) {
       case 0:
         activateFullEnergyBoost();
@@ -317,7 +333,6 @@ export const Boosts = () => {
               {user?.energyLevel} lvl
             </div>
             <button
-              disabled={energyDisabled}
               onClick={() => {
                 setModalOpen(true);
                 setSelectedBoost(boosts[2]);

@@ -112,50 +112,66 @@ export const Businesses = () => {
       </div>
       <div style={{ maxHeight: window.innerHeight - 314, overflowY: "scroll" }}>
         <div className="businesses-container">
-          {businesses.map((business) => (
-            <div
-              key={business.id}
-              className={`business-item  ${
-                (user?.referrals?.length || 0) < business.refsToUnlock
-                  ? "opacity-20"
-                  : "opacity-100"
-              }`}
-              onClick={() => {
-                if ((user?.referrals?.length || 0) >= business.refsToUnlock) {
-                  setSelectedBusiness(business);
-                  setModalOpen(true);
-                }
-              }}
-            >
-              <div className="flex justify-left items-center p-2 pb-2">
-                <img
-                  src={business.avatarUrl}
-                  className="rounded-full w-8 h-8 mr-2"
-                />
-                <div>
-                  <h3 style={{ fontSize: 10.2 }}>{business.name}</h3>
-                  <div style={{ fontSize: 8 }} className="mt-2">
-                    Reward per hour:
-                    <div className="text-sm">
-                      {formatNumber(business.rewardPerHour)}
+          {businesses.map((business) => {
+            const isAffordable = (user?.balance || 0) >= business.price;
+            const isEnoughRefs =
+              (user?.referrals.length || 0) >= business.refsToUnlock;
+            const isAvaliable = isAffordable || isEnoughRefs;
+
+            return (
+              <div
+                key={business.id}
+                className={`business-item relative ${
+                  !isAvaliable ? "opacity-20 cursor-not-allowed" : "opacity-100"
+                }`}
+                onClick={() => {
+                  if (isAvaliable) {
+                    setSelectedBusiness(business);
+                    setModalOpen(true);
+                  }
+                }}
+              >
+                {!isAffordable && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-center text-sm p-2 rounded-2xl rounded-b-xl">
+                    Not enough funds
+                  </div>
+                )}
+                {!isEnoughRefs && isAffordable && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-center text-sm p-2 rounded-2xl rounded-b-xl">
+                    Not enough refs - {business.refsToUnlock}
+                  </div>
+                )}
+
+                <div className="flex justify-left items-center p-2 pb-2">
+                  <img
+                    src={business.avatarUrl}
+                    className="rounded-full w-8 h-8 mr-2"
+                  />
+                  <div>
+                    <h3 style={{ fontSize: 10.2 }}>{business.name}</h3>
+                    <div style={{ fontSize: 8 }} className="mt-2">
+                      Reward per hour:
+                      <div className="text-sm">
+                        {formatNumber(business.rewardPerHour)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-[#5C5C5C] w-full h-10 rounded-xl flex items-center justify-between px-2">
+                  <div className="text-sm"> {business.level} lvl</div>
+                  <div>
+                    <VerticalDivider />
+                  </div>
+                  <div className="flex items-center">
+                    <EggSvg className="h-6" />
+                    <div className="ml-1 text-sm">
+                      {formatNumber(business.price)}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-[#5C5C5C] w-full h-10 rounded-xl flex items-center justify-between px-2">
-                <div className="text-sm"> {business.level} lvl</div>
-                <div>
-                  <VerticalDivider />
-                </div>
-                <div className="flex items-center">
-                  <EggSvg className="h-6" />
-                  <div className="ml-1 text-sm">
-                    {formatNumber(business.price)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

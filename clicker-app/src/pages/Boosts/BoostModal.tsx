@@ -29,6 +29,10 @@ export const BoostModal = ({
     };
   }, []);
 
+  const purchaseHandler = () => {
+    handleClose();
+    onPurchase();
+  };
   const handleClose = () => {
     modalRef.current?.classList.remove("visible");
     modalRef.current?.classList.add("hidden");
@@ -57,7 +61,7 @@ export const BoostModal = ({
         )}
 
         <button
-          onClick={onPurchase}
+          onClick={purchaseHandler}
           className="mt-4 py-2 px-6 text-sm rounded-lg flex justify-center items-center"
           style={{
             background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",

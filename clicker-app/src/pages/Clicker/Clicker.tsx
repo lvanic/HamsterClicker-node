@@ -92,7 +92,7 @@ export const Clicker: React.FC = () => {
   const handleContextMenu = (
     event: React.MouseEvent<HTMLImageElement, MouseEvent>
   ) => {
-    event.preventDefault(); // Prevent default context menu
+    event.preventDefault();
   };
 
   const handleClickEvent = () => {
@@ -147,7 +147,7 @@ export const Clicker: React.FC = () => {
             />
           </div>
           <Statistics />
-          <EnergyProgress energyCount={energyCount} />
+          <EnergyProgress energyCount={energyCount} maxEnergy={user?.maxEnergy} />
           {numberSignPositions.map((position) => (
             <NumberSign
               key={position.id}
