@@ -182,15 +182,14 @@ export const initSocketsLogic = (io) => ({
       );
       const businessLevel = !!businessUpgrade
         ? businessUpgrade.level
-        : user.businesses.some((bu) => bu.toString() == b._id.toString())
-        ? 1
-        : 0;
+        : user.businesses.some((bu) => bu.toString() == b._id.toString()) ? 1 : 0;
 
       return {
         ...b.toObject(),
         rewardPerHour: b.rewardPerHour * 2.2 ** businessLevel,
         price: b.price * 1.2 ** businessLevel,
         level: businessLevel,
+        lastUpgradeTimestamp: !!businessUpgrade ? businessUpgrade.timestamp : null,
       };
     });
 
@@ -316,8 +315,21 @@ export const initSocketsLogic = (io) => ({
         const businessIds = newUserInfo.businesses.filter(
           (b) => !lastUserInfo.businesses.includes(b)
         );
-        updatedInfo.newBusinesses = await Business.find({
+
+        const businesses = await Business.find({
           _id: { $in: businessIds },
+        });
+        updatedInfo.newBusinesses = businesses.map((b) => {
+          const businessUpgrade = newUserInfo.businessUpgrades.find(
+            (bu) => bu.businessId.toString() === b._id.toString()
+          );
+          const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+          return {
+            id: b._id,
+            ...b.toObject(),
+            lastUpgradeTimestamp: !!businessUpgrade ? businessUpgrade.timestamp : null,
+            level: businessLevel,
+          };
         });
         isBusinessAdded = true;
       }
@@ -430,6 +442,10 @@ export const initSocketsLogic = (io) => ({
         )
       : null;
 
+    if (!!businessUpgrade && businessUpgrade.timestamp + 1000 * 60 * 60 > Date.now()) {
+      return;
+    }
+
     const newLevel = !!businessUpgrade ? businessUpgrade.level + 1 : 2;
     const finalPrice = Math.round(business.price * 1.2 ** newLevel);
     const otherUpgrades = user.businessUpgrades.filter(
@@ -444,7 +460,7 @@ export const initSocketsLogic = (io) => ({
       { tgId: user.tgId },
       {
         $inc: { balance: -finalPrice },
-        businessUpgrades: [...otherUpgrades, { businessId, level: newLevel }],
+        businessUpgrades: [...otherUpgrades, { businessId, level: newLevel, timestamp: newLevel >= 3 ? Date.now() : null }],
       }
     );
     io.emit("businessBought", {
