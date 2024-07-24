@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { SmallEggSvg } from "../../components/SmallEggSvg";
 import { Business } from "../../models";
+import { formatNumber } from "../../utils/formatNumber";
 
 export const BuyBusiness = ({
   business,
@@ -29,7 +30,7 @@ export const BuyBusiness = ({
   return (
     <>
       <div className="overlay" onClick={handleClose} />
-      <div id="modal" className="modal" ref={modalRef}>
+      <div id="modal" className="modal h-72" ref={modalRef}>
         <img src={business?.avatarUrl} className="w-16 h-16 rounded-full" />
         <div className="text-xl mt-6">{business?.name}</div>
         <div className="text-xs">{business?.description}</div>
@@ -38,14 +39,16 @@ export const BuyBusiness = ({
             <div className="text-xs">Profit per hour</div>
             <div className="flex justify-left items-center">
               <SmallEggSvg />
-              <div className="ml-1">{business?.rewardPerHour}</div>
+              <div className="ml-1">
+                {formatNumber(business?.rewardPerHour)}
+              </div>
             </div>
           </div>
           <div className="flex flex-col justify-center items-left ml-2">
             <div className="text-xs">Price</div>
             <div className="flex justify-left items-center">
               <SmallEggSvg />
-              <div className="ml-1">{business?.price}</div>
+              <div className="ml-1">{formatNumber(business?.price)}</div>
             </div>
           </div>
         </div>

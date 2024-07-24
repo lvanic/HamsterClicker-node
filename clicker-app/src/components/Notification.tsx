@@ -15,8 +15,10 @@ export const Notification = ({
     modalRef.current?.classList.add("visible");
 
     setTimeout(() => {
+      modalRef.current?.classList.remove("visible");
+
       modalRef.current?.classList.add("hidden");
-    }, TIMEOUT / 2);
+    }, TIMEOUT - 300);
 
     setTimeout(() => {
       onClose();

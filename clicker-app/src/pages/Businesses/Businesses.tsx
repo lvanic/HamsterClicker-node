@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useWebSocket } from "../../hooks/useWebsocket";
 import { Business } from "../../models";
@@ -10,6 +10,7 @@ import { EggSvg } from "../Layout/EggSvg";
 import { BuyBusiness } from "./BuyBusiness";
 import { formatNumber } from "../../utils/formatNumber";
 import { VerticalDivider } from "../../components/VerticalDivider";
+import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 
 export const Businesses = () => {
   const { user } = useUser();
@@ -18,14 +19,12 @@ export const Businesses = () => {
   const [message, setMessage] = useState("");
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedBusiness, setSelectedBusiness] = useState<Business>();
-
+  const notifyContext = useContext(NotifyContext);
   useEffect(() => {
     if (webSocket && user) {
       webSocket.emit("getBusinessesToBuy", user?.tgId);
 
       webSocket.on("businesses", (data) => {
-        console.log(data);
-
         const parsedData = data.map((b: any) => ({
           id: b._id,
           ...b,
@@ -46,11 +45,23 @@ export const Businesses = () => {
 
   const buyBusiness = (businessId: string) => {
     let request = JSON.stringify([user?.tgId, businessId]);
+    let notify: NotifyMessage;
     if (businesses.find((x) => x.id == businessId)?.level == 0) {
       webSocket?.emit("buyBusiness", request);
+      notify = {
+        status: "ok",
+        message: "Business was purchased",
+        className: "h-72",
+      };
     } else {
+      notify = {
+        status: "ok",
+        message: "Business was upgraded",
+        className: "h-72",
+      };
       webSocket?.emit("upgradeBusiness", request);
     }
+    notifyContext?.setNotify(notify);
     setModalOpen(false);
   };
 

@@ -11,8 +11,8 @@ export const useSettings = () => {
   const [referralReward, setReferralReward] = useState(0);
   const [startClickUpgradeCost, setStartClickUpgradeCost] = useState(0);
   const [maxClickLevel, setMaxClickLevel] = useState(0);
-
-  useEffect(() => {    
+  const [startEnergyUpgradeCost, setStartEnergyUpgradeCost] = useState(0);
+  useEffect(() => {
     fetchSettings();
   }, []);
 
@@ -27,6 +27,7 @@ export const useSettings = () => {
     setReferralReward(settings.referralReward);
     setStartClickUpgradeCost(settings.startClickUpgradeCost);
     setMaxClickLevel(settings.maxClickLevel);
+    setStartEnergyUpgradeCost(settings.startEnergyUpgradeCost);
   };
 
   return {
@@ -37,5 +38,6 @@ export const useSettings = () => {
     rewardPerClick,
     startClickUpgradeCost,
     maxClickLevel,
+    startEnergyUpgradeCost,
   };
 };

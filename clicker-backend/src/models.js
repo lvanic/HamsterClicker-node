@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   lastName: String,
   balance: { type: Number, min: 0},
   score: { type: Number, min: 0},
-  energy: { type: Number, min: 0, max: 1000},
+  energy: { type: Number, min: 0},
   connectedWallet: String,
   lastDailyRewardTimestamp: Number,
   lastFullEnergyTimestamp: Number,

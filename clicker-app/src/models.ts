@@ -17,6 +17,8 @@ export interface User {
   totalIncomePerHour: number;
   userLevel: number;
   maxLevel: number;
+  energyLevel: number;
+  maxEnergy: number;
 }
 
 export interface Task {
