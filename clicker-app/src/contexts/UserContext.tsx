@@ -36,6 +36,7 @@ interface LiteSyncData {
   userPlaceInLeague: number;
   maxEnergy: number;
   energyLevel: number;
+  totalIncomePerHour?: number;
 }
 
 const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
@@ -68,18 +69,16 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           ...(data.completedTasks || []),
         ],
         clickPower: data.clickPower || prev.clickPower,
-        lastDailyRewardTimestamp:
-          data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
+        lastDailyRewardTimestamp:data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
         balance: data.balance,
         score: data.score,
         energyLevel: data.energyLevel || prev.energyLevel,
         maxEnergy: data.maxEnergy || prev.maxEnergy,
         energy: data.energy,
         userPlaceInLeague: data.userPlaceInLeague,
-        fullEnergyActivates:
-          data.fullEnergyActivates || prev.fullEnergyActivates,
-        lastFullEnergyTimestamp:
-          data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
+        fullEnergyActivates: data.fullEnergyActivates || prev.fullEnergyActivates,
+        lastFullEnergyTimestamp: data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
+        totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
       } as User;
     });
   };

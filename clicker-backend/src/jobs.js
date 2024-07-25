@@ -1,7 +1,9 @@
-import { Business, User } from './models.js';
+import { getAppSettings } from './admin.js';
+import { Business, User, AppSettings } from './models.js';
 
 const BUSINESS_UPDATE_IN_SECOND = 1;
 const ENERGY_UPDATE_INTERVAL_IN_SECOND = 1;
+const COMBO_UPDATE_IN_SECOND = 60 * 60;
 
 export const runEnergyRecover = () => {
   setInterval(async () => {
@@ -10,12 +12,7 @@ export const runEnergyRecover = () => {
         $lt: [
           "$energy",
           {
-            $add: [
-              1000,
-              {
-                $multiply: [500, { $subtract: ["$energyLevel", 1] }]
-              }
-            ]
+            $add: [1000, { $multiply: [500, { $subtract: ["$energyLevel", 1] }] }]
           }
         ]
       }
@@ -67,4 +64,47 @@ export const runBusinesses = () => {
 
     await Promise.all(updatePromises);
   }, BUSINESS_UPDATE_IN_SECOND * 1000);
+}
+
+const updateCombos = async () => {
+  console.info("Updating combos...");
+  const appSettings = await getAppSettings();
+
+  const currentHours = new Date().getHours();
+  if (appSettings.comboBusinesses.length !== 0
+      && appSettings.lastComboUpdateTimestamp + 1000 * 60 * 60 * 24 > Date.now()
+      && currentHours >= appSettings.comboUpdateDayHour
+  ) {
+    return;
+  }
+
+  const businesses = await Business.find({});
+  const randomIndexes = [];
+
+  while(true) {
+    const randomIndex = Math.floor(Math.random() * businesses.length);
+    if (!randomIndexes.includes(randomIndex)) {
+      randomIndexes.push(randomIndex);
+    } else {
+      continue
+    }
+
+    if (randomIndexes.length === 3) {
+      break;
+    }
+  }
+
+  appSettings.comboBusinesses = [
+    businesses[randomIndexes[0]]._id,
+    businesses[randomIndexes[1]]._id,
+    businesses[randomIndexes[2]]._id,
+  ];
+  appSettings.lastComboUpdateTimestamp = Date.now();
+  await appSettings.save();
+  await User.updateMany({}, { $set: { currentComboCompletions: [] }});
+}
+
+export const runCombos = () => {
+  updateCombos();
+  setInterval(updateCombos, COMBO_UPDATE_IN_SECOND * 1000);
 }

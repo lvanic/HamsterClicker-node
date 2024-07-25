@@ -212,12 +212,26 @@ export const initSocketsLogic = (io) => ({
       return;
     }
 
+    const appSettings = await getAppSettings();
+    const comboMatch = appSettings.comboBusinesses.includes(businessId)
+      && user.currentComboCompletions.length < 3
+      && !user.currentComboCompletions.includes(businessId);
+    const comboCompleted = comboMatch && user.currentComboCompletions.length == 2;
+
+    const updateQuery = {
+      $inc: { balance: comboCompleted ? appSettings.comboReward - business.price : -business.price },
+      businesses: [...user.businesses, business._id],
+    };
+    if (comboMatch) {
+      updateQuery.currentComboCompletions = [...user.currentComboCompletions, businessId];
+    }
+    if (comboCompleted) {
+      io.emit("comboCompleted", { reward: appSettings.comboReward });
+    }
+
     await User.findOneAndUpdate(
       { tgId: user.tgId },
-      {
-        $inc: { balance: -business.price },
-        businesses: [...user.businesses, business._id],
-      }
+      updateQuery,
     );
     io.emit("businessBought", {
       success: true,
@@ -365,9 +379,7 @@ export const initSocketsLogic = (io) => ({
         updatedInfo.referrals = await User.find({ _id: { $in: referralIds } });
       }
 
-      if (
-        lastUserInfo.completedTasks.length !== newUserInfo.completedTasks.length
-      ) {
+      if (lastUserInfo.completedTasks.length !== newUserInfo.completedTasks.length) {
         const completedTaskIds = newUserInfo.completedTasks.filter(
           (b) => !lastUserInfo.completedTasks.includes(b)
         );
@@ -380,15 +392,12 @@ export const initSocketsLogic = (io) => ({
         updatedInfo.clickPower = newUserInfo.clickPower;
       }
 
-      if (
-        lastUserInfo.lastDailyRewardTimestamp !==
-        newUserInfo.lastDailyRewardTimestamp
-      ) {
+      if (lastUserInfo.lastDailyRewardTimestamp !== newUserInfo.lastDailyRewardTimestamp) {
         updatedInfo.lastDailyRewardTimestamp =
           newUserInfo.lastDailyRewardTimestamp;
       }
 
-      if ( lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates) {
+      if (lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates) {
         updatedInfo.fullEnergyActivates = newUserInfo.fullEnergyActivates;
       }
 
@@ -400,6 +409,15 @@ export const initSocketsLogic = (io) => ({
       if (lastUserInfo.energyLevel !== newUserInfo.energyLevel) {
         updatedInfo.energyLevel = newUserInfo.energyLevel;
         updatedInfo.maxEnergy = 1000 + 500 * (newUserInfo.energyLevel - 1);
+      }
+
+      if (lastUserInfo.currentComboCompletions.length !== newUserInfo.currentComboCompletions.length) {
+        const competedComboIds = newUserInfo.currentComboCompletions.filter(
+          (b) => !lastUserInfo.currentComboCompletions.includes(b)
+        );
+        updatedInfo.currentComboCompletions = await Business.find({
+          _id: { $in: competedComboIds },
+        });
       }
 
       const userLeague = await League.findOne({
@@ -457,12 +475,28 @@ export const initSocketsLogic = (io) => ({
       return;
     }
 
+    const appSettings = await getAppSettings();
+
+    const comboMatch = appSettings.comboBusinesses.includes(businessId)
+      && user.currentComboCompletions.length < 3
+      && !user.currentComboCompletions.includes(businessId);
+    const comboCompleted = comboMatch && user.currentComboCompletions.length == 2;
+
+    const updateQuery = {
+      $inc: { balance: comboCompleted ? appSettings.comboReward - finalPrice : -finalPrice },
+      businessUpgrades: [...otherUpgrades, { businessId, level: newLevel, timestamp: newLevel >= 3 ? Date.now() : null }],
+    };
+
+    if (comboMatch) {
+      updateQuery.currentComboCompletions = [...user.currentComboCompletions, businessId];
+    }
+    if (comboCompleted) {
+      io.emit("comboCompleted", { reward: appSettings.comboReward });
+    }
+
     await User.findOneAndUpdate(
       { tgId: user.tgId },
-      {
-        $inc: { balance: -finalPrice },
-        businessUpgrades: [...otherUpgrades, { businessId, level: newLevel, timestamp: newLevel >= 3 ? Date.now() : null }],
-      }
+      updateQuery,
     );
     io.emit("businessBought", {
       success: true,

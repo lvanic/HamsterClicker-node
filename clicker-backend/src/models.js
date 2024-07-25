@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
   clickPower: Number,
   energyLevel: Number,
   lastOnlineTimestamp: Number,
+  currentComboCompletions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
@@ -48,6 +49,10 @@ const appSettingsSchema = new mongoose.Schema({
   startClickUpgradeCost: Number,
   maxEnergyLevel: Number,
   startEnergyUpgradeCost: Number,
+  comboReward: Number,
+  comboUpdateDayHour: Number,
+  lastComboUpdateTimestamp: Number,
+  comboBusinesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
 });
 export const AppSettings = mongoose.model("AppSettings", appSettingsSchema);
 
