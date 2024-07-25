@@ -95,7 +95,7 @@ export const Clicker: React.FC = () => {
   ) => {
     event.preventDefault();
   };
-
+  
   const handleClickEvent = () => {
     if (user) {
       handleClick({

@@ -1,8 +1,16 @@
-import { FC, ReactNode, createContext, useEffect, useState } from "react";
+import {
+  FC,
+  ReactNode,
+  createContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Business, Settings, Task } from "../models";
 import { getConfig } from "../utils/config";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { useUser } from "../hooks/useUser";
+import { getTelegramUser } from "../services/telegramService";
 
 interface DataContextProps {
   businesses: Business[];
@@ -26,6 +34,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
   const [settings, setSettings] = useState<Settings | null>(null);
   const { webSocket } = useWebSocket();
   const { user } = useUser();
+  const [isSubscribeDone, setSubscribeDone] = useState(false);
 
   const fetchSettings = async () => {
     const { adminApiUrl } = getConfig();
@@ -40,8 +49,6 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (webSocket && user) {
-      webSocket.emit("getBusinessesToBuy", user?.tgId);
-
       webSocket.on("businesses", (data) => {
         const parsedData = data.map((b: any) => ({
           id: b._id,
@@ -49,13 +56,14 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         }));
         setBusinesses(parsedData);
       });
-      webSocket.emit("getTasks");
 
       webSocket.on("tasks", (receivedTasks) => {
         if (user?.completedTasks) {
           const updatedTasks = receivedTasks.map((task: any) => {
+            console.log(task, user?.completedTasks);
+
             const isCompleted = user?.completedTasks.some(
-              (completedTask: any) => completedTask === task._id
+              (completedTask: any) => completedTask == task._id
             );
 
             return { ...task, completed: isCompleted };
@@ -66,16 +74,29 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         }
       });
 
+      setSubscribeDone(true);
+      return () => {
+        webSocket.off("tasks");
+        webSocket.off("businesses");
+      };
+    }
+  }, [webSocket, user]);
+
+  useEffect(() => {
+    if (webSocket) {
+      const tgUser = getTelegramUser();
+      webSocket.emit("getTasks");
+      webSocket.emit("getBusinessesToBuy", tgUser.id);
+
       webSocket.on("businessBought", (data) => {
-        webSocket.emit("getBusinessesToBuy", user?.tgId);
+        webSocket.emit("getBusinessesToBuy", tgUser.id);
       });
 
       return () => {
-        webSocket.off("businesses");
         webSocket.off("businessBought");
       };
     }
-  }, [webSocket, user?.tgId, user?.completedTasks]);
+  }, [webSocket, isSubscribeDone]);
 
   return (
     <DataContext.Provider

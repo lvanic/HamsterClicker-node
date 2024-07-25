@@ -29,13 +29,12 @@ export const Tasks = () => {
       webSocket.on("taskStatus", (data) => {
         const { id, finished } = data;
 
-        // dataContext?.setTasks((prevTasks: any) => {
-        //   console.log(prevTasks);
-          
-        //   return prevTasks.map((task: any) =>
-        //     task._id === id ? { ...task, completed: finished } : task
-        //   );
-        // });
+        dataContext?.setTasks((prevTasks: any) => {          
+          return prevTasks.map((task: any) =>
+            task._id == id ? { ...task, completed: finished } : task
+          );
+        });
+
         let notify: NotifyMessage;
         if (finished) {
           notify = {
@@ -56,7 +55,7 @@ export const Tasks = () => {
     return () => {
       webSocket?.off("taskStatus");
     };
-  }, [webSocket, user, notifyContext?.setNotify, dataContext?.setTasks]);
+  }, [webSocket]);
 
   const handleTaskClick = (task: any) => {
     setSelectedTask(task);

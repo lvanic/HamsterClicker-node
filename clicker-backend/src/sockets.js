@@ -108,6 +108,7 @@ export const initSocketsLogic = (io) => ({
     const user = await User.findOne({ tgId: tgUserId })
       .populate("referrals")
       .populate("businesses")
+      .populate("completedTasks")
 
     if (!user) {
       return;
