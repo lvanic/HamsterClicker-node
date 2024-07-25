@@ -41,7 +41,7 @@ export const EnergyProgress = ({
           }}
           className="ml-4"
         >
-          {energyCount}/{maxEnergy}
+          {energyCount}/{maxEnergy || 1000}
         </div>
       </div>
     </div>

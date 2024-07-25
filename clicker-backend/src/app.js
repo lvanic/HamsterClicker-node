@@ -24,7 +24,7 @@ const main = async () => {
       const [, refId] = ctx.message.text.split("ref_");
       const tgUserId = ctx.message.chat.id;
       console.log({ refId, tgUserId });
-      ctx.reply('Welcome')
+      ctx.reply("Welcome");
       const existingUser = await User.findOne({ tgId: tgUserId });
       if (!existingUser) {
         const user = new User({
@@ -35,6 +35,7 @@ const main = async () => {
           balance: 0,
           score: 0,
           energy: 1000,
+          maxEnergy: 1000,
           clickPower: 1,
         });
 
@@ -80,8 +81,8 @@ const main = async () => {
   });
 
   router.post("/wallet-address", async (ctx) => {
-    const {walletAddress, userTgId} = ctx.request.body;
-    const user = await User.findOne({tgId: userTgId});
+    const { walletAddress, userTgId } = ctx.request.body;
+    const user = await User.findOne({ tgId: userTgId });
     if (!user) {
       return;
     }

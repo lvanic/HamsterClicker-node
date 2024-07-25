@@ -31,7 +31,7 @@ export interface Task {
   active: boolean;
   type: string;
   activaterUrl: string;
-  completed: boolean;
+  completed: boolean | undefined;
 }
 
 export interface League {

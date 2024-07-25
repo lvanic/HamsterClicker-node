@@ -75,7 +75,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         webSocket.off("businessBought");
       };
     }
-  }, [webSocket, user?.tgId]);
+  }, [webSocket, user?.tgId, user?.completedTasks]);
 
   return (
     <DataContext.Provider
