@@ -37,6 +37,7 @@ const main = async () => {
           energy: 1000,
           maxEnergy: 1000,
           clickPower: 1,
+          energyLevel: 1,
         });
 
         if (!!refId) {
