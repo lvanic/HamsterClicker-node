@@ -30,6 +30,7 @@ export interface Task {
   active: boolean;
   type: string;
   activaterUrl: string;
+  completed: boolean;
 }
 
 export interface League {
@@ -51,4 +52,15 @@ export interface Business {
   price: number;
   level: number;
   lastUpgradeTimestamp: number;
+}
+
+export interface Settings {
+  energyPerSecond: number;
+  rewardPerClick: number;
+  fullEnergyBoostPerDay: number;
+  dailyReward: number;
+  referralReward: number;
+  startClickUpgradeCost: number;
+  maxClickLevel: number;
+  startEnergyUpgradeCost: number;
 }
