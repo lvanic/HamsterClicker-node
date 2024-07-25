@@ -29,9 +29,15 @@ export const Notification = ({
     };
   }, []);
 
+  const overlayClickHandle = () => {
+    modalRef.current?.classList.remove("visible");
+    modalRef.current?.classList.add("hidden");
+    onClose()
+  }
+  
   return (
     <>
-      <div className="overlay" />
+      <div className="overlay" onClick={overlayClickHandle} />
       <div
         id="modal"
         className={`modal ${notify.className}`}

@@ -11,14 +11,17 @@ import { EggSvg } from "../Layout/EggSvg";
 import { EggNimbus } from "../../components/EggNimbus";
 import { TaskList } from "./TaskList";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
+import { DataContext } from "../../contexts/DataContext";
+import { Task } from "../../models";
 
 export const Tasks = () => {
-  const [tasks, setTasks] = useState<any>([]);
+  // const [tasks, setTasks] = useState<any>([]);
   const { webSocket } = useWebSocket();
   const { user } = useUser();
-  const [isDataLoading, setDataLoading] = useState(true);
+  const [isDataLoading, setDataLoading] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const notifyContext = useContext(NotifyContext);
+  const dataContext = useContext(DataContext);
 
   useEffect(() => {
     if (webSocket) {
@@ -34,15 +37,15 @@ export const Tasks = () => {
 
             return { ...task, completed: isCompleted };
           });
-          setTasks(updatedTasks);
+          dataContext?.setTasks(updatedTasks);
         } else {
-          setTasks(receivedTasks);
+          dataContext?.setTasks(receivedTasks);
         }
       });
 
       webSocket.on("taskStatus", (data) => {
         const { id, finished } = data;
-        setTasks((prevTasks: any) =>
+        dataContext?.setTasks((prevTasks: any) =>
           prevTasks.map((task: any) =>
             task._id === id ? { ...task, completed: finished } : task
           )
@@ -79,7 +82,10 @@ export const Tasks = () => {
   };
 
   const handleOpenLink = () => {
-    if (selectedTask.type !== "telegram" && tasks[selectedTask._id] == false) {
+    if (
+      selectedTask.type !== "telegram" &&
+      dataContext?.tasks[selectedTask._id].active == false
+    ) {
       const tgUserId = getTelegramUser().id;
       webSocket?.emit(
         "checkTaskStatus",
@@ -120,13 +126,13 @@ export const Tasks = () => {
           >
             <div>Daily reward</div>
             <TaskList
-              tasks={tasks}
+              tasks={dataContext?.tasks}
               handleTaskClick={handleTaskClick}
               filter="telegram"
             />
             <div>List of tasks</div>
             <TaskList
-              tasks={tasks}
+              tasks={dataContext?.tasks}
               handleTaskClick={handleTaskClick}
               filter="link"
             />

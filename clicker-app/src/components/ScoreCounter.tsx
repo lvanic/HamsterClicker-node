@@ -1,3 +1,5 @@
+import { formatNumber } from "../utils/formatNumber";
+
 export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
   return (
     <div
@@ -19,7 +21,7 @@ export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
           paddingTop: "0px",
         }}
       >
-        {Math.floor(clickCount)}
+        {formatNumber(Math.floor(clickCount))}
       </div>
     </div>
   );
