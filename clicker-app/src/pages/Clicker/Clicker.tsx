@@ -15,6 +15,7 @@ import { Statistics } from "../../components/Statistics";
 import { useSettings } from "../../hooks/useSettings";
 import { LevelStatus } from "../../components/LevelStatus";
 import { DailyOffer } from "../../components/DailyOffer";
+import { ComboGame } from "../../components/ComboGame";
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -120,8 +121,9 @@ export const Clicker: React.FC = () => {
             <League />
             <LevelStatus />
           </div>
-          <div className="mb-2">
+          <div className="flex flex-row justify-center items-center w-full mb-2  gap-4">
             <DailyOffer />
+            <ComboGame />
           </div>
           <div className="gradient-border-container mb-4 w-10/12">
             <img
@@ -147,7 +149,10 @@ export const Clicker: React.FC = () => {
             />
           </div>
           <Statistics />
-          <EnergyProgress energyCount={energyCount} maxEnergy={user?.maxEnergy} />
+          <EnergyProgress
+            energyCount={energyCount}
+            maxEnergy={user?.maxEnergy}
+          />
           {numberSignPositions.map((position) => (
             <NumberSign
               key={position.id}

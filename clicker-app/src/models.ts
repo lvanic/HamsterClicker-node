@@ -19,6 +19,7 @@ export interface User {
   maxLevel: number;
   energyLevel: number;
   maxEnergy: number;
+  currentComboCompletions: string[];
 }
 
 export interface Task {
@@ -63,4 +64,7 @@ export interface Settings {
   startClickUpgradeCost: number;
   maxClickLevel: number;
   startEnergyUpgradeCost: number;
+  maxEnergyLevel: number;
+  comboUpdateDayHour: number;
+  comboReward: number;
 }

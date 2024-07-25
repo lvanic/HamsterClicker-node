@@ -22,30 +22,9 @@ export const Businesses = () => {
   const notifyContext = useContext(NotifyContext);
   const context = useContext(DataContext);
 
-  // if (!context) {
-  //   return <></>;
-  // }
-
   useEffect(() => {
     if (webSocket && user) {
       webSocket.emit("getBusinessesToBuy", user?.tgId);
-
-      webSocket.on("businesses", (data) => {
-        const parsedData = data.map((b: any) => ({
-          id: b._id,
-          ...b,
-        }));
-        context?.setBusinesses(parsedData);
-      });
-
-      webSocket.on("businessBought", (data) => {
-        webSocket.emit("getBusinessesToBuy", user?.tgId);
-      });
-
-      return () => {
-        webSocket.off("businesses");
-        webSocket.off("businessBought");
-      };
     }
   }, [webSocket, user?.tgId]);
 

@@ -27,22 +27,6 @@ export const Tasks = () => {
     if (webSocket) {
       webSocket.emit("getTasks");
 
-      webSocket.on("tasks", (receivedTasks) => {
-        setDataLoading(false);
-        if (user?.completedTasks) {
-          const updatedTasks = receivedTasks.map((task: any) => {
-            const isCompleted = user?.completedTasks.some(
-              (completedTask: any) => completedTask === task._id
-            );
-
-            return { ...task, completed: isCompleted };
-          });
-          dataContext?.setTasks(updatedTasks);
-        } else {
-          dataContext?.setTasks(receivedTasks);
-        }
-      });
-
       webSocket.on("taskStatus", (data) => {
         const { id, finished } = data;
         dataContext?.setTasks((prevTasks: any) =>
@@ -68,7 +52,6 @@ export const Tasks = () => {
       });
     }
     return () => {
-      webSocket?.off("tasks");
       webSocket?.off("taskStatus");
     };
   }, [webSocket, user]);
