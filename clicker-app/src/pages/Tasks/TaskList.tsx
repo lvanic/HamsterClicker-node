@@ -23,14 +23,14 @@ export const TaskList = ({
             <div className="w-full flex flex-row justify-left items-center">
               <img
                 src={task.avatarUrl}
-                className="mr-2 rounded-full w-16 h-min"
+                className="mr-2 rounded-full w-16 h-16"
               />
               <div>
                 <span
                   className={
                     task.completed
                       ? "text-xs text-gray-500 line-through leading-none"
-                      : " text-white leading-none"
+                      : "text-xs text-white leading-none"
                   }
                 >
                   {task.name}

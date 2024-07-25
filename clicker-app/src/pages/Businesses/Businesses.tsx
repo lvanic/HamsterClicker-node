@@ -116,16 +116,19 @@ export const Businesses = () => {
             const isAffordable = (user?.balance || 0) >= business.price;
             const isEnoughRefs =
               (user?.referrals.length || 0) >= business.refsToUnlock;
-            const isAvaliable = isAffordable || isEnoughRefs;
+            const isLastUpgradeLessThanHourAgo =
+              Date.now() - business.lastUpgradeTimestamp < 3600000;
+            const isAvailable =
+              isAffordable && isEnoughRefs && !isLastUpgradeLessThanHourAgo;
 
             return (
               <div
                 key={business.id}
                 className={`business-item relative ${
-                  !isAvaliable ? "opacity-20 cursor-not-allowed" : "opacity-100"
+                  !isAvailable ? "opacity-20 cursor-not-allowed" : "opacity-100"
                 }`}
                 onClick={() => {
-                  if (isAvaliable) {
+                  if (isAvailable) {
                     setSelectedBusiness(business);
                     setModalOpen(true);
                   }
@@ -139,6 +142,14 @@ export const Businesses = () => {
                 {!isEnoughRefs && isAffordable && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-center text-sm p-2 rounded-2xl rounded-b-xl">
                     Not enough refs - {business.refsToUnlock}
+                  </div>
+                )}
+                {isLastUpgradeLessThanHourAgo && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-center text-sm p-2 rounded-2xl rounded-b-xl">
+                    Upgrade locked until{" "}
+                    {new Date(
+                      business.lastUpgradeTimestamp + 3600000
+                    ).toLocaleTimeString()}
                   </div>
                 )}
 

@@ -50,4 +50,5 @@ export interface Business {
   refsToUnlock: number;
   price: number;
   level: number;
+  lastUpgradeTimestamp: number;
 }
