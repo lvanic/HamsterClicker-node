@@ -13,6 +13,7 @@ import { VerticalDivider } from "../../components/VerticalDivider";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 import { BusinessesList } from "./BusinessesList";
 import { DataContext } from "../../contexts/DataContext";
+import { BusinessesFilter } from "./BusinessesFilter";
 
 export const Businesses = () => {
   const { user } = useUser();
@@ -21,6 +22,7 @@ export const Businesses = () => {
   const [selectedBusiness, setSelectedBusiness] = useState<Business>();
   const notifyContext = useContext(NotifyContext);
   const context = useContext(DataContext);
+  const [filter, setFilter] = useState<string>("Markets");
 
   useEffect(() => {
     if (webSocket && user) {
@@ -95,11 +97,19 @@ export const Businesses = () => {
           </div>
         </div>
       </div>
-      <div style={{ maxHeight: window.innerHeight - 314, overflowY: "scroll" }}>
+      <BusinessesFilter
+        businesses={context?.businesses}
+        onCategorySelect={(category) => {
+          setFilter(category);
+        }}
+      />
+      <div style={{ maxHeight: window.innerHeight - 370, overflowY: "scroll" }}>
         <div className="businesses-container">
           {!!user && context?.businesses && (
             <BusinessesList
-              businesses={context?.businesses}
+              businesses={context?.businesses.filter(
+                (x) => x.category == filter
+              )}
               setModalOpen={setModalOpen}
               setSelectedBusiness={setSelectedBusiness}
               user={user}

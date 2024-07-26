@@ -51,7 +51,7 @@ export const AdminBusinesses = () => {
         {businesses.map((business) => (
           <div
             key={business.id}
-            className="flex flex-row bg-slate-50 px-2 py-2 justify-between"
+            className="flex flex-row px-2 py-2 justify-between"
           >
             <img src={business.avatarUrl} className="w-10 h-10 rounded-full" />
             <div className="flex flex-col w-3/4">

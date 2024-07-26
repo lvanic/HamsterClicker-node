@@ -5,6 +5,7 @@ import React, {
   FC,
   useEffect,
   useCallback,
+  useRef,
 } from "react";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { User, Business, Task } from "../models";
@@ -45,15 +46,15 @@ interface LiteSyncData {
 const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const [user, setUser] = useState<User | null>(null);
   const { webSocket } = useWebSocket();
-  const [isClicked, setIsClicked] = useState(false);
+  const clickRef = useRef<boolean>(false);
 
   const setClicked = useCallback((data: boolean) => {
-    setIsClicked((prev) => {
-      if (prev !== data) {
-        return data;
-      }
-      return prev;
-    });
+    console.log(data);
+    
+    if (clickRef.current != data) {
+      clickRef.current = data;
+    } else {
+    }
   }, []);
 
   const handleGetUser = (userData: any) => {
@@ -65,46 +66,44 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     });
   };
 
-  const handleLiteSync = useCallback(
-    (data: LiteSyncData) => {
-      setUser((prev) => {
-        if (!prev) {
-          return null;
-        }
-        console.log(isClicked);
+  const handleLiteSync = useCallback((data: LiteSyncData) => {
+    setUser((prev) => {
+      if (!prev) {
+        return null;
+      }
+      console.log(clickRef.current);
 
-        return {
-          ...prev,
-          businesses: [...prev.businesses, ...(data.newBusinesses || [])],
-          referrals: [...prev.referrals, ...(data.referrals || [])],
-          completedTasks: [
-            ...prev.completedTasks,
-            ...(data.completedTasks || []),
-          ],
-          clickPower: data.clickPower || prev.clickPower,
-          lastDailyRewardTimestamp:
-            data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
-          balance: isClicked
-            ? prev.balance + data.deltaAddedFromBusinesses
-            : data.balance,
-          score: isClicked
-            ? prev.score + data.deltaAddedFromBusinesses
-            : data.score,
-          energyLevel: data.energyLevel || prev.energyLevel,
-          maxEnergy: data.maxEnergy || prev.maxEnergy,
-          energy: isClicked ? prev.energy + data.deltaAddedEnergy : data.energy,
-          userPlaceInLeague: data.userPlaceInLeague,
-          fullEnergyActivates:
-            data.fullEnergyActivates || prev.fullEnergyActivates,
-          lastFullEnergyTimestamp:
-            data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
-          totalIncomePerHour:
-            data.totalIncomePerHour || prev.totalIncomePerHour,
-        } as User;
-      });
-    },
-    [isClicked]
-  );
+      return {
+        ...prev,
+        businesses: [...prev.businesses, ...(data.newBusinesses || [])],
+        referrals: [...prev.referrals, ...(data.referrals || [])],
+        completedTasks: [
+          ...prev.completedTasks,
+          ...(data.completedTasks || []),
+        ],
+        clickPower: data.clickPower || prev.clickPower,
+        lastDailyRewardTimestamp:
+          data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
+        balance: clickRef.current
+          ? prev.balance + data.deltaAddedFromBusinesses
+          : data.balance,
+        score: clickRef.current
+          ? prev.score + data.deltaAddedFromBusinesses
+          : data.score,
+        energyLevel: data.energyLevel || prev.energyLevel,
+        maxEnergy: data.maxEnergy || prev.maxEnergy,
+        energy: clickRef.current
+          ? prev.energy + data.deltaAddedEnergy
+          : data.energy,
+        userPlaceInLeague: data.userPlaceInLeague,
+        fullEnergyActivates:
+          data.fullEnergyActivates || prev.fullEnergyActivates,
+        lastFullEnergyTimestamp:
+          data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
+        totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
+      } as User;
+    });
+  }, []);
 
   useEffect(() => {
     const tgUser = getTelegramUser();

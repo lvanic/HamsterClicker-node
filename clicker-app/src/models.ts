@@ -53,6 +53,7 @@ export interface Business {
   price: number;
   level: number;
   lastUpgradeTimestamp: number;
+  category: string;
 }
 
 export interface Settings {

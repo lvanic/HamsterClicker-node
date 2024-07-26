@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   AiOutlineHome,
   AiOutlineUser,
@@ -8,7 +8,7 @@ import {
 import { useWebSocket } from "../../hooks/useWebsocket";
 import Loader from "../../components/Loader/Loader";
 import { usePageLoading } from "../../hooks/usePageLoading";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getPlatform } from "../../services/telegramService";
 import QRCode from "react-qr-code";
 import { getConfig } from "../../utils/config";
@@ -22,6 +22,12 @@ import { HomeSvg } from "../../components/HomeSvg";
 export const Layout = () => {
   const { isPageLoading } = usePageLoading();
   const platform = useMemo(() => getPlatform(), [getPlatform]);
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.pathname);
+
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location.pathname]);
 
   // if (platform !== "ios" && platform !== "android") {
   //   return <QRCodeComponent />;
@@ -33,48 +39,48 @@ export const Layout = () => {
   return (
     <>
       <Outlet />
-      <nav className="fixed bottom-0 left-0 w-full bg-opacity-30 bg-gray-800 border-t border-gray-700 flex justify-around py-2 shadow-lg flex items-center justify-center">
+      <nav className="fixed bottom-0 left-0 w-full bg-[#2525258C] border-t border-gray-700 flex justify-around py-2 shadow-lg flex items-center justify-center">
         <Link
           to="/"
-          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+          className={`w-16 text-white text-center flex flex-col items-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+              activeTab === "/" ? "bg-[#FD5463]" : ""
+          }`}
         >
           <HomeSvg />
           <span className="text-xs">Home</span>
         </Link>
         <Link
           to="/businesses"
-          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+          className={`w-16 text-white text-center flex flex-col items-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/businesses" ? "bg-[#FD5463]" : ""
+          }`}
         >
           <BusinessSvg />
           <span className="text-xs">Ferms</span>
         </Link>
         <Link
           to="/referrals"
-          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+          className={`w-16 text-white text-center flex flex-col items-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/referrals" ? "bg-[#FD5463]" : ""
+          }`}
         >
           <FriendSvg />
           <span className="text-xs">Friends</span>
         </Link>
         <Link
           to="/tasks"
-          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+          className={`w-16 text-white text-center flex flex-col items-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/tasks" ? "bg-[#FD5463]" : ""
+          }`}
         >
           <EarnSvg />
           <span className="text-xs">Earn</span>
         </Link>
         <Link
           to="/airdrop"
-          className="text-white text-center flex flex-col items-center text-sm transition duration-300"
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#1e90ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#fff")}
+          className={`w-16 text-white text-center flex flex-col items-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/airdrop" ? "bg-[#FD5463]" : ""
+          }`}
         >
           <EggSvg />
           <span className="text-xs">Airdrop</span>
