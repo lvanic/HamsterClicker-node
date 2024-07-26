@@ -20,7 +20,7 @@ export const runEnergyRecover = () => {
     try {
       await Promise.all(users.map((user) => {
         return User.findOneAndUpdate({ tgId: user.tgId }, {
-          $inc : { 'energy' : 1}
+          $inc : { 'energy' : 1, addedEnergy: 1}
         });
       }));
     } catch {}
@@ -57,7 +57,11 @@ export const runBusinesses = () => {
       return User.findOneAndUpdate(
         { _id: user._id },
         {
-          $inc: { balance: totalReward, score: totalReward },
+          $inc: { 
+            balance: totalReward, 
+            score: totalReward, 
+            addedFromBusinesses: totalReward 
+          },
         }
       );
     });

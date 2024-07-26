@@ -459,10 +459,16 @@ export const initSocketsLogic = (io) => ({
       const userPlaceInLeague = await User.countDocuments({
         balance: { $lte: userLeague.maxScore, $gte: newUserInfo.score },
       });
+
+      const deltaAddedFromBusinesses = newUserInfo.addedFromBusinesses - lastUserInfo.addedFromBusinesses;
+      const deltaAddedEnergy = newUserInfo.addedEnergy - lastUserInfo.addedEnergy;
+
       lastUserInfo = newUserInfo;
 
       io.emit("liteSync", {
         ...updatedInfo,
+        deltaAddedFromBusinesses: deltaAddedFromBusinesses,
+        deltaAddedEnergy:deltaAddedEnergy,
         balance: newUserInfo.balance,
         score: newUserInfo.score,
         energy: newUserInfo.energy,

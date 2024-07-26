@@ -63,7 +63,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
             console.log(task, user?.completedTasks);
 
             const isCompleted = user?.completedTasks.some(
-              (completedTask: any) => completedTask == task._id
+              (completedTask: any) => completedTask.id == task._id
             );
 
             return { ...task, completed: isCompleted };

@@ -14,7 +14,7 @@ interface ClickData {
 
 export const useClick = () => {
   const { webSocket } = useWebSocket();
-  const { user, setUser } = useUser();
+  const { user, setUser, setClicked } = useUser();
   const { setPageLoading } = usePageLoading();
 
   const [clickCount, setClickCount] = useState<number>(
@@ -28,10 +28,14 @@ export const useClick = () => {
     setClickCount(clicks);
     setEnergyCount(energy);
   };
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleClick = (clickData: ClickData) => {
     if (webSocket && energyCount > 0) {
       webSocket.emit("clickEvent", JSON.stringify(clickData));
+      if (setClicked) {
+        setClicked(true);
+      }
       if (!setUser) {
         return;
       }
@@ -42,28 +46,33 @@ export const useClick = () => {
 
       updateCounts(newBalance, newEnergy, newScore);
 
-      setTimeout(() => {
-        setUser((prev) => {
-          if (!prev) {
-            return null;
-          }
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current);
+      }
 
-          if (user?.league.maxScore && user.score >= user?.league.maxScore - 1) {
-            webSocket.emit("getUser", prev.tgId);
-          }
-          if (prev.energy > 0) {
-            webAppVibrate();
-            return {
-              ...prev,
-              score: newScore,
-              balance: newBalance,
-              energy: newEnergy,
-            };
-          } else {
-            return prev;
-          }
-        });
-      }, 100);
+      clickTimeoutRef.current = setTimeout(() => {
+        if (setClicked) {
+          setClicked(false);
+        }
+      }, 5000);
+
+      setUser((prev) => {
+        if (!prev) {
+          return null;
+        }
+
+        if (prev.energy > 0) {
+          webAppVibrate();
+          return {
+            ...prev,
+            score: newScore,
+            balance: newBalance,
+            energy: newEnergy,
+          };
+        } else {
+          return prev;
+        }
+      });
     } else {
       console.error("WebSocket is not connected or no energy left");
     }

@@ -38,6 +38,7 @@ const main = async () => {
           maxEnergy: 1000,
           clickPower: 1,
           energyLevel: 1,
+          addedFromBusinesses: 0,
         });
 
         if (!!refId) {
@@ -57,7 +58,7 @@ const main = async () => {
     }
   });
 
-  bot.launch();
+  // bot.launch();
   await mongoose.connect(config.MONGO_DB);
 
   const appSettings = await AppSettings.find({});

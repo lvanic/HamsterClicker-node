@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   tgUsername: String,
   firstName: String,
   lastName: String,
+  addedFromBusinesses: { type: Number, min: 0},
+  addedEnergy: { type: Number, min: 0},
   balance: { type: Number, min: 0},
   score: { type: Number, min: 0},
   energy: { type: Number, min: 0},

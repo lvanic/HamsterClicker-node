@@ -4,15 +4,16 @@ import React, {
   ReactNode,
   FC,
   useEffect,
+  useCallback,
 } from "react";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { User, Business, Task } from "../models";
-import { useLocation } from "react-router-dom";
 import { getTelegramUser } from "../services/telegramService";
 
 interface UserContextProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  setClicked: (data: boolean) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -37,15 +38,25 @@ interface LiteSyncData {
   maxEnergy: number;
   energyLevel: number;
   totalIncomePerHour?: number;
+  deltaAddedFromBusinesses: number;
+  deltaAddedEnergy: number;
 }
 
 const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const [user, setUser] = useState<User | null>(null);
   const { webSocket } = useWebSocket();
+  const [isClicked, setIsClicked] = useState(false);
+
+  const setClicked = useCallback((data: boolean) => {
+    setIsClicked((prev) => {
+      if (prev !== data) {
+        return data;
+      }
+      return prev;
+    });
+  }, []);
 
   const handleGetUser = (userData: any) => {
-    console.log(userData);
-
     setUser({
       ...userData,
       totalIncomePerHour: userData.totalIncomePerHour,
@@ -54,53 +65,81 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     });
   };
 
-  const handleLiteSync = (data: LiteSyncData) => {
-    setUser((prev) => {
-      if (!prev) {
-        return null;
-      }
+  const handleLiteSync = useCallback(
+    (data: LiteSyncData) => {
+      setUser((prev) => {
+        if (!prev) {
+          return null;
+        }
+        console.log(isClicked);
 
-      return {
-        ...prev,
-        businesses: [...prev.businesses, ...(data.newBusinesses || [])],
-        referrals: [...prev.referrals, ...(data.referrals || [])],
-        completedTasks: [
-          ...prev.completedTasks,
-          ...(data.completedTasks || []),
-        ],
-        clickPower: data.clickPower || prev.clickPower,
-        lastDailyRewardTimestamp:data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
-        balance: data.balance,
-        score: data.score,
-        energyLevel: data.energyLevel || prev.energyLevel,
-        maxEnergy: data.maxEnergy || prev.maxEnergy,
-        energy: data.energy,
-        userPlaceInLeague: data.userPlaceInLeague,
-        fullEnergyActivates: data.fullEnergyActivates || prev.fullEnergyActivates,
-        lastFullEnergyTimestamp: data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
-        totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
-      } as User;
-    });
-  };
+        return {
+          ...prev,
+          businesses: [...prev.businesses, ...(data.newBusinesses || [])],
+          referrals: [...prev.referrals, ...(data.referrals || [])],
+          completedTasks: [
+            ...prev.completedTasks,
+            ...(data.completedTasks || []),
+          ],
+          clickPower: data.clickPower || prev.clickPower,
+          lastDailyRewardTimestamp:
+            data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
+          balance: isClicked
+            ? prev.balance + data.deltaAddedFromBusinesses
+            : data.balance,
+          score: isClicked
+            ? prev.score + data.deltaAddedFromBusinesses
+            : data.score,
+          energyLevel: data.energyLevel || prev.energyLevel,
+          maxEnergy: data.maxEnergy || prev.maxEnergy,
+          energy: isClicked ? prev.energy + data.deltaAddedEnergy : data.energy,
+          userPlaceInLeague: data.userPlaceInLeague,
+          fullEnergyActivates:
+            data.fullEnergyActivates || prev.fullEnergyActivates,
+          lastFullEnergyTimestamp:
+            data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
+          totalIncomePerHour:
+            data.totalIncomePerHour || prev.totalIncomePerHour,
+        } as User;
+      });
+    },
+    [isClicked]
+  );
 
   useEffect(() => {
     const tgUser = getTelegramUser();
-    if (webSocket && tgUser.id != -1) {
+    if (webSocket && tgUser.id !== -1) {
       webSocket.on("liteSync", handleLiteSync);
       webSocket.emit("subscribeLiteSync", tgUser.id);
+    }
+    return () => {
+      webSocket?.off("liteSync", handleLiteSync);
+    };
+  }, [webSocket, handleLiteSync]);
 
+  useEffect(() => {
+    const tgUser = getTelegramUser();
+    if (webSocket && tgUser.id !== -1) {
       webSocket.on("user", handleGetUser);
       webSocket.emit("getUser", tgUser.id);
-
-      return () => {
-        webSocket.off("user", handleGetUser);
-        webSocket.off("liteSync", handleLiteSync);
-      };
     }
+    return () => {
+      webSocket?.off("user", handleGetUser);
+    };
   }, [webSocket]);
 
+  useEffect(() => {
+    if (
+      user?.league.maxScore &&
+      user.score >= user.league.maxScore - 1 &&
+      webSocket
+    ) {
+      webSocket.emit("getUser", user.tgId);
+    }
+  }, [webSocket, user]);
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, setClicked }}>
       {children}
     </UserContext.Provider>
   );
