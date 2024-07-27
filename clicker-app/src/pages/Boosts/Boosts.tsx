@@ -63,6 +63,7 @@ export const Boosts = () => {
   const [selectedBoost, setSelectedBoost] = useState<Boost | null>(null);
   const { startClickUpgradeCost, startEnergyUpgradeCost } = useSettings();
   const notifyContext = useContext(NotifyContext);
+  const { maxClickLevel, maxEnergyLevel } = useSettings();
 
   useEffect(() => {
     if (webSocket) {
@@ -90,7 +91,7 @@ export const Boosts = () => {
         "activateBoost",
         JSON.stringify([user?.tgId, "fullEnergyBoost"])
       );
-      
+
       if (fullEnergyActivates < 3) {
         const notify: NotifyMessage = {
           status: "ok",
@@ -110,6 +111,16 @@ export const Boosts = () => {
   };
 
   const improveClick = () => {
+    if (!!user && user?.clickPower >= maxClickLevel) {
+      const notify: NotifyMessage = {
+        status: "unknown",
+        className: "h-72",
+        message: "You have reached the maximum clicker level",
+      };
+      notifyContext?.setNotify(notify);
+      return;
+    }
+
     if (webSocket) {
       webSocket.emit("upgradeClick", user?.tgId);
     }
@@ -134,6 +145,16 @@ export const Boosts = () => {
   };
 
   const upgradeEnergy = () => {
+    if (!!user?.energyLevel && user.energyLevel >= maxEnergyLevel) {
+      const notify: NotifyMessage = {
+        status: "unknown",
+        className: "h-72",
+        message: "You have reached the maximum energy level",
+      };
+      notifyContext?.setNotify(notify);
+      return;
+    }
+
     if (webSocket) {
       webSocket.emit("upgradeEnergy", user?.tgId);
     }
@@ -302,10 +323,15 @@ export const Boosts = () => {
               }}
               className="p-1 rounded-lg"
               style={{
-                background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+                background:
+                  !!user && user?.clickPower >= maxClickLevel
+                    ? "linear-gradient(180deg, #C2C2C2 0%, #A1A1A1 100%)"
+                    : "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
               }}
             >
-              Improve
+              {!!user && user?.clickPower >= maxClickLevel
+                ? "Max level"
+                : "Improve"}
             </button>
           </div>
         </div>
@@ -333,16 +359,22 @@ export const Boosts = () => {
               {user?.energyLevel} lvl
             </div>
             <button
+              disabled={!!user && user?.energyLevel >= maxEnergyLevel}
               onClick={() => {
                 setModalOpen(true);
                 setSelectedBoost(boosts[2]);
               }}
               className="p-1 rounded-lg"
               style={{
-                background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+                background:
+                  !!user && user?.energyLevel >= maxEnergyLevel
+                    ? "linear-gradient(180deg, #C2C2C2 0%, #A1A1A1 100%)"
+                    : "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
               }}
             >
-              Upgrade
+              {!!user && user?.energyLevel >= maxEnergyLevel
+                ? "Max level"
+                : "Upgrade"}
             </button>
           </div>
         </div>

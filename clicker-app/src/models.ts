@@ -19,6 +19,7 @@ export interface User {
   maxLevel: number;
   energyLevel: number;
   maxEnergy: number;
+  currentComboCompletions: string[];
 }
 
 export interface Task {
@@ -30,7 +31,7 @@ export interface Task {
   active: boolean;
   type: string;
   activaterUrl: string;
-  completed: boolean;
+  completed: boolean | undefined;
 }
 
 export interface League {
@@ -52,6 +53,7 @@ export interface Business {
   price: number;
   level: number;
   lastUpgradeTimestamp: number;
+  category: string;
 }
 
 export interface Settings {
@@ -63,4 +65,7 @@ export interface Settings {
   startClickUpgradeCost: number;
   maxClickLevel: number;
   startEnergyUpgradeCost: number;
+  maxEnergyLevel: number;
+  comboUpdateDayHour: number;
+  comboReward: number;
 }

@@ -158,6 +158,7 @@ export const registerAdminRoutes = (router) => {
       rewardPerHour: ctx.request.body.rewardPerHour,
       refsToUnlock: !!ctx.request.body.refsToUnlock ? ctx.request.body.refsToUnlock : 0,
       price: ctx.request.body.price,
+      category: ctx.request.body.category,
       isDeleted: false,
     });
 

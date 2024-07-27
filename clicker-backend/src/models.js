@@ -10,9 +10,11 @@ const userSchema = new mongoose.Schema({
   tgUsername: String,
   firstName: String,
   lastName: String,
-  balance: { type: Number, min: 0},
-  score: { type: Number, min: 0},
-  energy: { type: Number, min: 0},
+  addedFromBusinesses: { type: Number, min: 0 },
+  addedEnergy: { type: Number, min: 0 },
+  balance: { type: Number, min: 0 },
+  score: { type: Number, min: 0 },
+  energy: { type: Number, min: 0 },
   connectedWallet: String,
   lastDailyRewardTimestamp: Number,
   lastFullEnergyTimestamp: Number,
@@ -20,11 +22,13 @@ const userSchema = new mongoose.Schema({
   clickPower: Number,
   energyLevel: Number,
   lastOnlineTimestamp: Number,
-  currentComboCompletions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
+  currentComboCompletions: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Business" },
+  ],
   referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
-  businessUpgrades: [businessUpgradeSchema]
+  businessUpgrades: [businessUpgradeSchema],
 });
 export const User = mongoose.model("User", userSchema);
 
@@ -73,5 +77,6 @@ const businessSchema = new mongoose.Schema({
   rewardPerHour: Number,
   refsToUnlock: Number,
   isDeleted: Boolean,
+  category: String,
 });
 export const Business = mongoose.model("Business", businessSchema);

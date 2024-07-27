@@ -15,7 +15,6 @@ import { DataContext } from "../../contexts/DataContext";
 import { Task } from "../../models";
 
 export const Tasks = () => {
-  // const [tasks, setTasks] = useState<any>([]);
   const { webSocket } = useWebSocket();
   const { user } = useUser();
   const [isDataLoading, setDataLoading] = useState(false);
@@ -27,29 +26,15 @@ export const Tasks = () => {
     if (webSocket) {
       webSocket.emit("getTasks");
 
-      webSocket.on("tasks", (receivedTasks) => {
-        setDataLoading(false);
-        if (user?.completedTasks) {
-          const updatedTasks = receivedTasks.map((task: any) => {
-            const isCompleted = user?.completedTasks.some(
-              (completedTask: any) => completedTask === task._id
-            );
-
-            return { ...task, completed: isCompleted };
-          });
-          dataContext?.setTasks(updatedTasks);
-        } else {
-          dataContext?.setTasks(receivedTasks);
-        }
-      });
-
       webSocket.on("taskStatus", (data) => {
         const { id, finished } = data;
-        dataContext?.setTasks((prevTasks: any) =>
-          prevTasks.map((task: any) =>
-            task._id === id ? { ...task, completed: finished } : task
-          )
-        );
+
+        dataContext?.setTasks((prevTasks: any) => {          
+          return prevTasks.map((task: any) =>
+            task._id == id ? { ...task, completed: finished } : task
+          );
+        });
+
         let notify: NotifyMessage;
         if (finished) {
           notify = {
@@ -63,15 +48,14 @@ export const Tasks = () => {
             status: "error",
             className: "h-72",
           };
-          notifyContext?.setNotify(notify);
         }
+        notifyContext?.setNotify(notify);
       });
     }
     return () => {
-      webSocket?.off("tasks");
       webSocket?.off("taskStatus");
     };
-  }, [webSocket, user]);
+  }, [webSocket]);
 
   const handleTaskClick = (task: any) => {
     setSelectedTask(task);
@@ -82,18 +66,22 @@ export const Tasks = () => {
   };
 
   const handleOpenLink = () => {
-    if (
-      selectedTask.type !== "telegram" &&
-      dataContext?.tasks[selectedTask._id].active == false
-    ) {
-      const tgUserId = getTelegramUser().id;
-      webSocket?.emit(
-        "checkTaskStatus",
-        JSON.stringify([tgUserId, selectedTask._id])
+    if (selectedTask && selectedTask._id) {
+      const task = dataContext?.tasks.find(
+        (task: any) => task._id === selectedTask._id
       );
-    }
+      const isTaskCompleted = task?.completed;
 
-    window.open(selectedTask.activateUrl, "_blank");
+      if (selectedTask.type !== "telegram" && !isTaskCompleted) {
+        const tgUserId = getTelegramUser().id;
+        webSocket?.emit(
+          "checkTaskStatus",
+          JSON.stringify([tgUserId, selectedTask._id])
+        );
+      }
+
+      window.open(selectedTask.activateUrl, "_blank");
+    }
   };
 
   const handleCheckStatus = () => {
@@ -122,7 +110,7 @@ export const Tasks = () => {
         ) : (
           <ul
             className="list-none p-0"
-            style={{ maxHeight: window.innerHeight - 338, overflowY: "scroll" }}
+            style={{ maxHeight: window.innerHeight - 346, overflowY: "scroll" }}
           >
             <div>Daily reward</div>
             <TaskList

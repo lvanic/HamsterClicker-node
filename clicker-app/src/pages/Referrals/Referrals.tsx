@@ -45,7 +45,7 @@ export const Referrals = () => {
       </div>
       <ul
         className="list-none p-4 rounded-xl bg-[#383838]"
-        style={{ maxHeight: window.innerHeight - 464, overflowY: "scroll" }}
+        style={{ maxHeight: window.innerHeight - 474, overflowY: "scroll" }}
       >
         <div onClick={updateReferals} className="absolute right-0 mr-16">
           <Reloader className={isReferralUpdate ? "animate-spin" : ""} />

@@ -10,6 +10,7 @@ export const AdminAddBusiness = () => {
   const [rewardPerHour, setRewardPerHour] = useState(0);
   const [refsToUnlock, setRefsToUnlock] = useState(0);
   const [price, setPrice] = useState(0);
+  const [category, setCategory] = useState("Specials");
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -28,6 +29,7 @@ export const AdminAddBusiness = () => {
         rewardPerHour,
         refsToUnlock,
         price,
+        category,
       }),
     });
 
@@ -83,6 +85,13 @@ export const AdminAddBusiness = () => {
         className="bg-slate-50 py-1 px-4 w-full outline-none"
         onChange={(e) => setPrice(Number(e.target.value))}
       />
+      <select onChange={(e) => setCategory(e.target.value)}>
+        <option value="PR&Team">PR&Team</option>
+        <option value="Markets">Markets</option>
+        <option value="Legal">Legal</option>
+        <option value="Web3">Web3</option>
+        <option value="Specials">Specials</option>
+      </select>
 
       <button
         className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono"
