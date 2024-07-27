@@ -49,7 +49,7 @@ export const AdminLeagues = () => {
         {leagues.map((league) => (
           <div
             key={league.id}
-            className="flex flex-row bg-slate-50 px-2 py-2 justify-between"
+            className="flex flex-row bg-slate-50 px-2 py-2 justify-between text-black"
           >
             <img src={league.avatarUrl} className="w-10 h-10 rounded-full" />
             <div className="flex flex-col w-2/4">
@@ -57,7 +57,7 @@ export const AdminLeagues = () => {
               <div className="text-xs font-light">{league.description}</div>
             </div>
             <button
-              className="bg-red-200 px-4 w-1/4"
+              className="bg-red-300 px-4 w-1/4"
               onClick={() => handleDeleteLeague(league.id)}
             >
               Delete

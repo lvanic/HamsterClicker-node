@@ -46,7 +46,7 @@ export const AdminUsers = () => {
   }
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 text-black">
       <div className="flex flex-row items-start justify-between">
         <button className="py-2 px-4 bg-slate-50 hover:bg-slate-300 font-mono text-sm" onClick={onSortClick}>
           Balance sort: {balanceSort === "asc" ? "asc" : "desc"}

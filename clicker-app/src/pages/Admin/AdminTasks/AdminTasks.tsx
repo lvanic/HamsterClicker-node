@@ -76,7 +76,7 @@ export const AdminTasks = () => {
         </Link>
 
         <button
-          className="bg-slate-50 hover:bg-slate-300 font-light py-1 px-4 w-full font-mono"
+          className="bg-slate-50 hover:bg-slate-300 font-light py-1 px-4 w-full font-mono text-black"
           onClick={handleFilterClick}
         >
           Filter: {filter}
@@ -90,7 +90,7 @@ export const AdminTasks = () => {
         {tasks.map((task) => (
           <div
             key={task.id}
-            className="flex flex-row bg-slate-50 px-2 py-2 justify-between"
+            className="flex flex-row bg-slate-50 px-2 py-2 justify-between text-black"
           >
             <img src={task.avatarUrl} className="w-10 h-10 rounded-full" />
             <div className="flex flex-col w-2/4">
@@ -102,14 +102,14 @@ export const AdminTasks = () => {
             </div>
             {task.active ? (
               <button
-                className="bg-red-200 px-4 w-1/4"
+                className="bg-red-300 px-4 w-1/4"
                 onClick={() => handleDeactivateClick(task.id)}
               >
                 Deactivate
               </button>
             ) : (
               <button
-                className="bg-green-200 px-4 w-1/4"
+                className="bg-green-300 px-4 w-1/4"
                 onClick={() => handleActivateClick(task.id)}
               >
                 Activate

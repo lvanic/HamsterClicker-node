@@ -1,7 +1,8 @@
 import { Task, User, AppSettings, League, Business } from "./models.js";
 
 export const getAppSettings = async () => {
-  const appSettings = await AppSettings.find({});
+  const appSettings = await AppSettings.find({})
+    .populate("comboBusinesses");
 
   if (!appSettings.length || appSettings.length === 0) {
     console.error("[FATAL] App settings not found");
@@ -14,7 +15,7 @@ export const getAppSettings = async () => {
 export const registerAdminRoutes = (router) => {
   router.get("/admin/settings", async (ctx) => {
     const settings = await getAppSettings();
-    ctx.body = settings;
+    ctx.body = { ...settings.toObject(), comboBusinesses: settings.comboBusinesses.map((b) => b.toObject()) };
   });
 
   router.post("/admin/settings", async (ctx) => {

@@ -9,6 +9,7 @@ export const AdminSettings = () => {
   const [fullEnergyBoostPerDay, setFullEnergyBoostPerDay] = useState(0);
   const [dailyReward, setDailyReward] = useState(0);
   const [referralReward, setReferralReward] = useState(0);
+  const [comboBusinesses, setComboBusinesses] = useState([]);
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -25,6 +26,7 @@ export const AdminSettings = () => {
     setFullEnergyBoostPerDay(settings.fullEnergyBoostPerDay);
     setDailyReward(settings.dailyReward);
     setReferralReward(settings.referralReward);
+    setComboBusinesses(settings.comboBusinesses);
   }
 
   const handleSubmit = async () => {
@@ -55,7 +57,20 @@ export const AdminSettings = () => {
   }
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 text-black">
+      <div className="flex flex-col mb-4">
+        <h2 className="text-white">Current combos:</h2>
+
+        <div className="flex space-x-2">
+          {comboBusinesses.map((business: any) => (
+            <div className="bg-slate-50 px-2 py-1 rounded-md flex justify-center items-center">
+              <img src={business.avatarUrl} className="w-6 h-6" />
+              <div className="text-xs ml-2">{business.name}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="flex flex-col">
         <label className="text-xs bg-slate-300 w-2/5">Full energy boost per day</label>
         <input

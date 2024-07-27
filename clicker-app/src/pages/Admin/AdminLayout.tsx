@@ -6,10 +6,10 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="font-sans p-5 max-w-3xl mx-auto">
       <h1 className="text-2xl font-black text-white mb-4 font-mono">CLICKER ADMIN</h1>
-      <ul className="list-none list-inside flex flex-row justify-between mb-6">
+      <ul className="list-none list-inside flex flex-row justify-between mb-6 text-black">
         <li className="py-1 px-6 bg-slate-50 font-bold">
           <a
-            className={pathname === "/admin/tasks" ? "text-black" : "text-gray-400"}
+            className={pathname === "/admin/tasks" ? "text-gray-400" : "text-black"}
             href="/admin/tasks"
           >
             Tasks
@@ -17,7 +17,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </li>
         <li className="py-1 px-10 bg-slate-50 font-bold">
           <a
-            className={pathname === "/admin/leagues" ? "text-black" : "text-gray-400"}
+            className={pathname === "/admin/leagues" ? "text-gray-400" : "text-black"}
             href="/admin/leagues"
           >
             Leagues
@@ -25,7 +25,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </li>
         <li className="py-1 px-10 bg-slate-50 font-bold">
           <a
-            className={pathname === "/admin/businesses" ? "text-black" : "text-gray-400"}
+            className={pathname === "/admin/businesses" ? "text-gray-400" : "text-black"}
             href="/admin/businesses"
           >
             Businesses
@@ -33,7 +33,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </li>
         <li className="py-1 px-10 bg-slate-50 font-bold">
           <a
-            className={pathname === "/admin/users" ? "text-black" : "text-gray-400"}
+            className={pathname === "/admin/users" ? "text-gray-400" : "text-black"}
             href="/admin/users"
           >
             Users
@@ -41,7 +41,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </li>
         <li className="py-1 px-10 bg-slate-50 font-bold">
           <a
-            className={pathname === "/admin/settings" ? "text-black" : "text-gray-400"}
+            className={pathname === "/admin/settings" ? "text-gray-400" : "text-black"}
             href="/admin/settings"
           >
             Settings
