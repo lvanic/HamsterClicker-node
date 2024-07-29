@@ -103,7 +103,7 @@ export const Businesses = () => {
           setFilter(category);
         }}
       />
-      <div style={{ maxHeight: window.innerHeight - 370, overflowY: "scroll" }}>
+      <div style={{ maxHeight: window.innerHeight - 374, overflowY: "scroll" }}>
         <div className="businesses-container">
           {!!user && context?.businesses && (
             <BusinessesList

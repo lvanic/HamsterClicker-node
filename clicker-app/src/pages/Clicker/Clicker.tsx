@@ -125,7 +125,7 @@ export const Clicker: React.FC = () => {
             <DailyOffer />
             <ComboGame />
           </div>
-          <div className="gradient-border-container mb-4 w-10/12">
+          <div className="gradient-border-container mb-2 w-10/12">
             <img
               ref={imgRef}
               src={user?.league.avatarUrl}

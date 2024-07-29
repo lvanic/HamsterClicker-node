@@ -29,7 +29,7 @@ export const Tasks = () => {
       webSocket.on("taskStatus", (data) => {
         const { id, finished } = data;
 
-        dataContext?.setTasks((prevTasks: any) => {          
+        dataContext?.setTasks((prevTasks: any) => {
           return prevTasks.map((task: any) =>
             task._id == id ? { ...task, completed: finished } : task
           );
@@ -39,16 +39,17 @@ export const Tasks = () => {
         if (finished) {
           notify = {
             message: "Task completed!",
-            status: "ok",
-            className: "h-72",
+            status: "task",
+            className: "h-96",
           };
         } else {
           notify = {
             message: "Task not completed yet.",
             status: "error",
-            className: "h-72",
+            className: "h-96",
           };
         }
+        setSelectedTask(null);
         notifyContext?.setNotify(notify);
       });
     }
@@ -110,7 +111,7 @@ export const Tasks = () => {
         ) : (
           <ul
             className="list-none p-0"
-            style={{ maxHeight: window.innerHeight - 346, overflowY: "scroll" }}
+            style={{ maxHeight: window.innerHeight - 348, overflowY: "scroll" }}
           >
             <div>Daily reward</div>
             <TaskList
