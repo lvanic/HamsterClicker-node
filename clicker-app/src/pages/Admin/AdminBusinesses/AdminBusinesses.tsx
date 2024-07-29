@@ -7,7 +7,6 @@ const { adminApiUrl } = getConfig();
 
 export const AdminBusinesses = () => {
   const [businesses, setBusinesses] = useState<Business[]>([]);
-
   const navigate = useNavigate();
 
   const refreshBusinesses = async () => {
