@@ -324,10 +324,8 @@ export const initSocketsLogic = (io) => ({
 
     await User.findOneAndUpdate(
       { tgId: user.tgId },
-      { $inc: { balance: -cost } }
+      { $inc: { balance: -cost, clickPower: 1 } }
     );
-    user.clickPower += 1;
-    await user.save();
   },
   subscribeLiteSync: async (userId) => {
     let lastUserInfo = await User.findOne({ tgId: userId });
