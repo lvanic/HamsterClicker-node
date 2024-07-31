@@ -1,10 +1,13 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useContext, useState } from "react";
 import { useUser } from "../hooks/useUser";
 import { useWebSocket } from "../hooks/useWebsocket";
+import { NotifyContext } from "../contexts/NotifyContext";
 
 export const DailyOffer = () => {
   const { webSocket } = useWebSocket();
+  const notifyContext = useContext(NotifyContext);
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   const dailyDisabled = useMemo(() => {
     if (user) {
@@ -14,8 +17,25 @@ export const DailyOffer = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (webSocket) {
+      webSocket.on("boostActivated", (msg) => {
+        notifyContext?.setNotify({
+          status: "ok",
+          message: msg,
+        });
+        setIsLoading(false);
+      });
+    }
+
+    return () => {
+      webSocket?.off("boostActivated");
+    };
+  }, [webSocket]);
+
   const onDailyActivate = () => {
     if (webSocket && !dailyDisabled) {
+      setIsLoading(true);
       webSocket.emit(
         "activateBoost",
         JSON.stringify([user?.tgId, "dailyReward"])
@@ -26,8 +46,9 @@ export const DailyOffer = () => {
   return (
     <div
       onClick={onDailyActivate}
-      className={dailyDisabled ? "opacity-50" : ""}
+      className={dailyDisabled ? "relative opacity-50" : "relative"}
     >
+      {isLoading && <div className="loader absolute top-4 left-4"/>}
       <svg
         width="60"
         height="60"

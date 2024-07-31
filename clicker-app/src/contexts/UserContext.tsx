@@ -49,8 +49,6 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const clickRef = useRef<boolean>(false);
 
   const setClicked = useCallback((data: boolean) => {
-    console.log(data);
-    
     if (clickRef.current != data) {
       clickRef.current = data;
     } else {
