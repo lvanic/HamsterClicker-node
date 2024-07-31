@@ -162,6 +162,10 @@ export const initSocketsLogic = (io) => ({
   getLeagueInfo: async (leagueId, topUsersCount) => {
     const league = await League.findOne({ _id: leagueId });
 
+    if (!league) {
+      return;
+    }
+
     const usersInLeague = await User.countDocuments({
       balance: { $lte: league.maxScore, $gte: league.minScore },
     });
