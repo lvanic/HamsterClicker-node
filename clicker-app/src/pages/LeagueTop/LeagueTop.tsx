@@ -12,7 +12,7 @@ export const LeagueTop = () => {
   const [topUsersInLeague, setTopUsersInLeague] = useState<User[]>([]);
 
   useEffect(() => {
-    if (webSocket) {
+    if (webSocket && user?.league.id) {
       webSocket.emit("getLeagueInfo", user?.league.id, 10);
 
       webSocket.on("league", (data) => {

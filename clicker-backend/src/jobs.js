@@ -42,7 +42,7 @@ export const runBusinesses = () => {
       const totalReward = user.businesses.reduce((sum, bId) => {
         const business = businesses.find(b => b._id.toString() === bId.toString());
         if (!business) {
-          console.error("[FATAL]: Detected user with business that doesn't exist.", business._id);
+          console.error("[FATAL]: Detected user with business that doesn't exist.");
           return sum;
         }
 
