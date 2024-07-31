@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useWebSocket } from "../../hooks/useWebsocket";
 import { League, User } from "../../models";
+import { formatNumber } from "../../utils/formatNumber";
 
 export const LeagueTop = () => {
   const { user } = useUser();
@@ -27,44 +28,37 @@ export const LeagueTop = () => {
   }, [webSocket, user?.league.id]);
 
   return (
-    <div className="font-sans p-5 rounded-lg max-w-md mx-auto shadow-md bg-[#2D3748] text-white">
-      <h2 className="text-2xl font-bold mb-4">
+    <div className="font-sans p-12 rounded-lg max-w-md mx-auto text-white shadow-md">
+      <h2 className="text-2xl font-bold mb-4 text-center">
         {league ? league.name : "Top League"}
       </h2>
-      <p>{league ? league.description : "Loading league information..."}</p>
-      <p className="my-2">Total users in league: {usersInLeague}</p>
-      <table className="w-full mt-4">
-        <thead>
-          <tr className="bg-[#434A54] text-gray-300">
-            <th className="py-2 px-4 text-left">Rank</th>
-            <th className="py-2 px-4 text-left">Name</th>
-            <th className="py-2 px-4 text-right">Points</th>
-          </tr>
-        </thead>
-        <tbody>
+      <p className="text-center">
+        {league ? league.description : "Loading league information..."}
+      </p>
+      <p className="my-2 text-center">Total users in league: {usersInLeague}</p>
+      <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-8 mb-8 p-4">
+        <div className="text-center mb-2">Top Users in League</div>
+        <ul className="list-none w-full">
           {topUsersInLeague.length > 0 ? (
             topUsersInLeague.map((user: User, index: number) => (
-              <tr
+              <li
                 key={user.tgId}
-                className="bg-[#3C4858] hover:bg-[#434A54] transition-colors"
+                className="flex justify-between items-center bg-[#3C4858] rounded-md p-4 my-1 shadow-sm"
               >
-                <td className="py-2 px-4">{index + 1}</td>
-                <td className="py-2 px-4">
-                  {user.tgUsername || user.firstName}
-                </td>
-                <td className="py-2 px-4 text-right">{user.balance}</td>
-              </tr>
+                <div className="flex items-center">
+                  <div className="flex text-md justify-center items-center border-2 border-white rounded-full w-10 h-10 mr-2">
+                    {index + 1}
+                  </div>
+                  <div>{user.tgUsername || user.firstName}</div>
+                </div>
+                <div> {formatNumber(user.score)}</div>
+              </li>
             ))
           ) : (
-            <tr>
-              <td colSpan={3} className="py-2 px-4 text-center">
-                No users in league
-              </td>
-            </tr>
+            <div className="text-center text-xs mt-2">No users in league</div>
           )}
-        </tbody>
-      </table>
+        </ul>
+      </div>
     </div>
   );
 };
- 
