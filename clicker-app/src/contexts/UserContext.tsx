@@ -10,6 +10,7 @@ import React, {
 import { useWebSocket } from "../hooks/useWebsocket";
 import { User, Business, Task } from "../models";
 import { getTelegramUser } from "../services/telegramService";
+import Loader from "../components/Loader/Loader";
 
 interface UserContextProps {
   user: User | null;
@@ -47,6 +48,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const [user, setUser] = useState<User | null>(null);
   const { webSocket } = useWebSocket();
   const clickRef = useRef<boolean>(false);
+  const [isUserLoading, setUserLoading] = useState(true);
 
   const setClicked = useCallback((data: boolean) => {
     if (clickRef.current != data) {
@@ -56,6 +58,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   }, []);
 
   const handleGetUser = (userData: any) => {
+    setUserLoading(false);
     setUser({
       ...userData,
       totalIncomePerHour: userData.totalIncomePerHour,
@@ -137,7 +140,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
 
   return (
     <UserContext.Provider value={{ user, setUser, setClicked }}>
-      {children}
+      {isUserLoading ? <Loader /> : children}
     </UserContext.Provider>
   );
 };

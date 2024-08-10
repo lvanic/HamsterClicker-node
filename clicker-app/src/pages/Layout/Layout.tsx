@@ -33,9 +33,9 @@ export const Layout = () => {
   //   return <QRCodeComponent />;
   // }
 
-  if (isPageLoading) {
-    return <Loader />;
-  }
+  // if (isPageLoading) {
+  //   return <Loader />;
+  // }
   return (
     <>
       <Outlet />

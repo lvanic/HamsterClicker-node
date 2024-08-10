@@ -24,7 +24,10 @@ const main = async () => {
       const [, refId] = ctx.message.text.split("ref_");
       const tgUserId = ctx.message.chat.id;
       console.log({ refId, tgUserId });
-      ctx.reply("Welcome");
+
+      ctx.reply("Welcome").catch(() => {
+        console.log("i don't know how its work");
+      });
       const existingUser = await User.findOne({ tgId: tgUserId });
       if (!existingUser) {
         const user = new User({
