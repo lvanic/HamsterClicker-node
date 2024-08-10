@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SmallEggSvg } from "../../components/SmallEggSvg";
 import { Business } from "../../models";
 import { formatNumber } from "../../utils/formatNumber";
@@ -12,25 +12,30 @@ export const BuyBusiness = ({
   onBuyBusiness: any;
   onClose: any;
 }) => {
+  const [visible, setVisible] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    modalRef.current?.classList.add("visible");
+    setVisible(true); // Trigger the animation on mount
 
     return () => {
-      modalRef.current?.classList.remove("visible");
+      setVisible(false); // Clean up on unmount
     };
   }, []);
 
   const handleClose = () => {
-    modalRef.current?.classList.remove("visible");
-    modalRef.current?.classList.add("hidden");
-    setTimeout(onClose, 300);
+    setVisible(false); // Trigger the exit animation
+    setTimeout(onClose, 300); // Wait for the animation to finish before closing
   };
 
   return (
     <>
       <div className="overlay" onClick={handleClose} />
-      <div id="modal" className="modal h-72" ref={modalRef}>
+      <div
+        id="modal"
+        className={`modal ${visible ? "visible" : "hidden"} h-72`}
+        ref={modalRef}
+      >
         <img src={business?.avatarUrl} className="w-16 h-16 rounded-full" />
         <div className="text-xl mt-6">{business?.name}</div>
         <div className="text-xs">{business?.description}</div>

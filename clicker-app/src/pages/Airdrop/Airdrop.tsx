@@ -1,3 +1,4 @@
+import EthereumButton from "../../components/TonButton/TonButton";
 import TonButton from "../../components/TonButton/TonButton";
 import { BigEggSvg } from "./BigEggSvg";
 
@@ -10,7 +11,7 @@ export const Airdrop = () => {
         Complete tasks and
         <br /> participate in the drop
       </div>
-      <TonButton />
+      <EthereumButton />
     </div>
   );
 };

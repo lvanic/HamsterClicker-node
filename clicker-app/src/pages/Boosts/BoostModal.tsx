@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { SmallEggSvg } from "../../components/SmallEggSvg";
 import { MediumEggSvg } from "../Businesses/MediumEggSvg";
 
@@ -21,11 +21,14 @@ export const BoostModal = ({
   eggIcon: boolean;
   purchaseText: string;
 }) => {
+  const [visible, setVisible] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    modalRef.current?.classList.add("visible");
+    setVisible(true); // Trigger the animation on mount
+
     return () => {
-      modalRef.current?.classList.remove("visible");
+      setVisible(false); // Clean up on unmount
     };
   }, []);
 
@@ -33,15 +36,20 @@ export const BoostModal = ({
     handleClose();
     onPurchase();
   };
+
   const handleClose = () => {
-    modalRef.current?.classList.remove("visible");
-    modalRef.current?.classList.add("hidden");
-    setTimeout(onClose, 300);
+    setVisible(false); // Trigger the exit animation
+    setTimeout(onClose, 300); // Wait for the animation to finish before closing
   };
+
   return (
     <>
       <div className="overlay" onClick={handleClose} />
-      <div id="modal" className="modal h-72" ref={modalRef}>
+      <div
+        id="modal"
+        className={`modal ${visible ? "visible" : "hidden"} h-72`}
+        ref={modalRef}
+      >
         <div
           className="flex h-16 w-16 items-center mt-5 justify-center bg-[#FD5C63] rounded-full p-2"
           style={{
@@ -59,7 +67,6 @@ export const BoostModal = ({
             </div>
           </div>
         )}
-
         <button
           onClick={purchaseHandler}
           className="mt-4 py-2 px-6 text-sm rounded-lg flex justify-center items-center"

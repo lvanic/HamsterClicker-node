@@ -1,34 +1,29 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { TonConnect, TonConnectButton } from "@tonconnect/ui-react";
-import { useTonAddress } from "@tonconnect/ui-react";
+import React, { useState, useMemo, useEffect } from "react";
 import { getConfig } from "../../utils/config";
 import { getTelegramUser } from "../../services/telegramService";
-import './TonButton.css'; // Импортируем CSS файл с пользовательскими стилями
+import "./TonButton.css";
+import ConnectModal from "./ConnectModal";
 
-const TonButton = ({ className }: { className?: string }) => {
-  const userFriendlyAddress = useTonAddress();
+const EthereumButton = ({ className }: { className?: string }) => {
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [inputAddress, setInputAddress] = useState("");
 
   useEffect(() => {
     const storedAddress = localStorage.getItem("walletAddress");
     if (storedAddress) {
-      // здесь можно добавить логику для работы с сохраненным адресом
-    } else {
-      if (userFriendlyAddress) {
-        localStorage.setItem("walletAddress", userFriendlyAddress);
-        sendWalletAddressToServer(userFriendlyAddress);
-      }
+      setWalletAddress(storedAddress);
     }
-  }, [userFriendlyAddress]);
+  }, []);
 
-  const truncatedAddress = useMemo(
-    () =>
-      userFriendlyAddress
-        ? `${userFriendlyAddress.slice(0, 3)}...${userFriendlyAddress.slice(
-            -3
-          )}`
-        : "",
-    [userFriendlyAddress]
-  );
+  const handleAddressSubmit = () => {
+    if (inputAddress) {
+      setWalletAddress(inputAddress);
+      localStorage.setItem("walletAddress", inputAddress);
+      sendWalletAddressToServer(inputAddress);
+      setIsModalOpen(false);
+    }
+  };
 
   const sendWalletAddressToServer = async (address: string) => {
     try {
@@ -50,17 +45,55 @@ const TonButton = ({ className }: { className?: string }) => {
     }
   };
 
+  const truncatedAddress = useMemo(
+    () =>
+      walletAddress
+        ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}`
+        : "",
+    [walletAddress]
+  );
+
   return (
     <div className={className}>
-      {!userFriendlyAddress ? (
-          <TonConnectButton />
+      {!walletAddress ? (
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="connect-button px-4 py-2"
+        >
+          Connect Ethereum Wallet
+        </button>
       ) : (
         <div className="border-2 border-white rounded-full py-1 px-4">
           <span className="text-white">{truncatedAddress}</span>
         </div>
       )}
+      {isModalOpen && (
+        <ConnectModal onClose={() => setIsModalOpen(false)}>
+          <div className="flex flex-col items-center gap-4 mt-6">
+            <div className="flex flex-col items-center gap-4">
+              <h2 className="">Enter Ethereum Wallet Address</h2>
+              <input
+                type="text"
+                value={inputAddress}
+                onChange={(e) => setInputAddress(e.target.value)}
+                placeholder="0x..."
+                className="bg-[#383838] rounded-lg px-4 py-2"
+              />
+            </div>
+            <button
+              onClick={handleAddressSubmit}
+              className="px-4 py-2 rounded-lg"
+              style={{
+                background: "linear-gradient(180deg, #ff4c64 0%, #f4895d 100%)",
+              }}
+            >
+              Submit
+            </button>
+          </div>
+        </ConnectModal>
+      )}
     </div>
   );
 };
 
-export default TonButton;
+export default EthereumButton;

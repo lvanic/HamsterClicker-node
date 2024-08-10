@@ -59,59 +59,57 @@ function App() {
   }, []);
   return (
     <BrowserRouter>
-      <TonConnectUIProvider manifestUrl="https://businessflowby.web.app/tonconnect-manifest.json">
-        <LoadingProvider>
-          <WebSocketProvider url={serverUrl} user_id={telegramUser?.id}>
-            <UserProvider user_id={telegramUser.id}>
-              <DataProvider>
-                <NotifyProvider>
-                  <Routes>
+      <LoadingProvider>
+        <WebSocketProvider url={serverUrl} user_id={telegramUser?.id}>
+          <UserProvider user_id={telegramUser.id}>
+            <DataProvider>
+              <NotifyProvider>
+                <Routes>
+                  <Route
+                    path="/"
+                    loader={() => <Loader />}
+                    element={<Layout />}
+                  >
+                    <Route index element={<Clicker />} />
+                    <Route path="referrals" element={<Referrals />} />
+                    <Route path="tasks" element={<Tasks />} />
+                    <Route path="boosts" element={<Boosts />} />
+                    <Route path="league" element={<LeagueTop />} />
+                    <Route path="businesses" element={<Businesses />} />
+                    <Route path="airdrop" element={<Airdrop />} />
                     <Route
-                      path="/"
-                      loader={() => <Loader />}
-                      element={<Layout />}
-                    >
-                      <Route index element={<Clicker />} />
-                      <Route path="referrals" element={<Referrals />} />
-                      <Route path="tasks" element={<Tasks />} />
-                      <Route path="boosts" element={<Boosts />} />
-                      <Route path="league" element={<LeagueTop />} />
-                      <Route path="businesses" element={<Businesses />} />
-                      <Route path="airdrop" element={<Airdrop />} />
-                      <Route
-                        path="maintenance-notice"
-                        element={<MaintenanceNotice />}
-                      />
-                    </Route>
+                      path="maintenance-notice"
+                      element={<MaintenanceNotice />}
+                    />
+                  </Route>
+                  <Route
+                    path="/admin"
+                    element={<AdminRoute password={adminPassword} />}
+                  >
+                    <Route index element={<AdminSettings />} />
+                    <Route path="tasks" element={<AdminTasks />} />
+                    <Route path="tasks/add" element={<AddTask />} />
+                    <Route path="leagues" element={<AdminLeagues />} />
+                    <Route path="leagues/add" element={<AdminAddLeague />} />
+                    <Route path="businesses" element={<AdminBusinesses />} />
                     <Route
-                      path="/admin"
-                      element={<AdminRoute password={adminPassword} />}
-                    >
-                      <Route index element={<AdminSettings />} />
-                      <Route path="tasks" element={<AdminTasks />} />
-                      <Route path="tasks/add" element={<AddTask />} />
-                      <Route path="leagues" element={<AdminLeagues />} />
-                      <Route path="leagues/add" element={<AdminAddLeague />} />
-                      <Route path="businesses" element={<AdminBusinesses />} />
-                      <Route
-                        path="businesses/add"
-                        element={<AdminAddBusiness />}
-                      />
-                      <Route
-                        path="businesses/edit/:id"
-                        element={<AdminEditBusiness />}
-                      />
-                      <Route path="users" element={<AdminUsers />} />
-                      <Route path="settings" element={<AdminSettings />} />
-                    </Route>
-                    <Route path="*" element={<NoPage />} />
-                  </Routes>
-                </NotifyProvider>
-              </DataProvider>
-            </UserProvider>
-          </WebSocketProvider>
-        </LoadingProvider>
-      </TonConnectUIProvider>
+                      path="businesses/add"
+                      element={<AdminAddBusiness />}
+                    />
+                    <Route
+                      path="businesses/edit/:id"
+                      element={<AdminEditBusiness />}
+                    />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
+                  <Route path="*" element={<NoPage />} />
+                </Routes>
+              </NotifyProvider>
+            </DataProvider>
+          </UserProvider>
+        </WebSocketProvider>
+      </LoadingProvider>
     </BrowserRouter>
   );
 }

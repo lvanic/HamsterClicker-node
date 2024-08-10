@@ -37,13 +37,17 @@ export const Businesses = () => {
       webSocket?.emit("buyBusiness", request);
       notify = {
         status: "ok",
-        message: "Business was purchased",
+        message: `${
+          context?.businesses.find((x) => x.id == businessId)?.name
+        } was purchased`,
         className: "h-72",
       };
     } else {
       notify = {
         status: "ok",
-        message: "Business was upgraded",
+        message: `${
+          context?.businesses.find((x) => x.id == businessId)?.name
+        } was purchased`,
         className: "h-72",
       };
       webSocket?.emit("upgradeBusiness", request);

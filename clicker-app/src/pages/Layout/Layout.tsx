@@ -43,20 +43,11 @@ export const Layout = () => {
         <Link
           to="/"
           className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-              activeTab === "/" ? "bg-[#FD5463]" : ""
+            activeTab === "/" ? "bg-[#FD5463]" : ""
           }`}
         >
           <HomeSvg />
           <span className="text-xs">Home</span>
-        </Link>
-        <Link
-          to="/businesses"
-          className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-            activeTab === "/businesses" ? "bg-[#FD5463]" : ""
-          }`}
-        >
-          <BusinessSvg />
-          <span className="text-xs">Ferms</span>
         </Link>
         <Link
           to="/referrals"
@@ -66,6 +57,15 @@ export const Layout = () => {
         >
           <FriendSvg />
           <span className="text-xs">Friends</span>
+        </Link>
+        <Link
+          to="/businesses"
+          className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/businesses" ? "bg-[#FD5463]" : ""
+          }`}
+        >
+          <BusinessSvg />
+          <span className="text-xs">Ferms</span>
         </Link>
         <Link
           to="/tasks"

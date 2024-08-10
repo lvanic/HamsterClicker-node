@@ -95,7 +95,7 @@ export const Clicker: React.FC = () => {
   ) => {
     event.preventDefault();
   };
-  
+
   const handleClickEvent = () => {
     if (user) {
       handleClick({
@@ -125,7 +125,12 @@ export const Clicker: React.FC = () => {
             <DailyOffer />
             <ComboGame />
           </div>
-          <div className="gradient-border-container mb-2 w-10/12">
+          <div
+            className="gradient-border-container mb-2 w-10/12"
+            style={{
+              aspectRatio: "1",
+            }}
+          >
             <img
               ref={imgRef}
               src={user?.league.avatarUrl}

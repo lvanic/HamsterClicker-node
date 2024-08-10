@@ -37,7 +37,7 @@ export const Notification = ({
   
   return (
     <>
-      <div className="overlay" onClick={overlayClickHandle} />
+      <div className="overlay-safe" onClick={overlayClickHandle} />
       <div
         id="modal"
         className={`modal ${notify.className}`}
@@ -63,13 +63,13 @@ export const Notification = ({
           <div className="mt-8">
             {notify.status == "task" ? <SuccessSvg /> : null}
           </div>
-          <div className="text-white mt-2 text-sm">
+          {/* <div className="text-white mt-2 text-sm">
             {notify.status == "task"
               ? "Сonfirmed"
               : notify.status == "ok"
               ? "Success"
               : "Something went wrong"}
-          </div>
+          </div> */}
           {notify.closeButton && (
             <button
               className="text-white px-6 py-2 relative top-8 rounded-lg"

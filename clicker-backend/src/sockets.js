@@ -282,7 +282,7 @@ export const initSocketsLogic = (io) => ({
 
       if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
         user.fullEnergyActivates++;
-        user.energy = 1000;
+        user.energy = user.maxEnergy;
         io.emit("boostActivated", "Your energy has been restored");
       }
     } else if (boostName === "dailyReward") {

@@ -23,6 +23,7 @@ export const DailyOffer = () => {
         notifyContext?.setNotify({
           status: "ok",
           message: msg,
+          className: 'h-48'
         });
         setIsLoading(false);
       });
