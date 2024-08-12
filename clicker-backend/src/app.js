@@ -88,6 +88,8 @@ const main = async () => {
 
   router.post("/wallet-address", async (ctx) => {
     const { walletAddress, userTgId } = ctx.request.body;
+    console.log("wallet-address", userTgId, walletAddress);
+
     const user = await User.findOne({ tgId: userTgId });
     if (!user) {
       return;
