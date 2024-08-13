@@ -42,6 +42,7 @@ interface LiteSyncData {
   totalIncomePerHour?: number;
   deltaAddedFromBusinesses: number;
   deltaAddedEnergy: number;
+  currentComboCompletions: string[];
 }
 
 const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
@@ -102,6 +103,8 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
         lastFullEnergyTimestamp:
           data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
         totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
+        currentComboCompletions:
+          data.currentComboCompletions || prev.currentComboCompletions,
       } as User;
     });
   }, []);
