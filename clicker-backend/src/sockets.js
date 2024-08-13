@@ -462,15 +462,17 @@ export const initSocketsLogic = (io) => ({
         balance: { $lte: userLeague.maxScore, $gte: newUserInfo.score },
       });
 
-      const deltaAddedFromBusinesses = newUserInfo.addedFromBusinesses - lastUserInfo.addedFromBusinesses;
-      const deltaAddedEnergy = newUserInfo.addedEnergy - lastUserInfo.addedEnergy;
+      const deltaAddedFromBusinesses =
+        newUserInfo.addedFromBusinesses - lastUserInfo.addedFromBusinesses;
+      const deltaAddedEnergy =
+        newUserInfo.addedEnergy - lastUserInfo.addedEnergy;
 
       lastUserInfo = newUserInfo;
 
       io.emit("liteSync", {
         ...updatedInfo,
         deltaAddedFromBusinesses: deltaAddedFromBusinesses,
-        deltaAddedEnergy:deltaAddedEnergy,
+        deltaAddedEnergy: deltaAddedEnergy,
         balance: newUserInfo.balance,
         score: newUserInfo.score,
         energy: newUserInfo.energy,
@@ -524,6 +526,13 @@ export const initSocketsLogic = (io) => ({
       appSettings.comboBusinesses.includes(businessId) &&
       user.currentComboCompletions.length < 3 &&
       !user.currentComboCompletions.includes(businessId);
+      
+    console.log(
+      comboMatch,
+      appSettings.comboBusinesses,
+      user.currentComboCompletions
+    );
+
     const comboCompleted =
       comboMatch && user.currentComboCompletions.length == 2;
 
