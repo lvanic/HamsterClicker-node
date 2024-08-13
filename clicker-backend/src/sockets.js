@@ -227,7 +227,7 @@ export const initSocketsLogic = (io) => ({
 
     const appSettings = await getAppSettings();
     const comboMatch =
-      appSettings.comboBusinesses.includes((c) => c._id == businessId) &&
+      appSettings.comboBusinesses.some((c) => c._id == businessId) &&
       user.currentComboCompletions.length < 3 &&
       !user.currentComboCompletions.includes(businessId);
     const comboCompleted =
@@ -523,17 +523,11 @@ export const initSocketsLogic = (io) => ({
     const appSettings = await getAppSettings();
 
     const comboMatch =
-      appSettings.comboBusinesses.includes((c) => c._id == businessId) &&
+      appSettings.comboBusinesses.some((c) => c._id == businessId) &&
       user.currentComboCompletions.length < 3 &&
       !user.currentComboCompletions.includes(businessId);
 
-    console.log(
-      appSettings.comboBusinesses,
-      businessId,
-      appSettings.comboBusinesses.includes((c) => c._id == businessId),
-      user.currentComboCompletions.length < 3,
-      !user.currentComboCompletions.includes(businessId)
-    );
+    console.log(appSettings.comboBusinesses.some((c) => c._id == businessId));
 
     const comboCompleted =
       comboMatch && user.currentComboCompletions.length == 2;
