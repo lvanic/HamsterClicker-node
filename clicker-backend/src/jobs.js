@@ -24,7 +24,7 @@ export const runEnergyRecover = () => {
         });
       }));
     } catch {}
-    console.log("Energy recovered for users:", users.map((user) => `${user.tgId}: ${user.energy}`).join('\n'));
+    // console.log("Energy recovered for users:", users.map((user) => `${user.tgId}: ${user.energy}`).join('\n'));
   }, ENERGY_UPDATE_INTERVAL_IN_SECOND * 1000);
 }
 
@@ -36,7 +36,7 @@ export const runBusinesses = () => {
       lastOnlineTimestamp: { $gt: Date.now() - 1000 * 60 * 60 * 3 },
     }).exec();
 
-    console.log("Updating businesses... Found users with businesses: ", users.length);
+    // console.log("Updating businesses... Found users with businesses: ", users.length);
 
     const updatePromises = users.map(user => {
       const totalReward = user.businesses.reduce((sum, bId) => {

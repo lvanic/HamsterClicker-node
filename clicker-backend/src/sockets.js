@@ -528,6 +528,8 @@ export const initSocketsLogic = (io) => ({
       !user.currentComboCompletions.includes(businessId);
 
     console.log(
+      appSettings.comboBusinesses,
+      businessId,
       appSettings.comboBusinesses.includes((c) => c._id == businessId),
       user.currentComboCompletions.length < 3,
       !user.currentComboCompletions.includes(businessId)
