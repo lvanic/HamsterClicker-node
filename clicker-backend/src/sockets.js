@@ -98,69 +98,74 @@ export const initSocketsLogic = (io) => ({
     }
   },
   getUser: async (userId) => {
-    const tgUserId = Number(userId);
+    try {
+      const tgUserId = Number(userId);
 
-    await User.findOneAndUpdate(
-      { tgId: tgUserId },
-      { lastOnlineTimestamp: new Date().getTime() }
-    );
-
-    const user = await User.findOne({ tgId: tgUserId })
-      .populate("referrals")
-      .populate("businesses")
-      .populate("completedTasks");
-
-    if (!user) {
-      return;
-    }
-
-    const leagues = await League.find({});
-    let userLeague = leagues.find(
-      (league) => league.minScore <= user.score && league.maxScore >= user.score
-    );
-    if (!userLeague) {
-      userLeague = leagues[leagues.length - 1];
-    }
-    const userLevel =
-      leagues
-        .sort((a, b) => a.minScore - b.minScore)
-        .findIndex((l) => l._id.toString() === userLeague._id.toString()) + 1;
-    const userPlaceInLeague = await User.countDocuments({
-      score: { $lte: userLeague.maxScore, $gte: user.score },
-    });
-    const totalIncomePerHour = user.businesses.reduce((sum, b) => {
-      const businessUpgrade = user.businessUpgrades.find(
-        (bu) => bu.businessId.toString() === b._id.toString()
-      );
-      const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
-      return sum + b.rewardPerHour * 2.2 ** (businessLevel - 1);
-    }, 0);
-
-    const userData = {
-      id: user._id,
-      ...user.toObject(),
-      referrals: user.referrals.map((r) => ({ id: r._id, ...r.toObject() })),
-      clickPower: user.clickPower,
-      userPlaceInLeague: userPlaceInLeague + 1,
-      totalIncomePerHour,
-      completedTasks: user.completedTasks.map((t) => ({
-        id: t._id,
-        ...t.toObject(),
-      })),
-      league: { id: userLeague._id, ...userLeague.toObject() },
-      userLevel,
-      maxLevel: leagues.length,
-      energyLevel: user.energyLevel,
-      maxEnergy: 1000 + 500 * (user.energyLevel - 1),
-    };
-
-    io.emit("user", userData);
-    io.on("disconnect", async () => {
       await User.findOneAndUpdate(
-        { tgId: userId },
+        { tgId: tgUserId },
         { lastOnlineTimestamp: new Date().getTime() }
       );
-    });
+
+      const user = await User.findOne({ tgId: tgUserId })
+        .populate("referrals")
+        .populate("businesses")
+        .populate("completedTasks");
+
+      if (!user) {
+        return;
+      }
+
+      const leagues = await League.find({});
+      let userLeague = leagues.find(
+        (league) =>
+          league.minScore <= user.score && league.maxScore >= user.score
+      );
+      if (!userLeague) {
+        userLeague = leagues[leagues.length - 1];
+      }
+      const userLevel =
+        leagues
+          .sort((a, b) => a.minScore - b.minScore)
+          .findIndex((l) => l._id.toString() === userLeague._id.toString()) + 1;
+      const userPlaceInLeague = await User.countDocuments({
+        score: { $lte: userLeague.maxScore, $gte: user.score },
+      });
+      const totalIncomePerHour = user.businesses.reduce((sum, b) => {
+        const businessUpgrade = user.businessUpgrades.find(
+          (bu) => bu.businessId.toString() === b._id.toString()
+        );
+        const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+        return sum + b.rewardPerHour * 2.2 ** (businessLevel - 1);
+      }, 0);
+
+      const userData = {
+        id: user._id,
+        ...user.toObject(),
+        referrals: user.referrals.map((r) => ({ id: r._id, ...r.toObject() })),
+        clickPower: user.clickPower,
+        userPlaceInLeague: userPlaceInLeague + 1,
+        totalIncomePerHour,
+        completedTasks: user.completedTasks.map((t) => ({
+          id: t._id,
+          ...t.toObject(),
+        })),
+        league: { id: userLeague._id, ...userLeague.toObject() },
+        userLevel,
+        maxLevel: leagues.length,
+        energyLevel: user.energyLevel,
+        maxEnergy: 1000 + 500 * (user.energyLevel - 1),
+      };
+
+      io.emit("user", userData);
+      io.on("disconnect", async () => {
+        await User.findOneAndUpdate(
+          { tgId: userId },
+          { lastOnlineTimestamp: new Date().getTime() }
+        );
+      });
+    } catch {
+      console.log("error on getting user");
+    }
   },
   getLeagueInfo: async (leagueId, topUsersCount) => {
     const league = await League.findOne({ _id: leagueId });
@@ -264,75 +269,84 @@ export const initSocketsLogic = (io) => ({
     io.emit("tasks", tasks);
   },
   activateBoost: async (data) => {
-    const parsedData = JSON.parse(data);
-    const [tgUserId, boostName] = parsedData;
+    try {
+      const parsedData = JSON.parse(data);
+      const [tgUserId, boostName] = parsedData;
 
-    const dayMs = 1000 * 60 * 60 * 24;
-    const appSettings = await getAppSettings();
-    const user = await User.findOne({ tgId: tgUserId });
-    if (!user) {
-      return;
+      const dayMs = 1000 * 60 * 60 * 24;
+      const appSettings = await getAppSettings();
+      const user = await User.findOne({ tgId: tgUserId });
+      if (!user) {
+        return;
+      }
+
+      if (boostName === "fullEnergyBoost") {
+        if (
+          !user.lastFullEnergyTimestamp ||
+          user.lastFullEnergyTimestamp + dayMs < Date.now()
+        ) {
+          user.fullEnergyActivates = 0;
+          user.lastFullEnergyTimestamp = Date.now();
+        }
+
+        if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
+          user.fullEnergyActivates++;
+          user.energy = user.maxEnergy;
+          io.emit("boostActivated", "Your energy has been restored");
+        }
+      } else if (boostName === "dailyReward") {
+        if (
+          !user.lastDailyRewardTimestamp ||
+          user.lastDailyRewardTimestamp + dayMs < Date.now()
+        ) {
+          user.lastDailyRewardTimestamp = Date.now();
+          await User.findOneAndUpdate(
+            { tgId: user.tgId },
+            {
+              $inc: { balance: appSettings.dailyReward },
+            }
+          );
+          io.emit(
+            "boostActivated",
+            `You received a daily reward of ${appSettings.dailyReward} coins`
+          );
+        }
+      }
+
+      await user.save();
+    } catch {
+      console.log("error on activate boost");
     }
-
-    if (boostName === "fullEnergyBoost") {
-      if (
-        !user.lastFullEnergyTimestamp ||
-        user.lastFullEnergyTimestamp + dayMs < Date.now()
-      ) {
-        user.fullEnergyActivates = 0;
-        user.lastFullEnergyTimestamp = Date.now();
-      }
-
-      if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
-        user.fullEnergyActivates++;
-        user.energy = user.maxEnergy;
-        io.emit("boostActivated", "Your energy has been restored");
-      }
-    } else if (boostName === "dailyReward") {
-      if (
-        !user.lastDailyRewardTimestamp ||
-        user.lastDailyRewardTimestamp + dayMs < Date.now()
-      ) {
-        user.lastDailyRewardTimestamp = Date.now();
-        await User.findOneAndUpdate(
-          { tgId: user.tgId },
-          {
-            $inc: { balance: appSettings.dailyReward },
-          }
-        );
-        io.emit(
-          "boostActivated",
-          `You received a daily reward of ${appSettings.dailyReward} coins`
-        );
-      }
-    }
-
-    await user.save();
   },
   upgradeClick: async (userId) => {
-    const user = await User.findOne({ tgId: userId });
-    if (!user) {
-      return;
-    }
+    try {
+      const user = await User.findOne({ tgId: userId });
+      if (!user) {
+        return;
+      }
 
-    const appSettings = await getAppSettings();
-    if (!appSettings) {
-      return;
-    }
+      const appSettings = await getAppSettings();
+      if (!appSettings) {
+        return;
+      }
 
-    if (user.clickPower >= appSettings.maxClickLevel) {
-      return;
-    }
+      if (user.clickPower >= appSettings.maxClickLevel) {
+        return;
+      }
 
-    const cost = appSettings.startClickUpgradeCost * 2 ** (user.clickPower - 1);
-    if (user.balance < cost) {
-      return;
-    }
+      const cost =
+        appSettings.startClickUpgradeCost * 2 ** (user.clickPower - 1);
+      if (user.balance < cost) {
+        return;
+      }
 
-    await User.findOneAndUpdate(
-      { tgId: user.tgId },
-      { $inc: { balance: -cost, clickPower: 1 } }
-    );
+      await User.findOneAndUpdate(
+        { tgId: user.tgId },
+        { $inc: { balance: -cost, clickPower: 1 } }
+      );
+    } catch {
+      console.log("error on upgrade click");
+    }
   },
   subscribeLiteSync: async (userId) => {
     let lastUserInfo = await User.findOne({ tgId: userId });
