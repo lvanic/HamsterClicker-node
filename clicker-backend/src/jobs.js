@@ -83,6 +83,9 @@ const updateCombos = async () => {
   }
 
   const businesses = await Business.find({});
+  if(businesses.length < 3){
+    return;
+  }
   const randomIndexes = [];
 
   while(true) {

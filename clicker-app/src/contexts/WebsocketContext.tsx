@@ -29,9 +29,10 @@ export const WebSocketProvider: React.FC<{
   const location = useLocation();
 
   useEffect(() => {
-    // if (location.key.includes("admin")) {
-    //   return;
-    // }
+    if (location.pathname.includes("admin")) {
+      setPageLoading(false)
+      return;
+    }
 
     const socket = io(url, {
       reconnectionDelayMax: 10000,

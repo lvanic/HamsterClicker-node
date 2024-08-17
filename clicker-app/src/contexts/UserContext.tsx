@@ -11,6 +11,7 @@ import { useWebSocket } from "../hooks/useWebsocket";
 import { User, Business, Task } from "../models";
 import { getTelegramUser } from "../services/telegramService";
 import Loader from "../components/Loader/Loader";
+import { useLocation } from "react-router-dom";
 
 interface UserContextProps {
   user: User | null;
@@ -50,6 +51,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const { webSocket } = useWebSocket();
   const clickRef = useRef<boolean>(false);
   const [isUserLoading, setUserLoading] = useState(true);
+  const location = useLocation();
 
   const setClicked = useCallback((data: boolean) => {
     if (clickRef.current != data) {
@@ -104,12 +106,16 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
         totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
         currentComboCompletions:
-          data?.currentComboCompletions?.map(c => c._id) || prev.currentComboCompletions,
+          data?.currentComboCompletions?.map((c) => c._id) ||
+          prev.currentComboCompletions,
       } as User;
     });
   }, []);
 
   useEffect(() => {
+    if (location.pathname.includes("admin")) {
+      return;
+    }
     const tgUser = getTelegramUser();
     if (webSocket && tgUser.id !== -1) {
       webSocket.on("liteSync", handleLiteSync);
@@ -121,6 +127,9 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   }, [webSocket, handleLiteSync]);
 
   useEffect(() => {
+    if (location.pathname.includes("admin")) {
+      return;
+    }
     const tgUser = getTelegramUser();
     if (webSocket && tgUser.id !== -1) {
       webSocket.on("user", handleGetUser);
@@ -132,6 +141,9 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   }, [webSocket]);
 
   useEffect(() => {
+    if (location.pathname.includes("admin")) {
+      return;
+    }
     if (
       user?.league.maxScore &&
       user.score >= user.league.maxScore - 1 &&

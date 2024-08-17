@@ -21,7 +21,7 @@ export const getTelegramUser = (): TelegramUser => {
     }
   }
   return {
-    id: 571484499,
+    id: -1,
     first_name: "user.first_name",
     last_name: "user.last_name",
     username: "user.username",
