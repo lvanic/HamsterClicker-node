@@ -115,9 +115,12 @@ export const initSocketsLogic = (io) => ({
     }
 
     const leagues = await League.find({});
-    const userLeague = leagues.find(
+    let userLeague = leagues.find(
       (league) => league.minScore <= user.score && league.maxScore >= user.score
     );
+    if (!userLeague) {
+      userLeague = leagues[leagues.length - 1];
+    }
     const userLevel =
       leagues
         .sort((a, b) => a.minScore - b.minScore)

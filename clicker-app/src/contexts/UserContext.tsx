@@ -114,6 +114,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
 
   useEffect(() => {
     if (location.pathname.includes("admin")) {
+      setUserLoading(false);
       return;
     }
     const tgUser = getTelegramUser();
@@ -128,6 +129,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
 
   useEffect(() => {
     if (location.pathname.includes("admin")) {
+      setUserLoading(false);
       return;
     }
     const tgUser = getTelegramUser();
@@ -142,6 +144,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
 
   useEffect(() => {
     if (location.pathname.includes("admin")) {
+      setUserLoading(false);
       return;
     }
     if (
