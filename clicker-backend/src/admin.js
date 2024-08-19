@@ -24,7 +24,8 @@ export const registerAdminRoutes = (router) => {
     let settings = await getAppSettings();
     const newSettings = ctx.request.body;
 
-    settings = { ...newSettings, ...settings };
+    existingSettings.set(newSettings);
+
     // .energyPerSecond = newSettings.energyPerSecond;
     // settings.rewardPerClick = newSettings.rewardPerClick;
     // settings.fullEnergyBoostPerDay = newSettings.fullEnergyBoostPerDay;
