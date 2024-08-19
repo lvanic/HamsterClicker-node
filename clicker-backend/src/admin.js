@@ -21,7 +21,7 @@ export const registerAdminRoutes = (router) => {
   });
 
   router.post("/admin/settings", async (ctx) => {
-    const settings = await getAppSettings();
+    let settings = await getAppSettings();
     const newSettings = ctx.request.body;
 
     settings = { ...newSettings, ...settings };
