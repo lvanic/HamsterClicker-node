@@ -1,8 +1,7 @@
 import { Task, User, AppSettings, League, Business } from "./models.js";
 
 export const getAppSettings = async () => {
-  const appSettings = await AppSettings.find({})
-    .populate("comboBusinesses");
+  const appSettings = await AppSettings.find({}).populate("comboBusinesses");
 
   if (!appSettings.length || appSettings.length === 0) {
     console.error("[FATAL] App settings not found");
@@ -15,18 +14,22 @@ export const getAppSettings = async () => {
 export const registerAdminRoutes = (router) => {
   router.get("/admin/settings", async (ctx) => {
     const settings = await getAppSettings();
-    ctx.body = { ...settings.toObject(), comboBusinesses: settings.comboBusinesses.map((b) => b.toObject()) };
+    ctx.body = {
+      ...settings.toObject(),
+      comboBusinesses: settings.comboBusinesses.map((b) => b.toObject()),
+    };
   });
 
   router.post("/admin/settings", async (ctx) => {
     const settings = await getAppSettings();
     const newSettings = ctx.request.body;
 
-    settings.energyPerSecond = newSettings.energyPerSecond;
-    settings.rewardPerClick = newSettings.rewardPerClick;
-    settings.fullEnergyBoostPerDay = newSettings.fullEnergyBoostPerDay;
-    settings.dailyReward = newSettings.dailyReward;
-    settings.referralReward = newSettings.referralReward;
+    settings = { ...newSettings, ...settings };
+    // .energyPerSecond = newSettings.energyPerSecond;
+    // settings.rewardPerClick = newSettings.rewardPerClick;
+    // settings.fullEnergyBoostPerDay = newSettings.fullEnergyBoostPerDay;
+    // settings.dailyReward = newSettings.dailyReward;
+    // settings.referralReward = newSettings.referralReward;
 
     await settings.save();
     ctx.body = settings;
@@ -156,7 +159,9 @@ export const registerAdminRoutes = (router) => {
       description: ctx.request.body.description,
       avatarUrl: ctx.request.body.avatarUrl,
       rewardPerHour: ctx.request.body.rewardPerHour,
-      refsToUnlock: !!ctx.request.body.refsToUnlock ? ctx.request.body.refsToUnlock : 0,
+      refsToUnlock: !!ctx.request.body.refsToUnlock
+        ? ctx.request.body.refsToUnlock
+        : 0,
       price: ctx.request.body.price,
       category: ctx.request.body.category,
       isDeleted: false,

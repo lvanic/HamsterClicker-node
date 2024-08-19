@@ -28,6 +28,7 @@ export const League = () => {
         <div
           style={{
             height: "100%",
+            maxWidth: "100%",
             width: (user?.score / user?.league.maxScore) * 100 + "%",
             backgroundColor: "#FF5064",
           }}

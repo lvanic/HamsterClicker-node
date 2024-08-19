@@ -167,22 +167,39 @@ export const initSocketsLogic = (io) => ({
       console.log("error on getting user");
     }
   },
-  getLeagueInfo: async (leagueId, topUsersCount) => {
+  getLeagueInfo: async ({ leagueId, topUsersCount }) => {
+    const leagues = await League.find({});
+
     const league = await League.findOne({ _id: leagueId });
+
+    const lastLeague = leagues[leagues.length - 1].id == league.id;
 
     if (!league) {
       return;
     }
 
-    const usersInLeague = await User.countDocuments({
+    let usersInLeague = await User.countDocuments({
       balance: { $lte: league.maxScore, $gte: league.minScore },
     });
 
-    const topUsersInLeague = await User.find({
+    let topUsersInLeague = await User.find({
       balance: { $lte: league.maxScore, $gte: league.minScore },
     })
       .sort({ balance: -1 })
       .limit(topUsersCount);
+
+    if (lastLeague) {
+      usersInLeague += await User.countDocuments({
+        balance: { $gte: league.minScore },
+      });
+      const dopUsers = await User.find({
+        balance: { $gte: league.minScore },
+      })
+        .sort({ balance: -1 })
+        .limit(topUsersCount);
+      topUsersInLeague = [...topUsersInLeague, ...dopUsers];
+    }
+    console.log(topUsersInLeague);
 
     io.emit("league", {
       league: { id: league._id, ...league },
@@ -471,10 +488,17 @@ export const initSocketsLogic = (io) => ({
         });
       }
 
-      const userLeague = await League.findOne({
-        minScore: { $lte: newUserInfo.score },
-        maxScore: { $gte: newUserInfo.score },
-      });
+      const leagues = await League.find({});
+      let userLeague = leagues.find(
+        (league) =>
+          league.minScore <= newUserInfo.score &&
+          league.maxScore >= newUserInfo.score
+      );
+
+      if (!userLeague) {
+        userLeague = leagues[leagues.length - 1];
+      }
+
       const userPlaceInLeague = await User.countDocuments({
         balance: { $lte: userLeague.maxScore, $gte: newUserInfo.score },
       });
@@ -497,10 +521,16 @@ export const initSocketsLogic = (io) => ({
       });
     }, 1000);
 
-    io.on("disconnect", () => {
-      clearInterval(interval);
-    });
+    const handleDisconnect = () => {
+      if (interval.hasRef()) {
+        clearInterval(interval);
+      }
+    };
+
+    io.on("unsubscribeLiteSync", handleDisconnect);
+    io.on("disconnect", handleDisconnect);
   },
+
   upgradeBusiness: async (data) => {
     const parsedData = JSON.parse(data);
     const [userTgId, businessId] = parsedData;

@@ -128,6 +128,7 @@ const main = async () => {
     console.log("Пользователь отключен от WebSocket");
   });
 
+  ensureAppSettings()
   runEnergyRecover();
   runBusinesses();
   runCombos();
@@ -138,3 +139,33 @@ const main = async () => {
   });
 };
 main();
+
+async function ensureAppSettings() {
+  try {
+    const appSettings = await AppSettings.findOne({});
+    if (appSettings) {
+      return appSettings;
+    }
+
+    const newAppSettings = new AppSettings({
+      energyPerSecond: 1,
+      rewardPerClick: 1,
+      fullEnergyBoostPerDay: 1,
+      dailyReward: 1,
+      referralReward: 1,
+      maxClickLevel: 1,
+      startClickUpgradeCost: 1,
+      maxEnergyLevel: 1,
+      startEnergyUpgradeCost: 1,
+      comboReward: 1,
+      comboUpdateDayHour: 0,
+      lastComboUpdateTimestamp: 0,
+    });
+
+    await newAppSettings.save();
+    return newAppSettings;
+  } catch (error) {
+    console.error('Error ensuring app settings:', error);
+    throw error;
+  }
+}

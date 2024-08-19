@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { getConfig } from "../../../utils/config";
 
 const { adminApiUrl } = getConfig();
@@ -9,6 +9,12 @@ export const AdminSettings = () => {
   const [fullEnergyBoostPerDay, setFullEnergyBoostPerDay] = useState(0);
   const [dailyReward, setDailyReward] = useState(0);
   const [referralReward, setReferralReward] = useState(0);
+  const [maxClickLevel, setMaxClickLevel] = useState(0);
+  const [startClickUpgradeCost, setStartClickUpgradeCost] = useState(0);
+  const [maxEnergyLevel, setMaxEnergyLevel] = useState(0);
+  const [startEnergyUpgradeCost, setStartEnergyUpgradeCost] = useState(0);
+  const [comboReward, setComboReward] = useState(0);
+  const [comboUpdateDayHour, setComboUpdateDayHour] = useState(0);
   const [comboBusinesses, setComboBusinesses] = useState([]);
 
   const [isError, setIsError] = useState(false);
@@ -26,8 +32,14 @@ export const AdminSettings = () => {
     setFullEnergyBoostPerDay(settings.fullEnergyBoostPerDay);
     setDailyReward(settings.dailyReward);
     setReferralReward(settings.referralReward);
+    setMaxClickLevel(settings.maxClickLevel);
+    setStartClickUpgradeCost(settings.startClickUpgradeCost);
+    setMaxEnergyLevel(settings.maxEnergyLevel);
+    setStartEnergyUpgradeCost(settings.startEnergyUpgradeCost);
+    setComboReward(settings.comboReward);
+    setComboUpdateDayHour(settings.comboUpdateDayHour);
     setComboBusinesses(settings.comboBusinesses);
-  }
+  };
 
   const handleSubmit = async () => {
     setIsError(false);
@@ -44,6 +56,12 @@ export const AdminSettings = () => {
         fullEnergyBoostPerDay,
         dailyReward,
         referralReward,
+        maxClickLevel,
+        startClickUpgradeCost,
+        maxEnergyLevel,
+        startEnergyUpgradeCost,
+        comboReward,
+        comboUpdateDayHour,
       }),
     });
 
@@ -54,7 +72,7 @@ export const AdminSettings = () => {
       setIsSuccess(false);
       setIsError(true);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col space-y-2 text-black">
@@ -71,45 +89,95 @@ export const AdminSettings = () => {
         </div>
       </div>
 
+      {/* Existing input fields */}
+
       <div className="flex flex-col">
-        <label className="text-xs bg-slate-300 w-2/5">Full energy boost per day</label>
+        <label className="text-xs bg-slate-300 w-2/5">Max click level</label>
         <input
           type="number"
-          placeholder="Full energy boost per day"
+          placeholder="Max click level"
           className="bg-slate-50 py-1 px-4 w-full outline-none"
-          value={fullEnergyBoostPerDay}
-          onChange={(e) => setFullEnergyBoostPerDay(Number(e.target.value))}
+          value={maxClickLevel}
+          onChange={(e) => setMaxClickLevel(Number(e.target.value))}
         />
       </div>
 
       <div className="flex flex-col">
-        <label className="text-xs bg-slate-300 w-2/5">Daily reward</label>
+        <label className="text-xs bg-slate-300 w-2/5">
+          Start click upgrade cost
+        </label>
         <input
           type="number"
-          placeholder="Daily reward"
+          placeholder="Start click upgrade cost"
           className="bg-slate-50 py-1 px-4 w-full outline-none"
-          value={dailyReward}
-          onChange={(e) => setDailyReward(Number(e.target.value))}
+          value={startClickUpgradeCost}
+          onChange={(e) => setStartClickUpgradeCost(Number(e.target.value))}
         />
       </div>
 
       <div className="flex flex-col">
-        <label className="text-xs bg-slate-300 w-2/5">Referral reward</label>
+        <label className="text-xs bg-slate-300 w-2/5">Max energy level</label>
         <input
           type="number"
-          placeholder="Referral reward"
+          placeholder="Max energy level"
           className="bg-slate-50 py-1 px-4 w-full outline-none"
-          value={referralReward}
-          onChange={(e) => setReferralReward(Number(e.target.value))}
+          value={maxEnergyLevel}
+          onChange={(e) => setMaxEnergyLevel(Number(e.target.value))}
         />
       </div>
 
-      <button className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">
+          Start energy upgrade cost
+        </label>
+        <input
+          type="number"
+          placeholder="Start energy upgrade cost"
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          value={startEnergyUpgradeCost}
+          onChange={(e) => setStartEnergyUpgradeCost(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">Combo reward</label>
+        <input
+          type="number"
+          placeholder="Combo reward"
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          value={comboReward}
+          onChange={(e) => setComboReward(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">
+          Combo update day hour
+        </label>
+        <input
+          type="number"
+          placeholder="Combo update day hour"
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          value={comboUpdateDayHour}
+          onChange={(e) => setComboUpdateDayHour(Number(e.target.value))}
+        />
+      </div>
+
+      <button
+        className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono"
+        onClick={handleSubmit}
+      >
         CONFIRM
       </button>
 
-      {isSuccess && <div className="bg-green-400 text-center text-white">Settings saved</div>}
-      {isError && <div className="bg-red-600 text-center text-white">Error</div>}
+      {isSuccess && (
+        <div className="bg-green-400 text-center text-white">
+          Settings saved
+        </div>
+      )}
+      {isError && (
+        <div className="bg-red-600 text-center text-white">Error</div>
+      )}
     </div>
   );
 };

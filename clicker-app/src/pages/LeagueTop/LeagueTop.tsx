@@ -13,7 +13,10 @@ export const LeagueTop = () => {
 
   useEffect(() => {
     if (webSocket && user?.league.id) {
-      webSocket.emit("getLeagueInfo", user?.league.id, 10);
+      webSocket.emit("getLeagueInfo", {
+        leagueId: user?.league.id,
+        topUsersCount: 10,
+      });
 
       webSocket.on("league", (data) => {
         setLeague(data.league);

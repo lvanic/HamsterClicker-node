@@ -96,9 +96,11 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           : data.score,
         energyLevel: data.energyLevel || prev.energyLevel,
         maxEnergy: data.maxEnergy || prev.maxEnergy,
-        energy: clickRef.current
-          ? prev.energy + data.deltaAddedEnergy
-          : data.energy,
+        energy:
+          clickRef.current &&
+          prev.energy + data.deltaAddedEnergy < prev.maxEnergy
+            ? prev.energy + data.deltaAddedEnergy
+            : data.energy,
         userPlaceInLeague: data.userPlaceInLeague,
         fullEnergyActivates:
           data.fullEnergyActivates || prev.fullEnergyActivates,
@@ -124,6 +126,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     }
     return () => {
       webSocket?.off("liteSync", handleLiteSync);
+      webSocket?.emit("unsubscribeLiteSync");
     };
   }, [webSocket, handleLiteSync]);
 
@@ -150,6 +153,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     if (
       user?.league.maxScore &&
       user.score >= user.league.maxScore - 1 &&
+      user.maxLevel != user.userLevel &&
       webSocket
     ) {
       webSocket.emit("getUser", user.tgId);
