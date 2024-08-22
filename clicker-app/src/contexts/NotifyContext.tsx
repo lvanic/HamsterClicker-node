@@ -9,6 +9,7 @@ import {
 import { Notification } from "../components/Notification";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { UserContext } from "./UserContext";
+import { formatNumber } from "../utils/formatNumber";
 
 export interface NotifyMessage {
   message: string;
@@ -62,9 +63,12 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
       const currentTime = new Date().getTime();
       const offlineTime = currentTime - userContext?.user.lastOnlineTimestamp;
       const offlineHours = offlineTime / (1000 * 60 * 60);
+      console.log(offlineTime, userContext?.user?.cachedIncome);
 
       let earned = 0;
-      if (offlineHours <= MAX_OFFLINE_EARNINGS_HOURS) {
+      if (offlineTime <= 0) {
+        earned = 0;
+      } else if (offlineHours <= MAX_OFFLINE_EARNINGS_HOURS) {
         earned = offlineHours * userContext?.user?.cachedIncome;
       } else {
         earned = MAX_OFFLINE_EARNINGS_HOURS * userContext?.user?.cachedIncome;
@@ -72,7 +76,7 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
 
       const notify: NotifyMessage = {
         status: "ok",
-        message: `During your absence you earned ${earned}`,
+        message: `During your absence you earned ${formatNumber(earned)}`,
         className: "h-48",
       };
       setNotify(notify);

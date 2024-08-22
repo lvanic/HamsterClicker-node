@@ -24,7 +24,7 @@ export const BusinessesList = memo(function BusinessesList({
           (user?.referrals.length || 0) >= business.refsToUnlock;
         const isLastUpgradeLessThanHourAgo =
           Date.now() - business.lastUpgradeTimestamp <
-          (business.level - 1 + 2) * 1000;
+          (business.level - 1 + 2) * 1000 * 60;
         const isAvailable =
           isAffordable && isEnoughRefs && !isLastUpgradeLessThanHourAgo;
 

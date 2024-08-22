@@ -25,7 +25,7 @@ export const initSocketsLogic = (io) => ({
             score: user.clickPower,
             energy: -1,
           },
-          lastOnlineTimestamp: new Date().getTime(),
+          // lastOnlineTimestamp: new Date().getTime(),
         }
       );
       await user.save();
