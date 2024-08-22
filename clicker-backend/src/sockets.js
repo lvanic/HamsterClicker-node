@@ -100,12 +100,6 @@ export const initSocketsLogic = (io) => ({
   getUser: async (userId) => {
     try {
       const tgUserId = Number(userId);
-
-      await User.findOneAndUpdate(
-        { tgId: tgUserId },
-        { lastOnlineTimestamp: new Date().getTime() }
-      );
-
       const user = await User.findOne({ tgId: tgUserId })
         .populate("referrals")
         .populate("businesses")
@@ -137,6 +131,11 @@ export const initSocketsLogic = (io) => ({
         const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
         return sum + b.rewardPerHour * 2.2 ** (businessLevel - 1);
       }, 0);
+      
+      await User.findOneAndUpdate(
+        { tgId: tgUserId },
+        { lastOnlineTimestamp: new Date().getTime() }
+      );
 
       const userData = {
         id: user._id,
