@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Task } from "../../../models";
 import { getConfig } from "../../../utils/config";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const { adminApiUrl } = getConfig();
 
 export const AdminTasks = () => {
+  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<"all" | "active" | "non-active">("all");
 
@@ -100,21 +102,31 @@ export const AdminTasks = () => {
                 Reward: {task.rewardAmount}
               </div>
             </div>
-            {task.active ? (
+
+            <div className="flex space-x-1">
               <button
-                className="bg-red-300 px-4 w-1/4"
-                onClick={() => handleDeactivateClick(task.id)}
+                className="bg-green-200 px-2"
+                onClick={() => navigate('/admin/tasks/edit/' + task.id)}
               >
-                Deactivate
+                  Edit
               </button>
-            ) : (
-              <button
-                className="bg-green-300 px-4 w-1/4"
-                onClick={() => handleActivateClick(task.id)}
-              >
-                Activate
-              </button>
-            )}
+
+              {task.active ? (
+                <button
+                  className="bg-red-300 px-4"
+                  onClick={() => handleDeactivateClick(task.id)}
+                >
+                  Deactivate
+                </button>
+              ) : (
+                <button
+                  className="bg-green-300 px-4"
+                  onClick={() => handleActivateClick(task.id)}
+                >
+                  Activate
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

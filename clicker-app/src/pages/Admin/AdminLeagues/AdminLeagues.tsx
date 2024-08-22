@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getConfig } from "../../../utils/config";
 import { League } from "../../../models";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const { adminApiUrl } = getConfig();
 
 export const AdminLeagues = () => {
   const [leagues, setLeagues] = useState<League[]>([]);
+  const navigate = useNavigate();
 
   const refreshLeagues = async () => {
     const response = await fetch(`${adminApiUrl}/admin/leagues`);
@@ -56,12 +57,22 @@ export const AdminLeagues = () => {
               <div className="font-bold">{league.name}</div>
               <div className="text-xs font-light">{league.description}</div>
             </div>
-            <button
-              className="bg-red-300 px-4 w-1/4"
-              onClick={() => handleDeleteLeague(league.id)}
-            >
-              Delete
-            </button>
+
+            <div className="flex space-x-1">
+              <button
+                className="bg-green-200 px-2"
+                onClick={() => navigate('/admin/leagues/edit/' + league.id)}
+              >
+                  Edit
+              </button>
+
+              <button
+                className="bg-red-300 px-4"
+                onClick={() => handleDeleteLeague(league.id)}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>

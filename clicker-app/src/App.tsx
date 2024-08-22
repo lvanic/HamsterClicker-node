@@ -26,6 +26,8 @@ import {
   AdminBusinesses,
   AdminAddBusiness,
   AdminEditBusiness,
+  AdminEditLeague,
+  AdminEditTask,
 } from "./pages/Admin";
 import { LeagueTop } from "./pages/LeagueTop/LeagueTop";
 import { Businesses } from "./pages/Businesses/Businesses";
@@ -89,8 +91,13 @@ function App() {
                     <Route index element={<AdminSettings />} />
                     <Route path="tasks" element={<AdminTasks />} />
                     <Route path="tasks/add" element={<AddTask />} />
+                    <Route path="tasks/edit/:id" element={<AdminEditTask />} />
                     <Route path="leagues" element={<AdminLeagues />} />
                     <Route path="leagues/add" element={<AdminAddLeague />} />
+                    <Route
+                      path="leagues/edit/:id"
+                      element={<AdminEditLeague />}
+                    />
                     <Route path="businesses" element={<AdminBusinesses />} />
                     <Route
                       path="businesses/add"

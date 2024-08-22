@@ -113,6 +113,20 @@ export const registerAdminRoutes = (router) => {
     ctx.body = task;
   });
 
+  router.put("/admin/tasks/:id", async (ctx) => {
+    const task = await Task.findById(ctx.params.id);
+    task.name = ctx.request.body.name;
+    task.description = ctx.request.body.description;
+    task.avatarUrl = ctx.request.body.avatarUrl;
+    task.type = ctx.request.body.type;
+    task.activateUrl = ctx.request.body.activateUrl;
+    task.rewardAmount = ctx.request.body.rewardAmount;
+
+    await task.save();
+
+    ctx.body = task;
+  });
+
   router.get("/admin/leagues", async (ctx) => {
     const leagues = await League.find({});
     ctx.body = leagues.map((l) => ({ id: l._id, ...l.toObject() }));
@@ -139,6 +153,24 @@ export const registerAdminRoutes = (router) => {
   router.delete("/admin/leagues/:id", async (ctx) => {
     const league = await League.findById(ctx.params.id);
     await league.remove();
+  });
+
+  router.get("/admin/leagues/:id", async (ctx) => {
+    const league = await League.findById(ctx.params.id);
+    ctx.body = league;
+  });
+
+  router.put("/admin/leagues/:id", async (ctx) => {
+    const league = await League.findById(ctx.params.id);
+    league.name = ctx.request.body.name;
+    league.description = ctx.request.body.description;
+    league.avatarUrl = ctx.request.body.avatarUrl;
+    league.minScore = ctx.request.body.minScore;
+    league.maxScore = ctx.request.body.maxScore;
+
+    await league.save();
+
+    ctx.body = league;
   });
 
   router.get("/admin/businesses", async (ctx) => {
