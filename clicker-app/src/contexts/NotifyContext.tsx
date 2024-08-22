@@ -31,14 +31,34 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
     setNotifyMessage(null);
   };
 
-  useEffect(() => {
-    webSocket?.on("comboCompleted", () => {
-      const notify: NotifyMessage = {
-        status: "ok",
-        message: "You are successfully completed the combo game",
-      };
+  const handleComboCompleted = () => {
+    console.log("combo ok");
+
+    const notify: NotifyMessage = {
+      status: "ok",
+      message: "You are successfully completed the combo game",
+    };
+    setTimeout(() => {
       setNotify(notify);
-    });
+    }, 2000);
+  };
+
+  const handleDailyReward = (data: string) => {
+    const notify: NotifyMessage = {
+      status: "ok",
+      message: data,
+    };
+
+    setNotify(notify);
+  };
+
+  useEffect(() => {
+    webSocket?.on("comboCompleted", handleComboCompleted);
+    // webSocket?.on("boostActivated", handleDailyReward);
+    return () => {
+      webSocket?.off("comboCompleted", handleComboCompleted);
+      // webSocket?.off("boostActivated", handleDailyReward);
+    };
   }, [webSocket]);
   return (
     <NotifyContext.Provider value={{ notify, setNotify }}>

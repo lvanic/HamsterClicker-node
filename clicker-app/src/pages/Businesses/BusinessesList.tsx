@@ -3,6 +3,7 @@ import { VerticalDivider } from "../../components/VerticalDivider";
 import { Business, User } from "../../models";
 import { formatNumber } from "../../utils/formatNumber";
 import { EggSvg } from "../Layout/EggSvg";
+import Timer from "./Timer";
 
 export const BusinessesList = memo(function BusinessesList({
   businesses,
@@ -50,11 +51,12 @@ export const BusinessesList = memo(function BusinessesList({
               </div>
             )}
             {isLastUpgradeLessThanHourAgo && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-center text-sm p-2 rounded-2xl rounded-b-xl">
-                Upgrade locked until{" "}
-                {new Date(
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 text-center text-sm p-2 rounded-2xl rounded-b-xl">
+                Upgrade locked for{" "}
+                {/* {new Date(
                   business.lastUpgradeTimestamp + 3600000
-                ).toLocaleTimeString()}
+                ).toLocaleTimeString()} */}
+                <Timer timestamp={business.lastUpgradeTimestamp + 3600000}/>
               </div>
             )}
 

@@ -116,6 +116,17 @@ export const AdminSettings = () => {
       </div>
 
       <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">Daily reward</label>
+        <input
+          type="number"
+          placeholder="Daily reward"
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          value={dailyReward}
+          onChange={(e) => setDailyReward(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="flex flex-col">
         <label className="text-xs bg-slate-300 w-2/5">Max energy level</label>
         <input
           type="number"

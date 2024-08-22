@@ -16,4 +16,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #1c1c1c;
+  /* height: calc(100vh - 100px)!important; */
+}
+
+#root{
+  height: calc(100vh - 73px);
+
 }

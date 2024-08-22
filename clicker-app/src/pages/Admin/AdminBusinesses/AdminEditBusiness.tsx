@@ -65,7 +65,7 @@ export const AdminEditBusiness = () => {
   }, []);
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 text-black">
       <input
         type="text"
         placeholder="Business name"
@@ -113,11 +113,11 @@ export const AdminEditBusiness = () => {
         value={price}
       />
 
-      <button className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
+      <button className="bg-green-600 hover:bg-green-700 text-black font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
         UPDATE
       </button>
 
-      {isSuccess && <div className="bg-green-400 text-center text-white">Successfully updated</div>}
+      {isSuccess && <div className="bg-green-400 text-center text-black">Successfully updated</div>}
       {isError && <div className="bg-red-600 text-center text-white">Error occurred. {errorText}</div>}
     </div>
   );

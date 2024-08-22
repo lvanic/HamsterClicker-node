@@ -31,30 +31,44 @@ export const LeagueTop = () => {
   }, [webSocket, user?.league.id]);
 
   return (
-    <div className="font-sans p-12 rounded-lg max-w-md mx-auto text-white shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        {league ? league.name : "Top League"}
-      </h2>
-      <p className="text-center">
-        {league ? league.description : "Loading league information..."}
-      </p>
-      <p className="my-2 text-center">Total users in league: {usersInLeague}</p>
-      <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-8 mb-8 p-4">
+    <div className="pt-0 px-4 rounded-lg overflow-scroll h-full pt-10">
+      <div className="px-16">
+        <div
+          className="gradient-border-container mb-2"
+          style={{
+            aspectRatio: "1",
+          }}
+        >
+          <img className="rounded-full" src={user?.league.avatarUrl} />
+        </div>
+      </div>
+      <div className="flex flex-col items-center mt-4">
+        <div className="uppercase text-xl">{user?.league.name}</div>
+        <div className="flex gap-1 text-[#515A70]">
+          <div>{formatNumber(user?.score || 0)}</div>
+          <div>/</div>
+          <div>{formatNumber(user?.league.maxScore || 0)}</div>
+        </div>
+      </div>
+      <div className="flex flex-col justify-center  items-center rounded-xl mt-8 mb-2 p-4">
         <div className="text-center mb-2">Top Users in League</div>
-        <ul className="list-none w-full">
+        <ul
+          className="list-none w-full relative m-x-full"
+          // style={{ maxHeight: window.innerHeight - 600, overflowY: "scroll" }}
+        >
           {topUsersInLeague.length > 0 ? (
-            topUsersInLeague.map((user: User, index: number) => (
+            topUsersInLeague.map((userL: User, index: number) => (
               <li
-                key={user.tgId}
-                className="flex justify-between items-center bg-[#3C4858] rounded-md p-4 my-1 shadow-sm"
+                key={userL.tgId}
+                className="flex justify-between items-center bg-[#383838] rounded-3xl p-4 my-1 shadow-sm"
               >
-                <div className="flex items-center">
-                  <div className="flex text-md justify-center items-center border-2 border-white rounded-full w-10 h-10 mr-2">
-                    {index + 1}
-                  </div>
-                  <div>{user.tgUsername || user.firstName}</div>
+                <div className="flex flex-col justify-start">
+                  <div>{userL.tgUsername || userL.firstName}</div>
+                  <div> {formatNumber(userL.score)}</div>
                 </div>
-                <div> {formatNumber(user.score)}</div>
+                <div className="flex text-2xl font-bold justify-center items-center bg-[#FD5463] rounded-full w-10 h-10">
+                  {index + 1}
+                </div>
               </li>
             ))
           ) : (

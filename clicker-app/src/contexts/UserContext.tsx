@@ -75,7 +75,6 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       if (!prev) {
         return null;
       }
-      console.log(clickRef.current);
 
       return {
         ...prev,
@@ -108,8 +107,12 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
         totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
         currentComboCompletions:
-          data?.currentComboCompletions?.map((c) => c._id) ||
-          prev.currentComboCompletions,
+          data?.currentComboCompletions != undefined
+            ? [
+                data?.currentComboCompletions?.map((c) => c._id),
+                ...prev.currentComboCompletions.filter(c => !data.currentComboCompletions.some(x => x == c)),
+              ]
+            : prev.currentComboCompletions,
       } as User;
     });
   }, []);
