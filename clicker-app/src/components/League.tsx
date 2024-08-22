@@ -15,7 +15,7 @@ export const League = () => {
         navigate("/league");
       }}
       style={{ display: "flex", alignItems: "center" }}
-      className="ml-6 pb-6 w-full"
+      className="pb-6 w-full"
     >
       <div
         style={{

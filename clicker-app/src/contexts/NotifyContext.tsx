@@ -53,7 +53,7 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
 
     setTimeout(() => {
       setNotify(notify);
-    }, 2000);
+    }, 3500);
   };
 
   useEffect(() => {

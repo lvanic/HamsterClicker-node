@@ -60,7 +60,7 @@ export const BusinessesList = memo(function BusinessesList({
                 <Timer
                   timestamp={
                     business.lastUpgradeTimestamp +
-                    (business.level - 1 + 2) * 1000
+                    (business.level - 1 + 2) * 1000 * 60
                   }
                 />
               </div>

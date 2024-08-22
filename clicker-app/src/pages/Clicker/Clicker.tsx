@@ -115,10 +115,12 @@ export const Clicker: React.FC = () => {
         <ClickerSkeleton />
       ) : (
         <>
-          <BoostButton />
-          <div className="flex flex-row justify-center items-center w-full mt-1 mb-1">
+          <div className="flex flex-row justify-center items-center w-full mt-1 mb-3 gap-2">
             <ScoreCounter clickCount={clickCount} />
-            <League />
+            <div className="flex flex-col justify-center items-center gap-1">
+              <BoostButton />
+              <League />
+            </div>
             <LevelStatus />
           </div>
           <div className="flex flex-row justify-center items-center w-full mb-2  gap-4">
