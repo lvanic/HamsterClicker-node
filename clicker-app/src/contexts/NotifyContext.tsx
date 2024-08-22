@@ -1,6 +1,14 @@
-import { FC, ReactNode, createContext, useEffect, useState } from "react";
+import {
+  FC,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Notification } from "../components/Notification";
 import { useWebSocket } from "../hooks/useWebsocket";
+import { UserContext } from "./UserContext";
 
 export interface NotifyMessage {
   message: string;
@@ -23,6 +31,8 @@ interface NotifyProviderProps {
 const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
   const [notify, setNotifyMessage] = useState<NotifyMessage | null>(null);
   const { webSocket } = useWebSocket();
+  const userContext = useContext(UserContext);
+  const [isStartNotifyShowed, setStartNotifyShowed] = useState(false);
 
   const setNotify = (notify: NotifyMessage) => {
     setNotifyMessage(notify);
@@ -37,20 +47,30 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
     const notify: NotifyMessage = {
       status: "ok",
       message: "You are successfully completed the combo game",
+      className: "h-24",
     };
+
     setTimeout(() => {
       setNotify(notify);
     }, 2000);
   };
 
-  const handleDailyReward = (data: string) => {
-    const notify: NotifyMessage = {
-      status: "ok",
-      message: data,
-    };
-
-    setNotify(notify);
-  };
+  useEffect(() => {
+    if (!isStartNotifyShowed) {
+      const earned = 200;
+      const notify: NotifyMessage = {
+        status: "ok",
+        message: `During your absense you earned ${earned}`,
+        className: "h-24",
+      };
+      setNotify(notify);
+      setStartNotifyShowed(true);
+    }
+  }, [
+    userContext?.user?.cachedIncome,
+    userContext?.user?.lastOnlineTimestamp,
+    isStartNotifyShowed,
+  ]);
 
   useEffect(() => {
     webSocket?.on("comboCompleted", handleComboCompleted);

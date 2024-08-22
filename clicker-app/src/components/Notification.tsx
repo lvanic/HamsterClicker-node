@@ -10,31 +10,42 @@ export const Notification = ({
   onClose: any;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<any>(null);
+
   useEffect(() => {
+    // Clear any existing timers
+    if (timeoutRef.current !== null) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    // Add the "visible" class and start new timers
     const TIMEOUT = 3000;
     modalRef.current?.classList.add("visible");
 
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       modalRef.current?.classList.remove("visible");
-
       modalRef.current?.classList.add("hidden");
     }, TIMEOUT - 300);
 
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       onClose();
     }, TIMEOUT);
 
     return () => {
-      modalRef.current?.classList.remove("visible");
+      // Clear any remaining timers on unmount
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, []);
+  }, [notify, onClose]);
 
   const overlayClickHandle = () => {
     modalRef.current?.classList.remove("visible");
     modalRef.current?.classList.add("hidden");
-    onClose()
-  }
-  
+    onClose();
+  };
+
   return (
     <>
       <div className="overlay-safe" onClick={overlayClickHandle} />
@@ -64,12 +75,12 @@ export const Notification = ({
             {notify.status == "task" ? <SuccessSvg /> : null}
           </div>
           {/* <div className="text-white mt-2 text-sm">
-            {notify.status == "task"
-              ? "Сonfirmed"
-              : notify.status == "ok"
-              ? "Success"
-              : "Something went wrong"}
-          </div> */}
+    {notify.status == "task"
+    ? "Сonfirmed"
+    : notify.status == "ok"
+    ? "Success"
+    : "Something went wrong"}
+    </div> */}
           {notify.closeButton && (
             <button
               className="text-white px-6 py-2 relative top-8 rounded-lg"

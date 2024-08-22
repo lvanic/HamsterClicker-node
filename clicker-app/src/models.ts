@@ -20,6 +20,8 @@ export interface User {
   energyLevel: number;
   maxEnergy: number;
   currentComboCompletions: string[];
+  cachedIncome: number;
+  lastOnlineTimestamp: number;
 }
 
 export interface Task {

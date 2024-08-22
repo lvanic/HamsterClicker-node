@@ -67,6 +67,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       totalIncomePerHour: userData.totalIncomePerHour,
       league: { ...userData.league, id: userData.league.id },
       userPlaceInLeague: userData.userPlaceInLeague,
+      cachedIncome: userData.totalIncomePerHour,
     });
   };
 
@@ -106,11 +107,15 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
         lastFullEnergyTimestamp:
           data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
         totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
+        cachedIncome: prev.cachedIncome,
+        lastOnlineTimestamp: prev.lastOnlineTimestamp,
         currentComboCompletions:
           data?.currentComboCompletions != undefined
             ? [
                 data?.currentComboCompletions?.map((c) => c._id),
-                ...prev.currentComboCompletions.filter(c => !data.currentComboCompletions.some(x => x == c)),
+                ...prev.currentComboCompletions.filter(
+                  (c) => !data.currentComboCompletions.some((x) => x == c)
+                ),
               ]
             : prev.currentComboCompletions,
       } as User;
