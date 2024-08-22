@@ -47,7 +47,7 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
     const notify: NotifyMessage = {
       status: "ok",
       message: "You are successfully completed the combo game",
-      className: "h-24",
+      className: "h-48",
     };
 
     setTimeout(() => {
@@ -56,12 +56,24 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!isStartNotifyShowed) {
-      const earned = 200;
+    if (!isStartNotifyShowed && userContext?.user?.lastOnlineTimestamp) {
+      const MAX_OFFLINE_EARNINGS_HOURS = 3;
+
+      const currentTime = new Date().getTime();
+      const offlineTime = currentTime - userContext?.user.lastOnlineTimestamp;
+      const offlineHours = offlineTime / (1000 * 60 * 60);
+
+      let earned = 0;
+      if (offlineHours <= MAX_OFFLINE_EARNINGS_HOURS) {
+        earned = offlineHours * userContext?.user?.cachedIncome;
+      } else {
+        earned = MAX_OFFLINE_EARNINGS_HOURS * userContext?.user?.cachedIncome;
+      }
+
       const notify: NotifyMessage = {
         status: "ok",
-        message: `During your absense you earned ${earned}`,
-        className: "h-24",
+        message: `During your absence you earned ${earned}`,
+        className: "h-48",
       };
       setNotify(notify);
       setStartNotifyShowed(true);

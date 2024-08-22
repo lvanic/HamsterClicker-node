@@ -33,7 +33,7 @@ export const Referrals = () => {
       <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-8 mb-8">
         <LargerEggSvg className="absolute mb-20" />
         <div className="mt-7 mb-7">1 friend = {referralReward} coins</div>
-        <ReferralLink className="mt-20" />
+        <ReferralLink className="mt-20" share={true} />
       </div>
       <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-14 mb-8">
         <LargerEggSvg className="absolute mb-24" />
@@ -41,7 +41,7 @@ export const Referrals = () => {
           If he has telegram premium
         </div>
         <div className="mb-7">1 friend = {referralReward} coins</div>
-        <ReferralLink className="mt-24" />
+        <ReferralLink className="mt-24" share={false} />
       </div>
       <ul
         className="list-none p-4 rounded-xl bg-[#383838]"
