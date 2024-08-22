@@ -552,7 +552,7 @@ export const initSocketsLogic = (io) => ({
 
     if (
       !!businessUpgrade &&
-      businessUpgrade.timestamp + 1000 * 60 * 60 > Date.now()
+      businessUpgrade.timestamp + (business.level - 1 + 2) * 1000 > Date.now()
     ) {
       return;
     }

@@ -15,7 +15,7 @@ export const BusinessesList = memo(function BusinessesList({
   user: User;
   setSelectedBusiness: (arg0: Business) => void;
   setModalOpen: (arg0: boolean) => void;
-})  {
+}) {
   return (
     <>
       {businesses.map((business) => {
@@ -56,7 +56,12 @@ export const BusinessesList = memo(function BusinessesList({
                 {/* {new Date(
                   business.lastUpgradeTimestamp + 3600000
                 ).toLocaleTimeString()} */}
-                <Timer timestamp={business.lastUpgradeTimestamp + 3600000}/>
+                <Timer
+                  timestamp={
+                    business.lastUpgradeTimestamp +
+                    (business.level - 1 + 2) * 1000
+                  }
+                />
               </div>
             )}
 
