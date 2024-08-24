@@ -87,11 +87,19 @@ export const Boosts = () => {
   }, [webSocket]);
 
   useEffect(() => {
-    if (window.Telegram && window.Telegram.WebApp) {
+    if (typeof window.Telegram.WebApp !== "undefined") {
+      console.log("show");
+
+      window.Telegram.WebApp.BackButton.show();
       window.Telegram.WebApp.BackButton.onClick(function () {
         window.history.back();
       });
     }
+    return () => {
+      if (typeof window.Telegram.WebApp !== "undefined") {
+        window.Telegram.WebApp.BackButton.hide();
+      }
+    };
   }, []);
 
   const activateFullEnergyBoost = () => {

@@ -30,6 +30,22 @@ export const LeagueTop = () => {
     }
   }, [webSocket, user?.league.id]);
 
+  useEffect(() => {
+    if (typeof window.Telegram.WebApp !== "undefined") {
+      console.log("show");
+
+      window.Telegram.WebApp.BackButton.show();
+      window.Telegram.WebApp.BackButton.onClick(function () {
+        window.history.back();
+      });
+    }
+    return () => {
+      if (typeof window.Telegram.WebApp !== "undefined") {
+        window.Telegram.WebApp.BackButton.hide();
+      }
+    };
+  }, []);
+
   return (
     <div className="pt-0 px-4 rounded-lg overflow-scroll h-full pt-10">
       <div className="px-16">
