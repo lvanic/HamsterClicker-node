@@ -83,7 +83,8 @@ const main = async () => {
   registerAdminRoutes(router);
 
   router.get("/app-settings", async (ctx) => {
-    ctx.body = await getAppSettings();
+    const settings = await getAppSettings();
+    ctx.body = { ...settings.toObject() };
   });
 
   router.post("/wallet-address", async (ctx) => {
@@ -118,8 +119,7 @@ const main = async () => {
       next();
     }
   });
-  
-  app.use(bodyParser());
+
   app.use(router.routes()).use(router.allowedMethods());
 
   const server = http.createServer(app.callback());
