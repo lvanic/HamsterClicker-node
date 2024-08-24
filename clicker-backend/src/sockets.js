@@ -131,7 +131,7 @@ export const initSocketsLogic = (io) => ({
         const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
         return sum + b.rewardPerHour * 2.2 ** (businessLevel - 1);
       }, 0);
-      
+
       await User.findOneAndUpdate(
         { tgId: tgUserId },
         { lastOnlineTimestamp: new Date().getTime() }
@@ -307,7 +307,7 @@ export const initSocketsLogic = (io) => ({
 
         if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
           user.fullEnergyActivates++;
-          user.energy = user.maxEnergy;
+          user.energy = 1000 + 500 * (user.energyLevel - 1);
           io.emit("boostActivated", "Your energy has been restored");
         }
       } else if (boostName === "dailyReward") {
