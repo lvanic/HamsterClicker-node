@@ -192,7 +192,7 @@ export const initSocketsLogic = (io) => ({
         score: { $gte: league.minScore },
       });
       const dopUsers = await User.find({
-        score: { $gte: league.minScore },
+        score: { $gte: league.maxScore },
       })
         .sort({ score: -1 })
         .limit(topUsersCount);
