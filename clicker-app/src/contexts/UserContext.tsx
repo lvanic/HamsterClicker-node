@@ -68,6 +68,10 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       league: { ...userData.league, id: userData.league.id },
       userPlaceInLeague: userData.userPlaceInLeague,
       cachedIncome: userData.totalIncomePerHour,
+      energy:
+        userData.energy < userData.maxEnergy
+          ? userData.energy
+          : userData.maxEnergy,
     });
   };
 
@@ -100,7 +104,9 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           clickRef.current &&
           prev.energy + data.deltaAddedEnergy < prev.maxEnergy
             ? prev.energy + data.deltaAddedEnergy
-            : data.energy,
+            : data.energy < prev.maxEnergy
+            ? data.energy
+            : prev.maxEnergy,
         userPlaceInLeague: data.userPlaceInLeague,
         fullEnergyActivates:
           data.fullEnergyActivates || prev.fullEnergyActivates,

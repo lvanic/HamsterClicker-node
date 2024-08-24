@@ -1,8 +1,8 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, memo } from "react";
 import { NotifyMessage } from "../contexts/NotifyContext";
 import { SuccessSvg } from "./SuccessSvg";
 
-export const Notification = ({
+const Notification = ({
   notify,
   onClose,
 }: {
@@ -13,13 +13,11 @@ export const Notification = ({
   const timeoutRef = useRef<any>(null);
 
   useEffect(() => {
-    // Clear any existing timers
     if (timeoutRef.current !== null) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+      // clearTimeout(timeoutRef.current);
+      // timeoutRef.current = null;
     }
 
-    // Add the "visible" class and start new timers
     const TIMEOUT = 3000;
     modalRef.current?.classList.add("visible");
 
@@ -33,8 +31,9 @@ export const Notification = ({
     }, TIMEOUT);
 
     return () => {
-      // Clear any remaining timers on unmount
       if (timeoutRef.current !== null) {
+        console.log(1234);
+        
         clearTimeout(timeoutRef.current);
       }
     };
@@ -57,7 +56,7 @@ export const Notification = ({
       >
         <div
           className={
-            "w-full h-full bg-[#282828] flex flex-col justify-center items-center rounded-b-xl " +
+            "w-full h-full bg-[#282828] flex flex-col justify-center items-center rounded-b-xl pt-10 " +
             (notify.status == "task" ? "text-[#35CE28]" : "text-red")
           }
           style={{
@@ -72,7 +71,9 @@ export const Notification = ({
         >
           <div className="text-lg text-center">{notify.message}</div>
           <div className="mt-8">
-            {notify.status == "task" ? <SuccessSvg /> : null}
+            {notify.status == "task" || notify.status == "ok" ? (
+              <SuccessSvg />
+            ) : null}
           </div>
           {/* <div className="text-white mt-2 text-sm">
     {notify.status == "task"
@@ -96,3 +97,5 @@ export const Notification = ({
     </>
   );
 };
+
+export default memo(Notification);

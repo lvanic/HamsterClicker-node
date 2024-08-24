@@ -71,7 +71,7 @@ export const Businesses = () => {
         <div className="flex justify-center items-center">
           <LargerEggSvg />
           <div className="text-5xl ml-2">
-            {formatNumber(Math.floor(user?.balance || 0))}
+            {Math.floor(user?.balance || 0)}
           </div>
         </div>
       </div>

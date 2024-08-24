@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Notification } from "../components/Notification";
+import  Notification  from "../components/Notification";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { UserContext } from "./UserContext";
 import { formatNumber } from "../utils/formatNumber";
@@ -42,13 +42,12 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
     setNotifyMessage(null);
   };
 
-  const handleComboCompleted = () => {
+  const handleComboCompleted = (data: any) => {
     console.log("combo ok");
 
     const notify: NotifyMessage = {
       status: "ok",
-      message: "You are successfully completed the combo game",
-      className: "h-48",
+      message: `You are successfully completed the combo game and received ${data.reward}`,
     };
 
     setTimeout(() => {
@@ -64,7 +63,9 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
       const offlineTime = currentTime - userContext?.user.lastOnlineTimestamp;
       const offlineHours = offlineTime / (1000 * 60 * 60);
       console.log(offlineTime, userContext?.user?.cachedIncome);
-
+      if (offlineTime / 1000 / 60 < 5) {
+        return;
+      }
       let earned = 0;
       if (offlineTime <= 0) {
         earned = 0;
@@ -77,7 +78,6 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
       const notify: NotifyMessage = {
         status: "ok",
         message: `During your absence you earned ${formatNumber(earned)}`,
-        className: "h-48",
       };
       setNotify(notify);
       setStartNotifyShowed(true);

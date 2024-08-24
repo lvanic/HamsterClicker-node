@@ -11,14 +11,14 @@ export const Statistics = () => {
     <div className="flex w-full justify-around items-center">
       <div>
         <div className="text-sm">Profit per tap</div>
-        <div className="flex flex-row justify-end items-center">
+        <div className="flex flex-row justify-center items-center">
           <EggSvg />
           <div className="ml-2 text-xl">+{user?.clickPower}</div>
         </div>
       </div>
       <div>
         <div className="text-sm">Profit per hour</div>
-        <div className="flex flex-row justify-start items-center">
+        <div className="flex flex-row justify-center items-center">
           <EggSvg />
           <div className="ml-2 text-xl">
             +{formatNumber(user?.totalIncomePerHour || 0)}

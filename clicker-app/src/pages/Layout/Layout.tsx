@@ -65,7 +65,7 @@ export const Layout = () => {
           }`}
         >
           <BusinessSvg />
-          <span className="text-xs">Ferms</span>
+          <span className="text-xs">Mine</span>
         </Link>
         <Link
           to="/tasks"

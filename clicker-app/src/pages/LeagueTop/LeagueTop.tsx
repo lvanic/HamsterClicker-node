@@ -63,7 +63,7 @@ export const LeagueTop = () => {
                 className="flex justify-between items-center bg-[#383838] rounded-3xl p-4 my-1 shadow-sm"
               >
                 <div className="flex flex-col justify-start">
-                  <div>{userL.tgUsername || userL.firstName}</div>
+                  <div>{userL.firstName || "Anonimus"}</div>
                   <div> {formatNumber(userL.score)}</div>
                 </div>
                 <div className="flex text-2xl font-bold justify-center items-center bg-[#FD5463] rounded-full w-10 h-10">

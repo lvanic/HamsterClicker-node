@@ -15,6 +15,7 @@ import { MassTapSvg } from "./MassTapSvg";
 import { BoostModal } from "./BoostModal";
 import { useSettings } from "../../hooks/useSettings";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
+import { useNavigate } from "react-router-dom";
 
 type Boost = {
   id: number;
@@ -64,13 +65,13 @@ export const Boosts = () => {
   const { startClickUpgradeCost, startEnergyUpgradeCost } = useSettings();
   const notifyContext = useContext(NotifyContext);
   const { maxClickLevel, maxEnergyLevel } = useSettings();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (webSocket) {
       const handleBoostActivated = (message: string) => {
         const notify: NotifyMessage = {
           status: "ok",
-          className: "h-72",
           message: message,
         };
 
@@ -85,6 +86,14 @@ export const Boosts = () => {
     }
   }, [webSocket]);
 
+  useEffect(() => {
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.BackButton.onClick(function () {
+        window.history.back();
+      });
+    }
+  }, []);
+
   const activateFullEnergyBoost = () => {
     if (webSocket) {
       webSocket.emit(
@@ -93,16 +102,15 @@ export const Boosts = () => {
       );
 
       if (fullEnergyActivates < 3) {
-        const notify: NotifyMessage = {
-          status: "ok",
-          className: "h-72",
-          message: "The energy has been restored",
-        };
-        notifyContext?.setNotify(notify);
+        // const notify: NotifyMessage = {
+        //   status: "ok",
+        //   className: "h-72",
+        //   message: "The energy has been restored",
+        // };
+        // notifyContext?.setNotify(notify);
       } else {
         const notify: NotifyMessage = {
           status: "error",
-          className: "h-72",
           message: "You can't restore energy today",
         };
         notifyContext?.setNotify(notify);
@@ -114,7 +122,6 @@ export const Boosts = () => {
     if (!!user && user?.clickPower >= maxClickLevel) {
       const notify: NotifyMessage = {
         status: "unknown",
-        className: "h-72",
         message: "You have reached the maximum clicker level",
       };
       notifyContext?.setNotify(notify);
@@ -130,14 +137,12 @@ export const Boosts = () => {
     ) {
       const notify: NotifyMessage = {
         status: "ok",
-        className: "h-72",
         message: "The power of your click has been enhanced",
       };
       notifyContext?.setNotify(notify);
     } else {
       const notify: NotifyMessage = {
         status: "error",
-        className: "h-72",
         message: "You don't have enough balance",
       };
       notifyContext?.setNotify(notify);
@@ -148,7 +153,6 @@ export const Boosts = () => {
     if (!!user?.energyLevel && user.energyLevel >= maxEnergyLevel) {
       const notify: NotifyMessage = {
         status: "unknown",
-        className: "h-72",
         message: "You have reached the maximum energy level",
       };
       notifyContext?.setNotify(notify);
@@ -164,14 +168,12 @@ export const Boosts = () => {
     ) {
       const notify: NotifyMessage = {
         status: "ok",
-        className: "h-72",
-        message: "The energy has been enhanced",
+        message: "Your energy level has been enhanced",
       };
       notifyContext?.setNotify(notify);
     } else {
       const notify: NotifyMessage = {
         status: "error",
-        className: "h-72",
         message: "You don't have enough balance",
       };
       notifyContext?.setNotify(notify);
@@ -252,7 +254,7 @@ export const Boosts = () => {
   }, [selectedBoost, user]);
 
   return (
-    <div className="font-sans p-5 pt-0 rounded-lg max-w-md mx-auto">
+    <div className="p-5 pt-0 rounded-lg max-w-md mx-auto">
       <div className="mt-4">
         <div className="flex justify-center w-full mb-8">
           <div className="w-min">
