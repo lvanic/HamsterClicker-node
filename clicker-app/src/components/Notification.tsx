@@ -10,33 +10,19 @@ const Notification = ({
   onClose: any;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<any>(null);
 
   useEffect(() => {
-    if (timeoutRef.current !== null) {
-      // clearTimeout(timeoutRef.current);
-      // timeoutRef.current = null;
-    }
-
     const TIMEOUT = 3000;
     modalRef.current?.classList.add("visible");
 
-    timeoutRef.current = setTimeout(() => {
+    setTimeout(() => {
       modalRef.current?.classList.remove("visible");
       modalRef.current?.classList.add("hidden");
     }, TIMEOUT - 300);
 
-    timeoutRef.current = setTimeout(() => {
+    setTimeout(() => {
       onClose();
     }, TIMEOUT);
-
-    return () => {
-      if (timeoutRef.current !== null) {
-        console.log(1234);
-        
-        clearTimeout(timeoutRef.current);
-      }
-    };
   }, [notify, onClose]);
 
   const overlayClickHandle = () => {

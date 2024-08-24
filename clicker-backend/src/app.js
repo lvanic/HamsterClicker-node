@@ -100,19 +100,27 @@ const main = async () => {
   });
 
   app.use(cors());
-  app.use(bodyParser());
-  app.use(router.routes()).use(router.allowedMethods());
   app.use(async (ctx, next) => {
     if (ctx.path.startsWith("/admin")) {
-      const token = ctx.headers["AdminToken"];
-      if (token === config.ADMIN_TOKEN) {
+      const token = ctx.headers["admin-token"];
+      console.log(token, config.ADMIN_TOKEN);
+
+      if (token === (config.ADMIN_TOKEN || "admin")) {
         await next();
       } else {
+        console.log("Unauthorized");
+
         ctx.status = 401;
         ctx.body = "Unauthorized";
+        return;
       }
+    } else {
+      next();
     }
   });
+  
+  app.use(bodyParser());
+  app.use(router.routes()).use(router.allowedMethods());
 
   const server = http.createServer(app.callback());
   const socketServer = new Server(server, {
@@ -128,7 +136,7 @@ const main = async () => {
     console.log("Пользователь отключен от WebSocket");
   });
 
-  ensureAppSettings()
+  ensureAppSettings();
   runEnergyRecover();
   runBusinesses();
   runCombos();
@@ -165,7 +173,7 @@ async function ensureAppSettings() {
     await newAppSettings.save();
     return newAppSettings;
   } catch (error) {
-    console.error('Error ensuring app settings:', error);
+    console.error("Error ensuring app settings:", error);
     throw error;
   }
 }

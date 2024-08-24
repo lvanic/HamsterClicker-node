@@ -25,7 +25,7 @@ export const Referrals = () => {
   };
 
   return (
-    <div className="font-sans p-12 rounded-lg max-w-md mx-auto">
+    <div className="p-12 rounded-lg max-w-md mx-auto">
       <div className="text-center text-xl">
         Invite friends and
         <br /> earn coins!

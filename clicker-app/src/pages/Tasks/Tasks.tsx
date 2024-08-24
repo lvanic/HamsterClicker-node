@@ -95,7 +95,7 @@ export const Tasks = () => {
 
   return (
     <>
-      <div className="font-sans p-5 rounded-lg max-w-md mx-auto">
+      <div className="p-5 rounded-lg max-w-md mx-auto">
         <div className="text-2xl text-center w-full">Earn more rewards</div>
         <div className="w-full flex justify-center items-center mt-6 mb-6">
           <EggNimbus className="absolute w-40 h-52" />

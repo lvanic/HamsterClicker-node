@@ -36,6 +36,7 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
   const [isStartNotifyShowed, setStartNotifyShowed] = useState(false);
 
   const setNotify = (notify: NotifyMessage) => {
+    setNotifyMessage(null);
     setNotifyMessage(notify);
   };
   const onClose = () => {
