@@ -100,6 +100,8 @@ const main = async () => {
     await user.save();
     ctx.body = "ok";
   });
+  
+  app.use(bodyParser());
 
   app.use(cors());
   app.use(async (ctx, next) => {
