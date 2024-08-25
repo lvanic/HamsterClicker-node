@@ -50,7 +50,13 @@ const main = async () => {
           if (refUser) {
             const appSettings = await getAppSettings();
             refUser.referrals.push(user);
-            refUser.balance += appSettings.referralReward;
+            const isPremium = ctx.from.is_premium;
+            console.log(isPremium);
+            if (isPremium) {
+              refUser.balance += appSettings.premiumReferralReward;
+            } else {
+              refUser.balance += appSettings.referralReward;
+            }
             await refUser.save();
           }
         }
@@ -100,7 +106,7 @@ const main = async () => {
     await user.save();
     ctx.body = "ok";
   });
-  
+
   app.use(bodyParser());
 
   app.use(cors());
