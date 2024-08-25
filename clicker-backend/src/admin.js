@@ -121,7 +121,6 @@ export const registerAdminRoutes = (router) => {
     task.type = ctx.request.body.type;
     task.activateUrl = ctx.request.body.activateUrl;
     task.rewardAmount = ctx.request.body.rewardAmount;
-    task.category = ctx.request.body.category;
 
     await task.save();
 
@@ -218,6 +217,7 @@ export const registerAdminRoutes = (router) => {
     business.rewardPerHour = ctx.request.body.rewardPerHour;
     business.refsToUnlock = ctx.request.body.refsToUnlock;
     business.price = ctx.request.body.price;
+    business.category = ctx.request.body.category;
 
     await business.save();
 
