@@ -121,6 +121,7 @@ export const registerAdminRoutes = (router) => {
     task.type = ctx.request.body.type;
     task.activateUrl = ctx.request.body.activateUrl;
     task.rewardAmount = ctx.request.body.rewardAmount;
+    task.category = ctx.request.body.category;
 
     await task.save();
 
