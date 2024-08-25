@@ -15,6 +15,9 @@ export const BusinessesFilter = ({
   const [selectedCategory, setSelectedCategory] = useState<string>(
     uniqueCategories[0] || "Markets"
   );
+  useEffect(() => {
+    handleCategoryClick(uniqueCategories[0] || "Markets");
+  }, [businesses]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);

@@ -73,6 +73,7 @@ export const AdminEditTask = () => {
 
   return (
     <div className="flex flex-col space-y-2 text-black">
+      <div className="text-white">Name</div>
       <input
         type="text"
         placeholder="Task name"
@@ -93,9 +94,8 @@ export const AdminEditTask = () => {
           Telegram subscribe
         </option>
         <option value="link">Link navigation</option>
-        <option value="twitter-subscribe">Twitter subscribe</option>
       </select>
-
+      <div className="text-white">Link</div>
       <input
         type="text"
         placeholder="Link"
@@ -103,14 +103,14 @@ export const AdminEditTask = () => {
         onChange={(e) => setActivateUrl(e.target.value)}
         value={activateUrl}
       />
-
+      <div className="text-white">Description</div>
       <textarea
         placeholder="Description"
         className="bg-slate-50 py-1 px-4 w-full outline-none resize-none h-36"
         onChange={(e) => setDescription(e.target.value)}
         value={description}
       />
-
+      <div className="text-white">Avatar link</div>
       <input
         type="text"
         placeholder="Avatar link"
@@ -118,7 +118,7 @@ export const AdminEditTask = () => {
         onChange={(e) => setAvatarUrl(e.target.value)}
         value={avatarUrl}
       />
-
+      <div className="text-white">Reward amount</div>
       <input
         type="number"
         placeholder="Reward amount"

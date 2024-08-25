@@ -16,6 +16,7 @@ export const AdminSettings = () => {
   const [comboReward, setComboReward] = useState(0);
   const [comboUpdateDayHour, setComboUpdateDayHour] = useState(0);
   const [comboBusinesses, setComboBusinesses] = useState([]);
+  const [premiumReferralReward, setPremiumReward] = useState(0);
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -43,6 +44,7 @@ export const AdminSettings = () => {
     setComboReward(settings.comboReward);
     setComboUpdateDayHour(settings.comboUpdateDayHour);
     setComboBusinesses(settings.comboBusinesses);
+    setPremiumReward(settings.premiumReferralReward);
   };
 
   const handleSubmit = async () => {
@@ -67,6 +69,7 @@ export const AdminSettings = () => {
         startEnergyUpgradeCost,
         comboReward,
         comboUpdateDayHour,
+        premiumReferralReward,
       }),
     });
 
@@ -94,8 +97,6 @@ export const AdminSettings = () => {
         </div>
       </div>
 
-      {/* Existing input fields */}
-
       <div className="flex flex-col">
         <label className="text-xs bg-slate-300 w-2/5">Max click level</label>
         <input
@@ -117,6 +118,30 @@ export const AdminSettings = () => {
           className="bg-slate-50 py-1 px-4 w-full outline-none"
           value={startClickUpgradeCost}
           onChange={(e) => setStartClickUpgradeCost(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">
+          Premium referral reward
+        </label>
+        <input
+          type="number"
+          placeholder="Premium referral reward"
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          value={premiumReferralReward}
+          onChange={(e) => setPremiumReward(Number(e.target.value))}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">Referral reward</label>
+        <input
+          type="number"
+          placeholder="Referral reward"
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          value={referralReward}
+          onChange={(e) => setReferralReward(Number(e.target.value))}
         />
       </div>
 

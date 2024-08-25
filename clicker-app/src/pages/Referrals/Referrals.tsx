@@ -12,7 +12,7 @@ import { useWebSocket } from "../../hooks/useWebsocket";
 export const Referrals = () => {
   const { user, setUser } = useUser();
   const referrals = user?.referrals;
-  const { referralReward } = useSettings();
+  const { referralReward, premiumReferralReward } = useSettings();
   const { webSocket } = useWebSocket();
   const [isReferralUpdate, setReferralUpdate] = useState(false);
 
@@ -40,7 +40,7 @@ export const Referrals = () => {
         <div className="mt-7 text-sm underline underline-offset-2">
           If he has telegram premium
         </div>
-        <div className="mb-7">1 friend = {referralReward} coins</div>
+        <div className="mb-7">1 friend = {premiumReferralReward} coins</div>
         <ReferralLink className="mt-24" share={false} />
       </div>
       <ul

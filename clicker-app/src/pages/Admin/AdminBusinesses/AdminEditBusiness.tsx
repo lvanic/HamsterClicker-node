@@ -11,6 +11,7 @@ export const AdminEditBusiness = () => {
   const [rewardPerHour, setRewardPerHour] = useState(0);
   const [refsToUnlock, setRefsToUnlock] = useState(0);
   const [price, setPrice] = useState(0);
+  const [category, setCategory] = useState("Specials");
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -33,6 +34,7 @@ export const AdminEditBusiness = () => {
         rewardPerHour,
         refsToUnlock,
         price,
+        category,
       }),
     });
 
@@ -58,6 +60,7 @@ export const AdminEditBusiness = () => {
         setDescription(business.description);
         setAvatarUrl(business.avatarUrl);
         setRewardPerHour(business.rewardPerHour);
+        setCategory(business.category);
         setRefsToUnlock(business.refsToUnlock);
         setPrice(business.price);
       } else {
@@ -69,6 +72,7 @@ export const AdminEditBusiness = () => {
 
   return (
     <div className="flex flex-col space-y-2 text-black">
+      <div className="text-white">Business name</div>
       <input
         type="text"
         placeholder="Business name"
@@ -76,14 +80,31 @@ export const AdminEditBusiness = () => {
         onChange={(e) => setName(e.target.value)}
         value={name}
       />
-
+      <div className="text-white">Description</div>
       <textarea
         placeholder="Description"
         className="bg-slate-50 py-1 px-4 w-full outline-none resize-none h-36"
         onChange={(e) => setDescription(e.target.value)}
         value={description}
       />
-
+      <select onChange={(e) => setCategory(e.target.value)}>
+        <option value="PR&Team" selected={category == "PR&Team"}>
+          PR&Team
+        </option>
+        <option value="Markets" selected={category == "Markets"}>
+          Markets
+        </option>
+        <option value="Legal" selected={category == "Legal"}>
+          Legal
+        </option>
+        <option value="Web3" selected={category == "Web3"}>
+          Web3
+        </option>
+        <option value="Specials" selected={category == "Specials"}>
+          Specials
+        </option>
+      </select>
+      <div className="text-white">Avatar link</div>
       <input
         type="text"
         placeholder="Avatar link"
@@ -91,7 +112,7 @@ export const AdminEditBusiness = () => {
         onChange={(e) => setAvatarUrl(e.target.value)}
         value={avatarUrl}
       />
-
+      <div className="text-white">Reward per hour</div>
       <input
         type="number"
         placeholder="Reward per hour"
@@ -99,7 +120,7 @@ export const AdminEditBusiness = () => {
         onChange={(e) => setRewardPerHour(Number(e.target.value))}
         value={rewardPerHour}
       />
-
+      <div className="text-white">Refs to unlock</div>
       <input
         type="number"
         placeholder="Refs to unlock"
@@ -107,7 +128,7 @@ export const AdminEditBusiness = () => {
         onChange={(e) => setRefsToUnlock(Number(e.target.value))}
         value={refsToUnlock}
       />
-
+      <div className="text-white">Price</div>
       <input
         type="number"
         placeholder="Price"

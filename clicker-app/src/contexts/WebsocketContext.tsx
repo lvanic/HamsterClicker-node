@@ -35,7 +35,7 @@ export const WebSocketProvider: React.FC<{
     }
 
     const socket = io(url, {
-      reconnectionDelayMax: 10000,
+      reconnectionDelayMax: 1000,
       query: {
         user_id: user_id,
       },

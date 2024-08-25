@@ -70,4 +70,5 @@ export interface Settings {
   maxEnergyLevel: number;
   comboUpdateDayHour: number;
   comboReward: number;
+  premiumReferralReward: number;
 }

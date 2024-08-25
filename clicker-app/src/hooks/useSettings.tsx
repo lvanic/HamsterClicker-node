@@ -21,6 +21,7 @@ export const useSettings = () => {
       maxEnergyLevel: 10,
       comboReward: 1000,
       comboUpdateDayHour: 0,
+      premiumReferralReward: 500,
     };
     return { ...fictSettings };
   }

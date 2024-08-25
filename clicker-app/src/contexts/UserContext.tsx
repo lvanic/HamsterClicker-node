@@ -29,7 +29,7 @@ interface UserProviderProps {
 interface LiteSyncData {
   newBusinesses?: Business[];
   referrals?: User[];
-  completedTasks?: Task[];
+  completedTasks?: any[];
   energy: number;
   clickPower?: number;
   lastDailyRewardTimestamp?: number;
@@ -87,7 +87,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
         referrals: [...prev.referrals, ...(data.referrals || [])],
         completedTasks: [
           ...prev.completedTasks,
-          ...(data.completedTasks || []),
+          ...(data.completedTasks?.map((t) => ({id: t._id, ...t})) || []),
         ],
         clickPower: data.clickPower || prev.clickPower,
         lastDailyRewardTimestamp:

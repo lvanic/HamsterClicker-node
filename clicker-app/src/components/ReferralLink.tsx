@@ -9,6 +9,7 @@ export const ReferralLink = ({
   share: boolean;
 }) => {
   const [link, setLink] = useState("");
+  const [isCopied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchLink = async () => {
@@ -27,7 +28,10 @@ export const ReferralLink = ({
   const handleCopy = () => {
     navigator.clipboard.writeText(link).then(
       () => {
-        // alert("Link copied to clipboard!");
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 2000);
       },
       (error) => {
         console.error("Error copying to clipboard", error);
@@ -36,28 +40,39 @@ export const ReferralLink = ({
   };
 
   return (
-    <div className={`absolute flex justify-center ${className}`}>
-      {share ? (
-        <button
-          onClick={handleShare}
-          className="text-white text-xs px-10 py-2 rounded-md transition duration-300"
-          style={{
-            background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
-          }}
-        >
-          Share
-        </button>
-      ) : (
-        <button
-          onClick={handleCopy}
-          className="text-white text-xs px-10 py-2 rounded-md transition duration-300"
-          style={{
-            background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
-          }}
-        >
-          Copy link
-        </button>
-      )}
-    </div>
+    <>
+      <div
+        className={`absolute w-full px-20 transition-all duration-300 ease-in-out ${
+          isCopied ? "top-[100px] opacity-100" : "top-[58px]  opacity-0"
+        } overflow-hidden`}
+      >
+        <div className="bg-[#383838] rounded-b-lg px-3 py-2 border border-t-none">
+          Link has been copied
+        </div>
+      </div>
+      <div className={`absolute flex justify-center ${className}`}>
+        {share ? (
+          <button
+            onClick={handleShare}
+            className="text-white text-xs px-10 py-2 rounded-md transition duration-300"
+            style={{
+              background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+            }}
+          >
+            Share
+          </button>
+        ) : (
+          <button
+            onClick={handleCopy}
+            className="text-white text-xs px-10 py-2 rounded-md transition duration-300"
+            style={{
+              background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+            }}
+          >
+            Copy link
+          </button>
+        )}
+      </div>
+    </>
   );
 };

@@ -62,7 +62,7 @@ export const AddTask = () => {
           Telegram subscribe
         </option>
         <option value="link">Link navigation</option>
-        <option value="twitter-subscribe">Twitter subscribe</option>
+        {/* <option value="twitter-subscribe">Twitter subscribe</option> */}
       </select>
 
       <input
