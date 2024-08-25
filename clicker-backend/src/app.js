@@ -62,7 +62,7 @@ const main = async () => {
     }
   });
 
-  bot.launch();
+  // bot.launch();
   await mongoose.connect(config.MONGO_DB);
 
   const appSettings = await AppSettings.find({});
@@ -85,6 +85,7 @@ const main = async () => {
   router.get("/app-settings", async (ctx) => {
     const settings = await getAppSettings();
     ctx.body = { ...settings.toObject() };
+    return;
   });
 
   router.post("/wallet-address", async (ctx) => {
@@ -116,7 +117,7 @@ const main = async () => {
         return;
       }
     } else {
-      next();
+      await next();
     }
   });
 
