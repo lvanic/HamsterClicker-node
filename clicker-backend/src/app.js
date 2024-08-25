@@ -62,7 +62,7 @@ const main = async () => {
     }
   });
 
-  // bot.launch();
+  bot.launch();
   await mongoose.connect(config.MONGO_DB);
 
   const appSettings = await AppSettings.find({});

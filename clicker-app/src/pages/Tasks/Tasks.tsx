@@ -28,29 +28,30 @@ export const Tasks = () => {
 
       webSocket.on("taskStatus", (data) => {
         const { id, finished } = data;
+        setTimeout(() => {
+          dataContext?.setTasks((prevTasks: any) => {
+            return prevTasks.map((task: any) =>
+              task._id == id ? { ...task, completed: finished } : task
+            );
+          });
 
-        dataContext?.setTasks((prevTasks: any) => {
-          return prevTasks.map((task: any) =>
-            task._id == id ? { ...task, completed: finished } : task
-          );
-        });
-
-        let notify: NotifyMessage;
-        if (finished) {
-          notify = {
-            message: "Task completed!",
-            status: "task",
-            className: "h-96",
-          };
-        } else {
-          notify = {
-            message: "Task not completed yet.",
-            status: "error",
-            className: "h-96",
-          };
-        }
-        setSelectedTask(null);
-        notifyContext?.setNotify(notify);
+          let notify: NotifyMessage;
+          if (finished) {
+            notify = {
+              message: "Task completed!",
+              status: "task",
+              className: "h-96",
+            };
+          } else {
+            notify = {
+              message: "Task not completed yet.",
+              status: "error",
+              className: "h-96",
+            };
+          }
+          setSelectedTask(null);
+          notifyContext?.setNotify(notify);
+        }, 3000);
       });
     }
     return () => {

@@ -19,6 +19,7 @@ export const AdminAddLeague = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Admin-Token": localStorage.getItem("password") || "",
       },
       body: JSON.stringify({
         name,
@@ -37,7 +38,7 @@ export const AdminAddLeague = () => {
       setIsError(true);
       setErrorText(await response.text());
     }
-  }
+  };
 
   return (
     <div className="flex flex-col space-y-2 text-black">
@@ -75,12 +76,23 @@ export const AdminAddLeague = () => {
         onChange={(e) => setmaxScore(Number(e.target.value))}
       />
 
-      <button className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
+      <button
+        className="bg-green-600 hover:bg-green-700 text-white font-light py-1 px-4 w-full font-mono"
+        onClick={handleSubmit}
+      >
         CONFIRM
       </button>
 
-      {isSuccess && <div className="bg-green-400 text-center text-white">Successfully added</div>}
-      {isError && <div className="bg-red-600 text-center text-white">Error occurred. {errorText}</div>}
+      {isSuccess && (
+        <div className="bg-green-400 text-center text-white">
+          Successfully added
+        </div>
+      )}
+      {isError && (
+        <div className="bg-red-600 text-center text-white">
+          Error occurred. {errorText}
+        </div>
+      )}
     </div>
   );
 };

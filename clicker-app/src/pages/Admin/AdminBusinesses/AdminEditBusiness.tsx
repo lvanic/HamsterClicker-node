@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 import { getConfig } from "../../../utils/config";
 
 const { adminApiUrl } = getConfig();
@@ -24,6 +24,7 @@ export const AdminEditBusiness = () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Admin-Token": localStorage.getItem("password") || "",
       },
       body: JSON.stringify({
         name,
@@ -43,12 +44,14 @@ export const AdminEditBusiness = () => {
       setIsError(true);
       setErrorText(await response.text());
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
-        const response = await fetch(`${adminApiUrl}/admin/businesses/${id}`);
+        const response = await fetch(`${adminApiUrl}/admin/businesses/${id}`, {
+          headers: { "Admin-Token": localStorage.getItem("password") || "" },
+        });
         const business = await response.json();
 
         setName(business.name);
@@ -60,7 +63,7 @@ export const AdminEditBusiness = () => {
       } else {
         navigate("/admin/businesses");
       }
-    }
+    };
     fetchData();
   }, []);
 
@@ -113,12 +116,23 @@ export const AdminEditBusiness = () => {
         value={price}
       />
 
-      <button className="bg-green-600 hover:bg-green-700 text-black font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
+      <button
+        className="bg-green-600 hover:bg-green-700 text-black font-light py-1 px-4 w-full font-mono"
+        onClick={handleSubmit}
+      >
         UPDATE
       </button>
 
-      {isSuccess && <div className="bg-green-400 text-center text-black">Successfully updated</div>}
-      {isError && <div className="bg-red-600 text-center text-white">Error occurred. {errorText}</div>}
+      {isSuccess && (
+        <div className="bg-green-400 text-center text-black">
+          Successfully updated
+        </div>
+      )}
+      {isError && (
+        <div className="bg-red-600 text-center text-white">
+          Error occurred. {errorText}
+        </div>
+      )}
     </div>
   );
 };

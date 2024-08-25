@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 import { getConfig } from "../../../utils/config";
 
 const { adminApiUrl } = getConfig();
 
 export const AdminEditTask = () => {
   const [name, setName] = useState("");
-  const [type, setType] = useState<"telegram" | "link" | "twitter-subscribe">("telegram");
+  const [type, setType] = useState<"telegram" | "link" | "twitter-subscribe">(
+    "telegram"
+  );
   const [activateUrl, setActivateUrl] = useState("");
   const [description, setDescription] = useState("");
   const [rewardAmount, setRewardAmount] = useState(0);
@@ -24,6 +26,7 @@ export const AdminEditTask = () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Admin-Token": localStorage.getItem("password") || "",
       },
       body: JSON.stringify({
         name,
@@ -43,12 +46,16 @@ export const AdminEditTask = () => {
       setIsError(true);
       setErrorText(await response.text());
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
-        const response = await fetch(`${adminApiUrl}/admin/tasks/${id}`);
+        const response = await fetch(`${adminApiUrl}/admin/tasks/${id}`, {
+          headers: {
+            "Admin-Token": localStorage.getItem("password") || "",
+          },
+        });
         const task = await response.json();
 
         setName(task.name);
@@ -60,7 +67,7 @@ export const AdminEditTask = () => {
       } else {
         navigate("/admin/leagues");
       }
-    }
+    };
     fetchData();
   }, []);
 
@@ -77,10 +84,14 @@ export const AdminEditTask = () => {
       <select
         name="choice"
         className="bg-slate-50 py-1 px-3 w-full outline-none"
-        onChange={(e) => setType(e.target.value.toString() as "telegram" | "link")}
+        onChange={(e) =>
+          setType(e.target.value.toString() as "telegram" | "link")
+        }
         value={type}
       >
-        <option value="telegram" selected>Telegram subscribe</option>
+        <option value="telegram" selected>
+          Telegram subscribe
+        </option>
         <option value="link">Link navigation</option>
         <option value="twitter-subscribe">Twitter subscribe</option>
       </select>
@@ -116,12 +127,23 @@ export const AdminEditTask = () => {
         value={rewardAmount}
       />
 
-      <button className="bg-green-600 hover:bg-green-700 text-black font-light py-1 px-4 w-full font-mono" onClick={handleSubmit}>
+      <button
+        className="bg-green-600 hover:bg-green-700 text-black font-light py-1 px-4 w-full font-mono"
+        onClick={handleSubmit}
+      >
         UPDATE
       </button>
 
-      {isSuccess && <div className="bg-green-400 text-center text-black">Successfully updated</div>}
-      {isError && <div className="bg-red-600 text-center text-white">Error occurred. {errorText}</div>}
+      {isSuccess && (
+        <div className="bg-green-400 text-center text-black">
+          Successfully updated
+        </div>
+      )}
+      {isError && (
+        <div className="bg-red-600 text-center text-white">
+          Error occurred. {errorText}
+        </div>
+      )}
     </div>
   );
 };

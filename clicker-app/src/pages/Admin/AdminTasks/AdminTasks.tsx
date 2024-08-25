@@ -16,7 +16,12 @@ export const AdminTasks = () => {
   }, [filter]);
 
   const refreshTasks = async () => {
-    const response = await fetch(`${adminApiUrl}/admin/tasks?filter=${filter}`);
+    const response = await fetch(
+      `${adminApiUrl}/admin/tasks?filter=${filter}`,
+      {
+        headers: { "Admin-Token": localStorage.getItem("password") || "" },
+      }
+    );
     const tasks = await response.json();
     setTasks(tasks);
   };
@@ -39,6 +44,7 @@ export const AdminTasks = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Admin-Token": localStorage.getItem("password") || "",
           },
         }
       );
@@ -57,6 +63,7 @@ export const AdminTasks = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Admin-Token": localStorage.getItem("password") || "",
           },
         }
       );
@@ -106,9 +113,9 @@ export const AdminTasks = () => {
             <div className="flex space-x-1">
               <button
                 className="bg-green-200 px-2"
-                onClick={() => navigate('/admin/tasks/edit/' + task.id)}
+                onClick={() => navigate("/admin/tasks/edit/" + task.id)}
               >
-                  Edit
+                Edit
               </button>
 
               {task.active ? (

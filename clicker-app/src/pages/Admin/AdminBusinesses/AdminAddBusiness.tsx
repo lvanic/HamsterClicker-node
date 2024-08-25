@@ -21,6 +21,7 @@ export const AdminAddBusiness = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Admin-Token": localStorage.getItem("password") || "",
       },
       body: JSON.stringify({
         name,

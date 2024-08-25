@@ -25,7 +25,11 @@ export const AdminSettings = () => {
   }, []);
 
   const fetchSettings = async () => {
-    const response = await fetch(`${adminApiUrl}/admin/settings`);
+    const response = await fetch(`${adminApiUrl}/admin/settings`, {
+      headers: {
+        "Admin-Token": localStorage.getItem("password") || "",
+      },
+    });
     const settings = await response.json();
     setEnergyPerSecond(settings.energyPerSecond);
     setRewardPerClick(settings.rewardPerClick);
@@ -49,6 +53,7 @@ export const AdminSettings = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Admin-Token": localStorage.getItem("password") || "",
       },
       body: JSON.stringify({
         energyPerSecond,

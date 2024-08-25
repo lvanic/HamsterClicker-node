@@ -38,7 +38,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
 
   const fetchSettings = async () => {
     const { adminApiUrl } = getConfig();
-    const response = await fetch(`${adminApiUrl}/admin/settings`);
+    const response = await fetch(`${adminApiUrl}/app-settings`);
     const settingsToSet = await response.json();
     setSettings(settingsToSet);
   };

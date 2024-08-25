@@ -10,10 +10,12 @@ export const AdminBusinesses = () => {
   const navigate = useNavigate();
 
   const refreshBusinesses = async () => {
-    const response = await fetch(`${adminApiUrl}/admin/businesses`);
+    const response = await fetch(`${adminApiUrl}/admin/businesses`, {
+      headers: { "Admin-Token": localStorage.getItem("password") || "" },
+    });
     const data = await response.json();
     setBusinesses(data);
-  }
+  };
 
   useEffect(() => {
     refreshBusinesses();
@@ -27,6 +29,7 @@ export const AdminBusinesses = () => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            "Admin-Token": localStorage.getItem("password") || "",
           },
         }
       );
@@ -56,9 +59,17 @@ export const AdminBusinesses = () => {
             <div className="flex flex-col w-3/4">
               <div className="flex space-x-2">
                 <span className="font-bold w-1/4">{business.name}</span>
-                <span className="text-xs text-green-800 w-1/4">Price: {business.price}</span>
-                <span className="text-xs w-1/4">({business.rewardPerHour} coins / hour)</span>
-                {business.refsToUnlock > 0 && <span className="text-xs align-middle text-indigo-700 w-1/4">{business.refsToUnlock} refs to unlock</span>}
+                <span className="text-xs text-green-800 w-1/4">
+                  Price: {business.price}
+                </span>
+                <span className="text-xs w-1/4">
+                  ({business.rewardPerHour} coins / hour)
+                </span>
+                {business.refsToUnlock > 0 && (
+                  <span className="text-xs align-middle text-indigo-700 w-1/4">
+                    {business.refsToUnlock} refs to unlock
+                  </span>
+                )}
               </div>
               <div className="text-xs font-light">{business.description}</div>
             </div>
@@ -66,7 +77,9 @@ export const AdminBusinesses = () => {
             <div className="flex space-x-1">
               <button
                 className="bg-green-200 px-2"
-                onClick={() => navigate('/admin/businesses/edit/' + business.id)}
+                onClick={() =>
+                  navigate("/admin/businesses/edit/" + business.id)
+                }
               >
                 Edit
               </button>

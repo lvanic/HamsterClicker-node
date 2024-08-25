@@ -10,10 +10,12 @@ export const AdminLeagues = () => {
   const navigate = useNavigate();
 
   const refreshLeagues = async () => {
-    const response = await fetch(`${adminApiUrl}/admin/leagues`);
+    const response = await fetch(`${adminApiUrl}/admin/leagues`, {
+      headers: { "Admin-Token": localStorage.getItem("password") || "" },
+    });
     const data = await response.json();
     setLeagues(data);
-  }
+  };
 
   useEffect(() => {
     refreshLeagues();
@@ -21,15 +23,13 @@ export const AdminLeagues = () => {
 
   const handleDeleteLeague = async (leagueId: string) => {
     if (window.confirm("Are you sure?")) {
-      const response = await fetch(
-        `${adminApiUrl}/admin/leagues/${leagueId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${adminApiUrl}/admin/leagues/${leagueId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Admin-Token": localStorage.getItem("password") || "",
+        },
+      });
 
       if (response.ok) {
         refreshLeagues();
@@ -61,9 +61,9 @@ export const AdminLeagues = () => {
             <div className="flex space-x-1">
               <button
                 className="bg-green-200 px-2"
-                onClick={() => navigate('/admin/leagues/edit/' + league.id)}
+                onClick={() => navigate("/admin/leagues/edit/" + league.id)}
               >
-                  Edit
+                Edit
               </button>
 
               <button
