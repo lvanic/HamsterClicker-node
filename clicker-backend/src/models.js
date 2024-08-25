@@ -49,6 +49,7 @@ const appSettingsSchema = new mongoose.Schema({
   fullEnergyBoostPerDay: Number,
   dailyReward: Number,
   referralReward: Number,
+  premiumReferralReward: Number,
   maxClickLevel: Number,
   startClickUpgradeCost: Number,
   maxEnergyLevel: Number,
