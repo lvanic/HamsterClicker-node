@@ -47,9 +47,7 @@ export const initSocketsLogic = (io) => ({
       return;
     }
 
-    if (
-      user.completedTasks.includes((ut) => ut.toString() == task.id.toString())
-    ) {
+    if (user.completedTasks.find((ut) => ut.toString() == task.id.toString())) {
       return;
     }
 
