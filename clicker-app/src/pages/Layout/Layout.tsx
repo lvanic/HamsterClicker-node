@@ -29,9 +29,9 @@ export const Layout = () => {
     setActiveTab(location.pathname);
   }, [location.pathname]);
 
-  // if (platform !== "ios" && platform !== "android") {
-  //   return <QRCodeComponent />;
-  // }
+  if (platform !== "ios" && platform !== "android") {
+    return <QRCodeComponent />;
+  }
 
   // if (isPageLoading) {
   //   return <Loader />;

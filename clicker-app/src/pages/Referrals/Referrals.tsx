@@ -63,8 +63,8 @@ export const Referrals = () => {
                   {referral.firstName[0]}
                 </div>
                 <div className="flex flex-row">
-                  <div className="text-xs">{referral.firstName}</div>
-                  <div className="text-xs ml-2">@{referral.tgUsername}</div>
+                  <div className="text-xs">{referral.firstName || "Anonimus"}</div>
+                  <div className="text-xs ml-2">@{referral.tgUsername || "Anonimus"}</div>
                 </div>
               </li>
               <Delimiter />

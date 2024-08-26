@@ -101,7 +101,12 @@ export const initSocketsLogic = (io) => ({
     try {
       const tgUserId = Number(userId);
       const user = await User.findOne({ tgId: tgUserId })
-        .populate("referrals")
+        .populate({
+          path: "referrals",
+          options: {
+            limit: 15,
+          },
+        })
         .populate("businesses")
         .populate("completedTasks");
 

@@ -172,6 +172,7 @@ async function ensureAppSettings() {
       referralReward: 1,
       maxClickLevel: 1,
       startClickUpgradeCost: 1,
+      premiumReferralReward: 1,
       maxEnergyLevel: 1,
       startEnergyUpgradeCost: 1,
       comboReward: 1,

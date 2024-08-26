@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import  Notification  from "../components/Notification";
+import Notification from "../components/Notification";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { UserContext } from "./UserContext";
 import { formatNumber } from "../utils/formatNumber";
@@ -80,7 +80,9 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
         status: "ok",
         message: `During your absence you earned ${formatNumber(earned)}`,
       };
-      setNotify(notify);
+      if (earned >= 1) {
+        setNotify(notify);
+      }
       setStartNotifyShowed(true);
     }
   }, [
