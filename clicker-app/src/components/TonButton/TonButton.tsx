@@ -84,7 +84,7 @@ const EthereumButton = ({ className }: { className?: string }) => {
             Connect Ethereum Wallet
           </button>
         ) : (
-          <div className="border-2 border-white rounded-full py-1 px-4">
+          <div className="border-2 border-white rounded-full py-1 px-4 flex items-center gap-2">
             <span className="text-white">{truncatedAddress}</span>
             <svg
               onClick={handleDisconnectWallet}
