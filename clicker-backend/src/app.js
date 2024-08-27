@@ -141,8 +141,13 @@ const main = async () => {
 
   socketServer.on("connection", handleSocketConnection);
 
-  socketServer.on("disconnect", () => {
-    console.log("Пользователь отключен от WebSocket");
+  socketServer.on("disconnect", async () => {
+    const tgUserId = Number(socketServer.userId);
+
+    await User.findOneAndUpdate(
+      { tgId: tgUserId },
+      { lastOnlineTimestamp: new Date().getTime() }
+    );
   });
 
   ensureAppSettings();

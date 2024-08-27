@@ -26,6 +26,12 @@ export const initSocketsLogic = (io) => ({
             energy: -1,
           },
           // lastOnlineTimestamp: new Date().getTime(),
+        },
+        {
+          upsert: true,
+          new: true,
+          runValidators: true,
+          setDefaultsOnInsert: true,
         }
       );
       await user.save();
@@ -34,66 +40,82 @@ export const initSocketsLogic = (io) => ({
     }
   },
   checkTaskStatus: async (data) => {
-    const parsedData = JSON.parse(data);
-    const [tgUserId, taskId] = parsedData;
+    try {
+      const parsedData = JSON.parse(data);
+      const [tgUserId, taskId] = parsedData;
 
-    const task = await Task.findById(taskId);
-    if (!task) {
-      return;
-    }
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return;
+      }
 
-    const user = await User.findOne({ tgId: tgUserId });
-    if (!user) {
-      return;
-    }
-
-    if (user.completedTasks.find((ut) => ut.toString() == task.id.toString())) {
-      return;
-    }
-
-    if (task.type == "telegram") {
-      const slices = task.activateUrl.split("/");
-      const tgChatId = slices[slices.length - 1];
-
-      const res = await fetch(
-        `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/getChatMember?chat_id=@${tgChatId}&user_id=${tgUserId}`
-      );
-      const data = await res.json();
+      const user = await User.findOne({ tgId: tgUserId });
+      if (!user) {
+        return;
+      }
 
       if (
-        data.ok &&
-        data.result &&
-        data.result.status &&
-        data.result.status !== "left" &&
-        data.result.status !== "kicked"
+        user.completedTasks.find((ut) => ut.toString() == task.id.toString())
       ) {
+        return;
+      }
+
+      if (task.type == "telegram") {
+        const slices = task.activateUrl.split("/");
+        const tgChatId = slices[slices.length - 1];
+
+        const res = await fetch(
+          `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/getChatMember?chat_id=@${tgChatId}&user_id=${tgUserId}`
+        );
+        const data = await res.json();
+
+        if (
+          data.ok &&
+          data.result &&
+          data.result.status &&
+          data.result.status !== "left" &&
+          data.result.status !== "kicked"
+        ) {
+          user.completedTasks.push(task);
+
+          await User.findOneAndUpdate(
+            { tgId: user.tgId },
+            {
+              $inc: { balance: task.rewardAmount, score: task.rewardAmount },
+            },
+            {
+              upsert: true,
+              new: true,
+              runValidators: true,
+              setDefaultsOnInsert: true,
+            }
+          );
+
+          await user.save();
+          io.emit("taskStatus", { id: task.id, finished: true });
+        } else {
+          io.emit("taskStatus", { id: task.id, finished: false });
+        }
+      } else {
         user.completedTasks.push(task);
 
         await User.findOneAndUpdate(
           { tgId: user.tgId },
           {
-            $inc: { balance: task.rewardAmount, score: task.rewardAmount },
+            $inc: { balance: task.rewardAmount },
+          },
+          {
+            upsert: true,
+            new: true,
+            runValidators: true,
+            setDefaultsOnInsert: true,
           }
         );
 
         await user.save();
         io.emit("taskStatus", { id: task.id, finished: true });
-      } else {
-        io.emit("taskStatus", { id: task.id, finished: false });
       }
-    } else {
-      user.completedTasks.push(task);
-
-      await User.findOneAndUpdate(
-        { tgId: user.tgId },
-        {
-          $inc: { balance: task.rewardAmount },
-        }
-      );
-
-      await user.save();
-      io.emit("taskStatus", { id: task.id, finished: true });
-    }
+    } catch {}
   },
   getUser: async (userId) => {
     try {
@@ -137,7 +159,13 @@ export const initSocketsLogic = (io) => ({
 
       await User.findOneAndUpdate(
         { tgId: tgUserId },
-        { lastOnlineTimestamp: new Date().getTime() }
+        { lastOnlineTimestamp: new Date().getTime() },
+        {
+          upsert: true,
+          new: true,
+          runValidators: true,
+          setDefaultsOnInsert: true,
+        }
       );
 
       const userData = {
@@ -159,12 +187,6 @@ export const initSocketsLogic = (io) => ({
       };
 
       io.emit("user", userData);
-      io.on("disconnect", async () => {
-        await User.findOneAndUpdate(
-          { tgId: userId },
-          { lastOnlineTimestamp: new Date().getTime() }
-        );
-      });
     } catch {
       console.log("error on getting user");
     }
@@ -278,7 +300,12 @@ export const initSocketsLogic = (io) => ({
       io.emit("comboCompleted", { reward: appSettings.comboReward });
     }
 
-    await User.findOneAndUpdate({ tgId: user.tgId }, updateQuery);
+    await User.findOneAndUpdate({ tgId: user.tgId }, updateQuery, {
+      upsert: true,
+      new: true,
+      runValidators: true,
+      setDefaultsOnInsert: true,
+    });
     io.emit("businessBought", {
       success: true,
     });
@@ -323,6 +350,12 @@ export const initSocketsLogic = (io) => ({
             { tgId: user.tgId },
             {
               $inc: { balance: appSettings.dailyReward },
+            },
+            {
+              upsert: true,
+              new: true,
+              runValidators: true,
+              setDefaultsOnInsert: true,
             }
           );
           io.emit(
@@ -361,7 +394,13 @@ export const initSocketsLogic = (io) => ({
 
       await User.findOneAndUpdate(
         { tgId: user.tgId },
-        { $inc: { balance: -cost, clickPower: 1 } }
+        { $inc: { balance: -cost, clickPower: 1 } },
+        {
+          upsert: true,
+          new: true,
+          runValidators: true,
+          setDefaultsOnInsert: true,
+        }
       );
     } catch {
       console.log("error on upgrade click");
@@ -524,13 +563,17 @@ export const initSocketsLogic = (io) => ({
     }, 1000);
 
     const handleDisconnect = () => {
-      if (interval.hasRef()) {
-        clearInterval(interval);
-      }
+      clearInterval(interval);
+      io.off("unsubscribeLiteSync", handleDisconnect);
+      io.off("disconnect", handleDisconnect);
     };
 
-    io.on("unsubscribeLiteSync", handleDisconnect);
-    io.on("disconnect", handleDisconnect);
+    if (!io.listenerCount("unsubscribeLiteSync")) {
+      io.on("unsubscribeLiteSync", handleDisconnect);
+    }
+    if (!io.listenerCount("disconnect")) {
+      io.on("disconnect", handleDisconnect);
+    }
   },
 
   upgradeBusiness: async (data) => {
@@ -608,7 +651,12 @@ export const initSocketsLogic = (io) => ({
       io.emit("comboCompleted", { reward: appSettings.comboReward });
     }
 
-    await User.findOneAndUpdate({ tgId: user.tgId }, updateQuery);
+    await User.findOneAndUpdate({ tgId: user.tgId }, updateQuery, {
+      upsert: true,
+      new: true,
+      runValidators: true,
+      setDefaultsOnInsert: true,
+    });
     io.emit("businessBought", {
       success: true,
     });
@@ -636,7 +684,13 @@ export const initSocketsLogic = (io) => ({
 
     await User.findOneAndUpdate(
       { tgId: user.tgId },
-      { $inc: { balance: -cost } }
+      { $inc: { balance: -cost } },
+      {
+        upsert: true,
+        new: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      }
     );
     user.energyLevel += 1;
     await user.save();
