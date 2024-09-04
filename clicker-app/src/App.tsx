@@ -34,6 +34,7 @@ import { Businesses } from "./pages/Businesses/Businesses";
 import { Airdrop } from "./pages/Airdrop/Airdrop";
 import { NotifyProvider } from "./contexts/NotifyContext";
 import { DataProvider } from "./contexts/DataContext";
+import { AdminBroadcast } from "./pages/Admin/AdminBroadcast/AdminBroadcast";
 
 function switchSwipeDown(enable: boolean) {
   window.Telegram.WebApp.expand();
@@ -109,6 +110,7 @@ function App() {
                     />
                     <Route path="users" element={<AdminUsers />} />
                     <Route path="settings" element={<AdminSettings />} />
+                    <Route path="broadcast" element={<AdminBroadcast />} />
                   </Route>
                   <Route path="*" element={<NoPage />} />
                 </Routes>

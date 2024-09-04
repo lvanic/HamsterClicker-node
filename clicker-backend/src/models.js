@@ -12,9 +12,9 @@ const userSchema = new mongoose.Schema({
   lastName: String,
   addedFromBusinesses: { type: Number, min: 0 },
   addedEnergy: { type: Number, min: 0 },
-  balance: { type: Number, min: 0 },
+  balance: { type: Number },
   score: { type: Number, min: 0 },
-  energy: { type: Number, min: 0 },
+  energy: { type: Number },
   connectedWallet: String,
   lastDailyRewardTimestamp: Number,
   lastFullEnergyTimestamp: Number,
@@ -23,14 +23,14 @@ const userSchema = new mongoose.Schema({
   energyLevel: Number,
   lastOnlineTimestamp: Number,
   currentComboCompletions: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Business" },
+    { type: mongoose.Schema.Types.ObjectId, ref: "SalboBusiness" },
   ],
-  referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
-  businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
+  referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "SalboUser" }],
+  completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "SalboTask" }],
+  businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "SalboBusiness" }],
   businessUpgrades: [businessUpgradeSchema],
 });
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model("SalboUser", userSchema);
 
 const taskSchema = new mongoose.Schema({
   rewardAmount: Number,
@@ -41,7 +41,7 @@ const taskSchema = new mongoose.Schema({
   type: String,
   activateUrl: String,
 });
-export const Task = mongoose.model("Task", taskSchema);
+export const Task = mongoose.model("SalboTask", taskSchema);
 
 const appSettingsSchema = new mongoose.Schema({
   energyPerSecond: Number,
@@ -57,9 +57,14 @@ const appSettingsSchema = new mongoose.Schema({
   comboReward: Number,
   comboUpdateDayHour: Number,
   lastComboUpdateTimestamp: Number,
-  comboBusinesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
+  comboBusinesses: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "SalboBusiness" },
+  ],
 });
-export const AppSettings = mongoose.model("AppSettings", appSettingsSchema);
+export const AppSettings = mongoose.model(
+  "SalboAppSettings",
+  appSettingsSchema
+);
 
 const leagueSchema = new mongoose.Schema({
   name: String,
@@ -68,7 +73,7 @@ const leagueSchema = new mongoose.Schema({
   minScore: Number,
   maxScore: Number,
 });
-export const League = mongoose.model("League", leagueSchema);
+export const League = mongoose.model("SalboLeague", leagueSchema);
 
 const businessSchema = new mongoose.Schema({
   name: String,
@@ -80,4 +85,4 @@ const businessSchema = new mongoose.Schema({
   isDeleted: Boolean,
   category: String,
 });
-export const Business = mongoose.model("Business", businessSchema);
+export const Business = mongoose.model("SalboBusiness", businessSchema);

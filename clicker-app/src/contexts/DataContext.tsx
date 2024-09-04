@@ -59,9 +59,9 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
 
       webSocket.on("tasks", (receivedTasks) => {
         if (user?.completedTasks) {
-          const updatedTasks = receivedTasks.map((task: any) => {
-            console.log(task, user?.completedTasks);
+          console.log(user?.completedTasks);
 
+          const updatedTasks = receivedTasks.map((task: any) => {
             const isCompleted = user?.completedTasks.some(
               (completedTask: any) => completedTask.id == task._id
             );
@@ -80,7 +80,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         webSocket.off("businesses");
       };
     }
-  }, [webSocket, user]);
+  }, [webSocket, user?.completedTasks]);
 
   useEffect(() => {
     if (webSocket) {

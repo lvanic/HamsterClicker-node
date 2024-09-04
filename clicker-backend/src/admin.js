@@ -1,4 +1,5 @@
 import { Task, User, AppSettings, League, Business } from "./models.js";
+import { sendForAllUsers } from "./app.js";
 
 export const getAppSettings = async () => {
   const appSettings = await AppSettings.find({}).populate("comboBusinesses");
@@ -174,7 +175,7 @@ export const registerAdminRoutes = (router) => {
   });
 
   router.get("/admin/businesses", async (ctx) => {
-    const businesses = await Business.find({});
+    const businesses = await Business.find({ isDeleted: false });
     ctx.body = businesses.map((business) => ({
       id: business.id,
       ...business.toObject(),
@@ -222,5 +223,47 @@ export const registerAdminRoutes = (router) => {
     await business.save();
 
     ctx.body = business;
+  });
+
+  router.get("/admin/reset-users", async (ctx) => {
+    await User.updateMany(
+      {},
+      {
+        $set: {
+          addedFromBusinesses: 0,
+          balance: 0,
+          score: 0,
+          energy: 1000,
+          clickPower: 1,
+          energyLevel: 1,
+          currentComboCompletions: [],
+          completedTasks: [],
+          businesses: [],
+          businessUpgrades: [],
+        },
+      }
+    );
+    ctx.body = "Users reset";
+    return;
+  });
+
+  router.post("/admin/broadcast", async (ctx) => {
+    const { message } = ctx.request.body;
+
+    if (!message) {
+      ctx.status = 400;
+      ctx.body = "Message is required";
+      return;
+    }
+
+    try {
+      await sendForAllUsers(message);
+      ctx.status = 200;
+      ctx.body = "Broadcast message sent";
+    } catch (error) {
+      console.error("Error during broadcasting:", error);
+      ctx.status = 500;
+      ctx.body = "Internal Server Error";
+    }
   });
 };

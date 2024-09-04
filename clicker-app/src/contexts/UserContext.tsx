@@ -48,9 +48,12 @@ interface LiteSyncData {
 
 const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const [user, setUser] = useState<User | null>(null);
-  const { webSocket } = useWebSocket();
+  const { webSocket, isSocketLive } = useWebSocket();
   const clickRef = useRef<boolean>(false);
   const [isUserLoading, setUserLoading] = useState(true);
+  const [loadingPercentage, setLoadingPercentage] = useState(0);
+  const [isLeagueRequested, setLeagueRequested] = useState(false);
+
   const location = useLocation();
 
   const setClicked = useCallback((data: boolean) => {
@@ -62,17 +65,22 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
 
   const handleGetUser = (userData: any) => {
     setUserLoading(false);
-    setUser({
+
+    setUser((prev) => ({
       ...userData,
       totalIncomePerHour: userData.totalIncomePerHour,
       league: { ...userData.league, id: userData.league.id },
       userPlaceInLeague: userData.userPlaceInLeague,
       cachedIncome: userData.totalIncomePerHour,
       energy:
-        userData.energy < userData.maxEnergy
-          ? userData.energy
+        prev?.energy != null
+          ? prev?.energy
+          : userData.energy < userData.maxEnergy
+          ? userData.energy <= 0
+            ? 0
+            : userData.energy
           : userData.maxEnergy,
-    });
+    }));
   };
 
   const handleLiteSync = useCallback((data: LiteSyncData) => {
@@ -80,33 +88,30 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       if (!prev) {
         return null;
       }
-
+      // alert(prev.maxEnergy)
       return {
         ...prev,
         businesses: [...prev.businesses, ...(data.newBusinesses || [])],
         referrals: [...prev.referrals, ...(data.referrals || [])],
         completedTasks: [
           ...prev.completedTasks,
-          ...(data.completedTasks?.map((t) => ({id: t._id, ...t})) || []),
+          ...(data.completedTasks?.map((t) => ({ id: t._id, ...t })) || []),
         ],
         clickPower: data.clickPower || prev.clickPower,
         lastDailyRewardTimestamp:
           data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
-        balance: clickRef.current
-          ? prev.balance + data.deltaAddedFromBusinesses
-          : data.balance,
+        balance: prev.balance + data.deltaAddedFromBusinesses,
         score: clickRef.current
           ? prev.score + data.deltaAddedFromBusinesses
-          : data.score,
+          : prev.score + data.deltaAddedFromBusinesses,
         energyLevel: data.energyLevel || prev.energyLevel,
         maxEnergy: data.maxEnergy || prev.maxEnergy,
         energy:
-          clickRef.current &&
-          prev.energy + data.deltaAddedEnergy < prev.maxEnergy
-            ? prev.energy + data.deltaAddedEnergy
-            : data.energy < prev.maxEnergy
-            ? data.energy
-            : prev.maxEnergy,
+          prev.energy + 1 >= prev.maxEnergy
+            ? prev.maxEnergy
+            : prev.energy + 1 < 0
+            ? 0
+            : prev.energy + 1,
         userPlaceInLeague: data.userPlaceInLeague,
         fullEnergyActivates:
           data.fullEnergyActivates || prev.fullEnergyActivates,
@@ -128,21 +133,91 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     });
   }, []);
 
+  const handleUserLeague = (leagueInfo: any) => {
+    setLeagueRequested(false);
+    setUser((prev) => {
+      if (!prev) {
+        return null;
+      }
+      return {
+        ...prev,
+        league: { ...leagueInfo.userLeague, id: leagueInfo.userLeague._id },
+        userPlaceInLeague: leagueInfo.userPlaceInLeague,
+        userLevel: leagueInfo.userLevel,
+      };
+    });
+  };
+  const handleRestoreEnergy = (info: any) => {
+    setUser((prev) => {
+      if (!prev) {
+        return null;
+      }
+      return {
+        ...prev,
+        energy: prev.maxEnergy,
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (
+      webSocket?.connected &&
+      user?.tgId &&
+      user.score >= user.league.maxScore &&
+      !isLeagueRequested
+    ) {
+      webSocket.emit("userLeague", user?.tgId);
+      setLeagueRequested(true);
+    }
+  }, [webSocket?.connected, user?.score, isLeagueRequested]);
+
+  useEffect(() => {
+    if (webSocket?.connected && user?.tgId) {
+      webSocket.on("userLeague", handleUserLeague);
+    }
+    return () => {
+      webSocket?.off("userLeague", handleUserLeague);
+    };
+  }, [webSocket?.connected, user?.tgId]);
+
   useEffect(() => {
     if (location.pathname.includes("admin")) {
       setUserLoading(false);
       return;
     }
-    const tgUser = getTelegramUser();
-    if (webSocket && tgUser.id !== -1) {
+
+    if (webSocket?.connected && user?.tgId) {
       webSocket.on("liteSync", handleLiteSync);
-      webSocket.emit("subscribeLiteSync", tgUser.id);
+      webSocket.emit("subscribeLiteSync", user?.tgId);
     }
     return () => {
       webSocket?.off("liteSync", handleLiteSync);
       webSocket?.emit("unsubscribeLiteSync");
     };
-  }, [webSocket, handleLiteSync]);
+  }, [webSocket?.connected, handleLiteSync, user?.tgId, isSocketLive]);
+
+  const handleRewardGet = (amount: number) => {
+    setUser((prev) => {
+      if (!prev) {
+        return null;
+      }
+      return {
+        ...prev,
+        balance: prev?.balance + amount,
+        score: prev?.score + amount,
+      };
+    });
+  };
+  useEffect(() => {
+    if (webSocket?.connected) {
+      webSocket.on("reward", handleRewardGet);
+      webSocket.on("energyRestored", handleRestoreEnergy);
+    }
+    return () => {
+      webSocket?.off("reward", handleRewardGet);
+      webSocket?.off("energyRestored", handleRestoreEnergy);
+    };
+  }, [webSocket?.connected, isSocketLive]);
 
   useEffect(() => {
     if (location.pathname.includes("admin")) {
@@ -150,29 +225,32 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       return;
     }
     const tgUser = getTelegramUser();
-    if (webSocket && tgUser.id !== -1) {
+
+    if (webSocket?.connected && tgUser.id !== -1) {
+      console.log("Get user", tgUser.id);
+
       webSocket.on("user", handleGetUser);
       webSocket.emit("getUser", tgUser.id);
     }
     return () => {
       webSocket?.off("user", handleGetUser);
     };
-  }, [webSocket]);
+  }, [webSocket?.connected, isSocketLive]);
 
   useEffect(() => {
-    if (location.pathname.includes("admin")) {
-      setUserLoading(false);
-      return;
+    if (isUserLoading) {
+      const interval = setInterval(() => {
+        setLoadingPercentage((prev) => {
+          if (prev < 98) {
+            return prev + 2;
+          } else {
+            clearInterval(interval);
+            return prev;
+          }
+        });
+      }, 30);
     }
-    if (
-      user?.league.maxScore &&
-      user.score >= user.league.maxScore - 1 &&
-      user.maxLevel != user.userLevel &&
-      webSocket
-    ) {
-      webSocket.emit("getUser", user.tgId);
-    }
-  }, [webSocket, user]);
+  }, [isUserLoading]);
 
   return (
     <UserContext.Provider value={{ user, setUser, setClicked }}>

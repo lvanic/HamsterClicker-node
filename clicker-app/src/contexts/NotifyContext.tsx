@@ -93,10 +93,10 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
 
   useEffect(() => {
     webSocket?.on("comboCompleted", handleComboCompleted);
-    // webSocket?.on("boostActivated", handleDailyReward);
+    // webSocket?.on("boostActivated", );
     return () => {
       webSocket?.off("comboCompleted", handleComboCompleted);
-      // webSocket?.off("boostActivated", handleDailyReward);
+      // webSocket?.off("boostActivated", );
     };
   }, [webSocket]);
   return (

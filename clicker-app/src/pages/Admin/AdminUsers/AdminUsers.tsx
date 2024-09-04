@@ -79,7 +79,7 @@ export const AdminUsers = () => {
         </div>
       </div>
 
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 overflow-scroll max-h-[70vh]">
         {users.map((user, index) => (
           <div
             className="flex flex-row items-center bg-slate-50 py-2 px-4"

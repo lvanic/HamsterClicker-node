@@ -49,7 +49,7 @@ export const AdminBusinesses = () => {
         ADD BUSINESS
       </Link>
 
-      <div className="flex flex-col space-y-2 overflow-y-hidden max-h-[80vh]">
+      <div className="flex flex-col space-y-2 overflow-scroll max-h-[70vh]">
         {businesses.map((business) => (
           <div
             key={business.id}

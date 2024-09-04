@@ -19,6 +19,13 @@ let config = process.env;
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 
 const main = async () => {
+  const processError = (e) => {
+    console.log(e);
+  };
+
+  process.on("uncaughtException", processError);
+  process.on("unhandledRejection", processError);
+
   bot.start(async (ctx) => {
     try {
       const [, refId] = ctx.message.text.split("ref_");
@@ -43,6 +50,7 @@ const main = async () => {
           clickPower: 1,
           energyLevel: 1,
           addedFromBusinesses: 0,
+          lastOnlineTimestamp: new Date().getTime(),
         });
 
         if (!!refId) {
@@ -160,8 +168,11 @@ const main = async () => {
     console.log(`Сервер запущен на http://localhost:${port}`);
   });
 };
-main();
-
+try {
+  main();
+} catch (e) {
+  console.log(e);
+}
 async function ensureAppSettings() {
   try {
     const appSettings = await AppSettings.findOne({});
@@ -192,3 +203,19 @@ async function ensureAppSettings() {
     throw error;
   }
 }
+
+export const sendForAllUsers = async (message) => {
+  try {
+    const users = await User.find({}, "tgId");
+    for (const user of users) {
+      try {
+        await bot.telegram.sendMessage(user.tgId, message);
+      } catch (error) {
+        console.error(`Failed to send message to user ${user.tgId}:`, error);
+      }
+    }
+    console.log("Broadcast message sent to all users.");
+  } catch (error) {
+    console.error("Error sending broadcast to users:", error);
+  }
+};
