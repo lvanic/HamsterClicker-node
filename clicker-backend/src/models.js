@@ -23,14 +23,14 @@ const userSchema = new mongoose.Schema({
   energyLevel: Number,
   lastOnlineTimestamp: Number,
   currentComboCompletions: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "SalboBusiness" },
+    { type: mongoose.Schema.Types.ObjectId, ref: "Business" },
   ],
-  referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "SalboUser" }],
-  completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "SalboTask" }],
-  businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "SalboBusiness" }],
+  referrals: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  completedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
+  businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
   businessUpgrades: [businessUpgradeSchema],
 });
-export const User = mongoose.model("SalboUser", userSchema);
+export const User = mongoose.model("User", userSchema);
 
 const taskSchema = new mongoose.Schema({
   rewardAmount: Number,
@@ -41,7 +41,7 @@ const taskSchema = new mongoose.Schema({
   type: String,
   activateUrl: String,
 });
-export const Task = mongoose.model("SalboTask", taskSchema);
+export const Task = mongoose.model("Task", taskSchema);
 
 const appSettingsSchema = new mongoose.Schema({
   energyPerSecond: Number,
@@ -58,11 +58,11 @@ const appSettingsSchema = new mongoose.Schema({
   comboUpdateDayHour: Number,
   lastComboUpdateTimestamp: Number,
   comboBusinesses: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "SalboBusiness" },
+    { type: mongoose.Schema.Types.ObjectId, ref: "Business" },
   ],
 });
 export const AppSettings = mongoose.model(
-  "SalboAppSettings",
+  "AppSettings",
   appSettingsSchema
 );
 
@@ -73,7 +73,7 @@ const leagueSchema = new mongoose.Schema({
   minScore: Number,
   maxScore: Number,
 });
-export const League = mongoose.model("SalboLeague", leagueSchema);
+export const League = mongoose.model("League", leagueSchema);
 
 const businessSchema = new mongoose.Schema({
   name: String,
@@ -85,4 +85,4 @@ const businessSchema = new mongoose.Schema({
   isDeleted: Boolean,
   category: String,
 });
-export const Business = mongoose.model("SalboBusiness", businessSchema);
+export const Business = mongoose.model("Business", businessSchema);
