@@ -22,7 +22,8 @@ export const Businesses = () => {
   const [selectedBusiness, setSelectedBusiness] = useState<Business>();
   const notifyContext = useContext(NotifyContext);
   const context = useContext(DataContext);
-  const [filter, setFilter] = useState<string>("Markets");
+  const [filter, setFilter] = useState<string>("Markets".toLocaleLowerCase());
+  const [loadingBusinessIds, setLoadingBusinessIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (webSocket && user) {
@@ -31,31 +32,55 @@ export const Businesses = () => {
   }, [webSocket, user?.tgId]);
 
   const buyBusiness = (businessId: string) => {
-    let request = JSON.stringify([user?.tgId, businessId]);
-    let notify: NotifyMessage;
-    if (context?.businesses.find((x) => x.id == businessId)?.level == 0) {
+    setLoadingBusinessIds((prev) => [...prev, businessId]);
+
+    const request = JSON.stringify([user?.tgId, businessId]);
+
+    const business = context?.businesses.find((x) => x.id === businessId);
+
+    if (business?.level === 0) {
       webSocket?.emit("buyBusiness", request);
-      notify = {
-        status: "ok",
-        message: `${
-          context?.businesses.find((x) => x.id == businessId)?.name
-        } was purchased`,
-        className: "h-72",
-      };
     } else {
-      notify = {
-        status: "ok",
-        message: `${
-          context?.businesses.find((x) => x.id == businessId)?.name
-        } was purchased`,
-        className: "h-72",
-      };
       webSocket?.emit("upgradeBusiness", request);
     }
-    notifyContext?.setNotify(notify);
+
     setModalOpen(false);
   };
 
+  useEffect(() => {
+    if (webSocket) {
+      const handleBusinessBought = ({ success, id }: any) => {
+        setLoadingBusinessIds((prev) =>
+          prev.filter((businessId) => businessId !== id)
+        );
+
+        if (success) {
+          const business = context?.businesses.find((x) => x.id === id);
+          const notify: NotifyMessage = {
+            status: "ok",
+            message: `${business?.name} was ${
+              business?.level === 0 ? "purchased" : "upgraded"
+            }`,
+            className: "h-72",
+          };
+          notifyContext?.setNotify(notify);
+        } else {
+          const notify: NotifyMessage = {
+            status: "error",
+            message: `Deal fell through, try again later`,
+            className: "h-72",
+          };
+          notifyContext?.setNotify(notify);
+        }
+      };
+
+      webSocket.on("businessBought", handleBusinessBought);
+
+      return () => {
+        webSocket.off("businessBought", handleBusinessBought);
+      };
+    }
+  }, [webSocket, context?.businesses, notifyContext]);
   return (
     <div className="p-5 pt-0 rounded-lg max-w-md mx-auto">
       <div
@@ -70,9 +95,7 @@ export const Businesses = () => {
         <div className="text-center">My balance</div>
         <div className="flex justify-center items-center">
           <LargerEggSvg />
-          <div className="text-5xl ml-2">
-            {Math.floor(user?.balance || 0)}
-          </div>
+          <div className="text-5xl ml-2">{Math.floor(user?.balance || 0)}</div>
         </div>
       </div>
       <div className="mt-4 mb-4 flex justify-between">

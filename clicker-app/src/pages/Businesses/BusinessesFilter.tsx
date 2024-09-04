@@ -17,7 +17,7 @@ export const BusinessesFilter = ({
   );
   useEffect(() => {
     handleCategoryClick(uniqueCategories[0] || "Markets");
-  }, [businesses]);
+  }, [uniqueCategories]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
