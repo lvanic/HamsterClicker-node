@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useContext, useState } from "react";
+import { useMemo, useEffect, useContext, useState, useCallback } from "react";
 import { useUser } from "../hooks/useUser";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { NotifyContext } from "../contexts/NotifyContext";
@@ -10,30 +10,31 @@ export const DailyOffer = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dailyDisabled = useMemo(() => {
-    if (user) {
-      return Date.now() - user.lastDailyRewardTimestamp < 1000 * 60 * 60 * 24;
-    } else {
-      return true;
-    }
+    return user ? Date.now() - user.lastDailyRewardTimestamp < 86400000 : true;
   }, [user]);
+
+  const handleBoostActivated = useCallback(
+    (msg: any) => {
+      notifyContext?.setNotify({
+        status: "ok",
+        message: msg.message,
+      });
+      setIsLoading(false);
+    },
+    [notifyContext]
+  );
 
   useEffect(() => {
     if (webSocket) {
-      webSocket.on("boostActivated", (msg) => {
-        notifyContext?.setNotify({
-          status: "ok",
-          message: msg,
-        });
-        setIsLoading(false);
-      });
+      webSocket.on("boostActivated", handleBoostActivated);
     }
 
     return () => {
-      webSocket?.off("boostActivated");
+      webSocket?.off("boostActivated", handleBoostActivated);
     };
-  }, [webSocket]);
+  }, [webSocket, handleBoostActivated]);
 
-  const onDailyActivate = () => {
+  const onDailyActivate = useCallback(() => {
     if (webSocket && !dailyDisabled) {
       setIsLoading(true);
       webSocket.emit(
@@ -41,14 +42,14 @@ export const DailyOffer = () => {
         JSON.stringify([user?.tgId, "dailyReward"])
       );
     }
-  };
+  }, [webSocket, dailyDisabled, user?.tgId]);
 
   return (
     <div
       onClick={onDailyActivate}
       className={dailyDisabled ? "relative opacity-50" : "relative"}
     >
-      {isLoading && <div className="loader absolute top-4 left-4"/>}
+      {isLoading && <div className="loader absolute top-4 left-4" />}
       <svg
         width="60"
         height="60"

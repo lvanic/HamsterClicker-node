@@ -22,7 +22,7 @@ export const Businesses = () => {
   const [selectedBusiness, setSelectedBusiness] = useState<Business>();
   const notifyContext = useContext(NotifyContext);
   const context = useContext(DataContext);
-  const [filter, setFilter] = useState<string>("Markets".toLocaleLowerCase());
+  const [filter, setFilter] = useState<string>("Web3".toLocaleLowerCase());
   const [loadingBusinessIds, setLoadingBusinessIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -135,11 +135,12 @@ export const Businesses = () => {
           {!!user && context?.businesses && (
             <BusinessesList
               businesses={context?.businesses.filter(
-                (x) => x.category == filter
+                (x) => x.category.toLocaleLowerCase() == filter.toLocaleLowerCase()
               )}
               setModalOpen={setModalOpen}
               setSelectedBusiness={setSelectedBusiness}
               user={user}
+              loadingBusinessIds={loadingBusinessIds}
             />
           )}
         </div>

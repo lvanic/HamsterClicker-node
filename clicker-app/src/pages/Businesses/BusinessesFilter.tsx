@@ -13,16 +13,16 @@ export const BusinessesFilter = ({
     ...new Set(businesses.map((business) => business.category)),
   ];
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    uniqueCategories[0] || "Markets"
+    uniqueCategories[0]?.toLocaleLowerCase()
   );
-  useEffect(() => {
-    handleCategoryClick(uniqueCategories[0] || "Markets");
-  }, [uniqueCategories]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
     onCategorySelect(category);
   };
+  useEffect(() => {
+    setSelectedCategory(uniqueCategories[0]?.toLocaleLowerCase());
+  }, [uniqueCategories[0]]);
 
   return (
     <div className="flex flex-row items-center justify-between w-full bg-[#323232 mb-4">
@@ -30,7 +30,7 @@ export const BusinessesFilter = ({
         <button
           key={category}
           className={`p-2 text-xs rounded-lg ${
-            selectedCategory === category ? "bg-[#323232]" : ""
+            selectedCategory?.toLocaleLowerCase() === category?.toLocaleLowerCase() ? "bg-[#323232]" : ""
           }`}
           onClick={() => handleCategoryClick(category)}
         >

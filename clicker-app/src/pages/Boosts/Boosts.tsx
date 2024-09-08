@@ -56,7 +56,6 @@ const boosts: Boost[] = [
     purchaseText: (nextCost: number) => `Upgrade for ${nextCost} coins`,
   },
 ];
-
 export const Boosts = () => {
   const { webSocket } = useWebSocket();
   const { user } = useUser();
@@ -67,21 +66,49 @@ export const Boosts = () => {
   const { maxClickLevel, maxEnergyLevel } = useSettings();
   const navigate = useNavigate();
 
+  const [isEnergyUpgrading, setEnergyUpgrading] = useState(false);
+  const [isEnergyRestoring, setEnergyRestroring] = useState(false);
+  const [isClickUpgrading, setClickUpgrading] = useState(false);
+
   useEffect(() => {
     if (webSocket) {
-      const handleBoostActivated = (message: string) => {
+      const handleBoostActivated = ({ success, message }: any) => {
         const notify: NotifyMessage = {
           status: "ok",
           message: message,
         };
-
+        setEnergyRestroring(false);
         notifyContext?.setNotify(notify);
       };
 
       webSocket.on("boostActivated", handleBoostActivated);
 
+      webSocket.on("clickPowerUpgraded", ({ success }) => {
+        setClickUpgrading(false);
+        console.log("clickPowerUpgraded", success);
+
+        const notify: NotifyMessage = {
+          status: success ? "ok" : "error",
+          message: success
+            ? "The power of your click has been enhanced"
+            : "The power of your click was not increased",
+        };
+        notifyContext?.setNotify(notify);
+      });
+
+      webSocket.on("energyUpgraded", ({ success }) => {
+        setEnergyUpgrading(false);
+        const notify: NotifyMessage = {
+          status: success ? "ok" : "error",
+          message: success
+            ? "Your energy level has been enhanced"
+            : "Your energy level was not enhanced",
+        };
+        notifyContext?.setNotify(notify);
+      });
       return () => {
         webSocket.off("boostActivated", handleBoostActivated);
+        webSocket.off("clickPowerUpgraded");
       };
     }
   }, [webSocket]);
@@ -104,12 +131,12 @@ export const Boosts = () => {
 
   const activateFullEnergyBoost = () => {
     if (webSocket) {
-      webSocket.emit(
-        "activateBoost",
-        JSON.stringify([user?.tgId, "fullEnergyBoost"])
-      );
-
       if (fullEnergyActivates < 3) {
+        setEnergyRestroring(true);
+        webSocket.emit(
+          "activateBoost",
+          JSON.stringify([user?.tgId, "fullEnergyBoost"])
+        );
         // const notify: NotifyMessage = {
         //   status: "ok",
         //   className: "h-72",
@@ -117,11 +144,11 @@ export const Boosts = () => {
         // };
         // notifyContext?.setNotify(notify);
       } else {
-        const notify: NotifyMessage = {
-          status: "error",
-          message: "You can't restore energy today",
-        };
-        notifyContext?.setNotify(notify);
+        // const notify: NotifyMessage = {
+        //   status: "error",
+        //   message: "You can't restore energy today",
+        // };
+        // notifyContext?.setNotify(notify);
       }
     }
   };
@@ -135,19 +162,13 @@ export const Boosts = () => {
       notifyContext?.setNotify(notify);
       return;
     }
-
-    if (webSocket) {
-      webSocket.emit("upgradeClick", user?.tgId);
-    }
     if (
+      webSocket &&
       startClickUpgradeCost * 2 ** ((user?.clickPower || 2) - 1) <=
-      (user?.balance || 0)
+        (user?.balance || 0)
     ) {
-      const notify: NotifyMessage = {
-        status: "ok",
-        message: "The power of your click has been enhanced",
-      };
-      notifyContext?.setNotify(notify);
+      setClickUpgrading(true);
+      webSocket.emit("upgradeClick", user?.tgId);
     } else {
       const notify: NotifyMessage = {
         status: "error",
@@ -167,18 +188,13 @@ export const Boosts = () => {
       return;
     }
 
-    if (webSocket) {
-      webSocket.emit("upgradeEnergy", user?.tgId);
-    }
     if (
+      webSocket &&
       startEnergyUpgradeCost * 2 ** ((user?.energyLevel || 2) - 1) <=
-      (user?.balance || 0)
+        (user?.balance || 0)
     ) {
-      const notify: NotifyMessage = {
-        status: "ok",
-        message: "Your energy level has been enhanced",
-      };
-      notifyContext?.setNotify(notify);
+      webSocket.emit("upgradeEnergy", user?.tgId);
+      setEnergyUpgrading(true);
     } else {
       const notify: NotifyMessage = {
         status: "error",
@@ -237,7 +253,7 @@ export const Boosts = () => {
         );
       case 2:
         return selectedBoost.purchaseText(
-          startClickUpgradeCost * 2 ** ((user?.energyLevel || 2) - 1)
+          startEnergyUpgradeCost * 2 ** ((user?.energyLevel || 2) - 1)
         );
       default:
         return "";
@@ -274,8 +290,16 @@ export const Boosts = () => {
             style={{
               width: "-webkit-fill-available",
             }}
-            className="flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2"
+            className={
+              "flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2 " +
+              (isEnergyRestoring ? "opacity-50" : "opacity-100")
+            }
           >
+            {isEnergyRestoring && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-center rounded-2xl">
+                <div className="loader"></div>
+              </div>
+            )}
             <div className="flex justify-center h-0">
               <div
                 className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"
@@ -309,8 +333,16 @@ export const Boosts = () => {
             style={{
               width: "-webkit-fill-available",
             }}
-            className="flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2"
+            className={
+              "relative flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2 " +
+              (isClickUpgrading ? "opacity-50" : "opacity-100")
+            }
           >
+            {isClickUpgrading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-center rounded-2xl">
+                <div className="loader"></div>
+              </div>
+            )}
             <div className="flex justify-center h-0">
               <div
                 className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"
@@ -351,8 +383,16 @@ export const Boosts = () => {
             style={{
               width: "-webkit-fill-available",
             }}
-            className="flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2"
+            className={
+              "relative flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2 " +
+              (isEnergyUpgrading ? "opacity-50" : "opacity-100")
+            }
           >
+            {isEnergyUpgrading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-center rounded-2xl">
+                <div className="loader"></div>
+              </div>
+            )}
             <div className="flex justify-center h-0">
               <div
                 className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"

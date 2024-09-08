@@ -56,6 +56,7 @@ export interface Business {
   level: number;
   lastUpgradeTimestamp: number;
   category: string;
+  addedRewardPerHour: number;
 }
 
 export interface Settings {

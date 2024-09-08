@@ -164,7 +164,8 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       webSocket?.connected &&
       user?.tgId &&
       user.score >= user.league.maxScore &&
-      !isLeagueRequested
+      !isLeagueRequested &&
+      user.userLevel < user.maxLevel
     ) {
       webSocket.emit("userLeague", user?.tgId);
       setLeagueRequested(true);

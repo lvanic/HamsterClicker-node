@@ -29,6 +29,7 @@ export const Clicker: React.FC = () => {
   const [imageClicked, setImageClicked] = useState<boolean>(false);
   const { user } = useUser();
   const isSkeletonLoading = useSkeletonLoading();
+  const [devData, setDevData] = useState<any>(null);
 
   const handleTouchStart = (event: TouchEvent) => {
     const newTouches = new Set<number>(
@@ -96,16 +97,15 @@ export const Clicker: React.FC = () => {
     event.preventDefault();
   };
 
-  const handleClickEvent = () => {
-    if (user) {
-      handleClick({
-        user_id: user.tgId,
-        position: { x: 100, y: 200 },
-        time_stamp: Date.now(),
-      });
-    }
-  };
-
+  // const handleClickEvent = () => {
+  //   if (user) {
+  //     handleClick({
+  //       user_id: user.tgId,
+  //       position: { x: 100, y: 200 },
+  //       time_stamp: Date.now(),
+  //     });
+  //   }
+  // };
   return (
     <div
       className="text-center p-4 pt-0 relative flex flex-col items-center"
@@ -144,7 +144,7 @@ export const Clicker: React.FC = () => {
               onTouchEnd={handleTouchEnd}
               //@ts-ignore
               onTouchCancel={handleTouchEnd}
-              onClick={handleClickEvent}
+              // onClick={handleClickEvent}
               onContextMenu={handleContextMenu}
               className={`text-lg border-none filter drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) rounded-full p-4
                 ${
