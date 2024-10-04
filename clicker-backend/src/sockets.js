@@ -306,7 +306,7 @@ export const initSocketsLogic = (io) => ({
         })
           .sort({ score: -1 })
           .limit(topUsersCount);
-        topUsersInLeague = [...topUsersInLeague, ...dopUsers];
+        topUsersInLeague = [...dopUsers, ...topUsersInLeague];
       }
       io.emit("league", {
         league: { id: league._id, ...league },
