@@ -286,8 +286,12 @@ export const initSocketsLogic = (io) => ({
       if (!league) {
         return;
       }
-      let usersInLeague;
-      
+      let usersInLeague = 0;
+
+      usersInLeague += await User.countDocuments({
+        score: { $lte: league.maxScore, $gte: league.minScore },
+      });
+
       if (lastLeague) {
         usersInLeague += await User.countDocuments({
           score: { $gte: league.minScore },
@@ -297,12 +301,8 @@ export const initSocketsLogic = (io) => ({
         })
           .sort({ score: -1 })
           .limit(topUsersCount);
-        topUsersInLeague = [...topUsersInLeague, ...dopUsers];
+        topUsersInLeague = [...dopUsers, ...topUsersInLeague];
       }
-
-      usersInLeague = await User.countDocuments({
-        score: { $lte: league.maxScore, $gte: league.minScore },
-      });
 
       let topUsersInLeague = await User.find({
         score: { $lte: league.maxScore, $gte: league.minScore },
