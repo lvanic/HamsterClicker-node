@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   AiOutlineHome,
   AiOutlineUser,
@@ -25,13 +25,26 @@ export const Layout = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
 
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location.pathname]);
 
-  if (platform !== "ios" && platform !== "android") {
-    return <QRCodeComponent />;
-  }
+  useEffect(() => {
+    const selectedLanguage =
+      params.get("lang") || localStorage.getItem("language") || "en";
+
+    if ((params.get("lang") || "eg") !== selectedLanguage) {
+      params.set("lang", selectedLanguage);
+      navigate(`?${params.toString()}`, { replace: true });
+    }
+  }, [navigate]);
+
+  // if (platform !== "ios" && platform !== "android") {
+  //   return <QRCodeComponent />;
+  // }
 
   // if (isPageLoading) {
   //   return <Loader />;
@@ -39,7 +52,7 @@ export const Layout = () => {
   return (
     <>
       <Outlet />
-      <nav className="fixed bottom-0 left-0 w-full bg-[#2525258C] border-t border-gray-700 flex justify-around py-2 shadow-lg flex items-center justify-center">
+      <nav className="fixed bottom-0 left-0 w-full bg-[#2525258C] border-t border-gray-700 flex justify-around pt-2 pb-4 shadow-lg flex items-center justify-center">
         <Link
           to="/"
           className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${

@@ -20,6 +20,6 @@ body {
 }
 
 #root{
-  height: calc(100vh - 73px);
+  height: calc(100vh - 81px);
   user-select: none;
 }

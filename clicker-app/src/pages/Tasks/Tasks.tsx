@@ -112,7 +112,7 @@ export const Tasks = () => {
         ) : (
           <ul
             className="list-none p-0"
-            style={{ maxHeight: window.innerHeight - 348, overflowY: "scroll" }}
+            style={{ maxHeight: window.innerHeight - 356, overflowY: "scroll" }}
           >
             <div>Daily reward</div>
             <TaskList

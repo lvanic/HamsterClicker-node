@@ -1,0 +1,8 @@
+{
+  "coins": "coins",
+  "youReceived": "You received a daily reward of",
+  "dailyRewardAlready": "Daily reward has already been claimed today",
+  "transactionFailed": "Transaction failed after multiple attempts",
+  "energyRestored": "Your energy has been restored",
+  "fullEnergyLimit": "Full energy boost limit reached for today"
+}

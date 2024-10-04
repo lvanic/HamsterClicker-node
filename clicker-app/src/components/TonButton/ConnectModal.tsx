@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { getPlatform } from "../../services/telegramService";
 
 interface ModalProps {
   onClose: () => void;
@@ -7,21 +8,31 @@ interface ModalProps {
 
 const ConnectModal: React.FC<ModalProps> = ({ onClose, children }) => {
   const [visible, setVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const platform = useMemo(() => getPlatform(), [getPlatform]);
 
   useEffect(() => {
-    setVisible(true); // Trigger the animation on mount
-    return () => setVisible(false); // Clean up on unmount
-  }, []);
+    setVisible(true);
+
+    return () => {
+      setVisible(false);
+    };
+  }, [platform]);
 
   const handleClose = () => {
-    setVisible(false); // Trigger the exit animation
-    setTimeout(onClose, 300); // Wait for the animation to finish before closing
+    setVisible(false);
+    setTimeout(onClose, 300); // Ждем завершения анимации перед закрытием
   };
 
   return (
     <>
       <div className="overlay" onClick={handleClose} />
-      <div className={`modal ${visible ? "visible" : "hidden"} h-56`}>
+      <div
+        className={`modal top-20 rounded-[40px!important] mx-4  ${
+          visible ? "visible" : "hidden"
+        } h-56`}
+        style={{ width: "-webkit-fill-available" }} // динамически изменяем mb
+      >
         {children}
       </div>
     </>

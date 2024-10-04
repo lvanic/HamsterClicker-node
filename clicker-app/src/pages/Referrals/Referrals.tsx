@@ -31,12 +31,16 @@ export const Referrals = () => {
         <br /> earn coins!
       </div>
       <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-8 mb-8">
-        <LargerEggSvg className="absolute mb-20" />
+        <div className="absolute mb-20">
+          <LargerEggSvg />
+        </div>
         <div className="mt-7 mb-7">1 friend = {referralReward} coins</div>
         <ReferralLink className="mt-20" share={true} />
       </div>
       <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-14 mb-8">
-        <LargerEggSvg className="absolute mb-24" />
+        <div className="absolute pb-24">
+          <LargerEggSvg />
+        </div>
         <div className="mt-7 text-sm underline underline-offset-2">
           If he has telegram premium
         </div>
@@ -45,7 +49,7 @@ export const Referrals = () => {
       </div>
       <ul
         className="list-none p-4 rounded-xl bg-[#383838]"
-        style={{ maxHeight: window.innerHeight - 476, overflowY: "scroll" }}
+        style={{ maxHeight: window.innerHeight - 484, overflowY: "scroll" }}
       >
         <div onClick={updateReferals} className="absolute right-0 mr-16">
           <Reloader className={isReferralUpdate ? "animate-spin" : ""} />
@@ -63,8 +67,12 @@ export const Referrals = () => {
                   {referral.firstName[0]}
                 </div>
                 <div className="flex flex-row">
-                  <div className="text-xs">{referral.firstName || "Anonimus"}</div>
-                  <div className="text-xs ml-2">@{referral.tgUsername || "Anonimus"}</div>
+                  <div className="text-xs">
+                    {referral.firstName || "Anonimus"}
+                  </div>
+                  <div className="text-xs ml-2">
+                    @{referral.tgUsername || "Anonimus"}
+                  </div>
                 </div>
               </li>
               <Delimiter />

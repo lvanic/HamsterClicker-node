@@ -30,30 +30,44 @@ interface NotifyProviderProps {
 }
 
 const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
-  const [notify, setNotifyMessage] = useState<NotifyMessage | null>(null);
+  const [notifyQueue, setNotifyQueue] = useState<NotifyMessage[]>([]);
+  const [currentNotify, setCurrentNotify] = useState<NotifyMessage | null>(
+    null
+  );
   const { webSocket } = useWebSocket();
   const userContext = useContext(UserContext);
   const [isStartNotifyShowed, setStartNotifyShowed] = useState(false);
 
   const setNotify = (notify: NotifyMessage) => {
-    setNotifyMessage(null);
-    setNotifyMessage(notify);
+    setNotifyQueue((prevQueue) => [...prevQueue, notify]);
   };
-  const onClose = () => {
-    setNotifyMessage(null);
+
+  const showNextNotify = () => {
+    if (notifyQueue.length > 0) {
+      setCurrentNotify(notifyQueue[0]);
+
+      // Таймер на 3 секунды, затем удаляем текущее уведомление из очереди
+      const timer = setTimeout(() => {
+        setNotifyQueue((prevQueue) => prevQueue.slice(1));
+        setCurrentNotify(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
   };
+
+  useEffect(() => {
+    if (!currentNotify && notifyQueue.length > 0) {
+      showNextNotify();
+    }
+  }, [notifyQueue, currentNotify]);
 
   const handleComboCompleted = (data: any) => {
-    console.log("combo ok");
-
     const notify: NotifyMessage = {
       status: "ok",
-      message: `You are successfully completed the combo game and received ${data.reward}`,
+      message: `You successfully completed the combo game and received ${data.reward}`,
     };
-
-    setTimeout(() => {
-      setNotify(notify);
-    }, 3500);
+    setNotify(notify);
   };
 
   useEffect(() => {
@@ -63,14 +77,13 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
       const currentTime = new Date().getTime();
       const offlineTime = currentTime - userContext?.user.lastOnlineTimestamp;
       const offlineHours = offlineTime / (1000 * 60 * 60);
-      console.log(offlineTime, userContext?.user?.cachedIncome);
+
       if (offlineTime / 1000 / 60 < 5) {
         return;
       }
+
       let earned = 0;
-      if (offlineTime <= 0) {
-        earned = 0;
-      } else if (offlineHours <= MAX_OFFLINE_EARNINGS_HOURS) {
+      if (offlineHours <= MAX_OFFLINE_EARNINGS_HOURS) {
         earned = offlineHours * userContext?.user?.cachedIncome;
       } else {
         earned = MAX_OFFLINE_EARNINGS_HOURS * userContext?.user?.cachedIncome;
@@ -80,9 +93,11 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
         status: "ok",
         message: `During your absence you earned ${formatNumber(earned)}`,
       };
+
       if (earned >= 1) {
         setNotify(notify);
       }
+
       setStartNotifyShowed(true);
     }
   }, [
@@ -93,15 +108,17 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
 
   useEffect(() => {
     webSocket?.on("comboCompleted", handleComboCompleted);
-    // webSocket?.on("boostActivated", );
+
     return () => {
       webSocket?.off("comboCompleted", handleComboCompleted);
-      // webSocket?.off("boostActivated", );
     };
   }, [webSocket]);
+
   return (
-    <NotifyContext.Provider value={{ notify, setNotify }}>
-      {notify != null && <Notification notify={notify} onClose={onClose} />}
+    <NotifyContext.Provider value={{ notify: currentNotify, setNotify }}>
+      {currentNotify && (
+        <Notification notify={currentNotify} onClose={showNextNotify} />
+      )}
       {children}
     </NotifyContext.Provider>
   );

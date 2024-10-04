@@ -58,8 +58,8 @@ export const Businesses = () => {
           const business = context?.businesses.find((x) => x.id === id);
           const notify: NotifyMessage = {
             status: "ok",
-            message: `${business?.name} was ${
-              business?.level === 0 ? "purchased" : "upgraded"
+            message: `${business?.name} ${
+              business?.level === 0 ? "was purchased" : "was upgraded"
             }`,
             className: "h-72",
           };
@@ -95,7 +95,9 @@ export const Businesses = () => {
         <div className="text-center">My balance</div>
         <div className="flex justify-center items-center">
           <LargerEggSvg />
-          <div className="text-5xl ml-2">{Math.floor(user?.balance || 0)}</div>
+          <div className="text-5xl ml-2">
+            {formatNumber(user?.balance || 0)}
+          </div>
         </div>
       </div>
       <div className="mt-4 mb-4 flex justify-between">
@@ -130,12 +132,13 @@ export const Businesses = () => {
           setFilter(category);
         }}
       />
-      <div style={{ maxHeight: window.innerHeight - 374, overflowY: "scroll" }}>
+      <div style={{ maxHeight: window.innerHeight - 382, overflowY: "scroll" }}>
         <div className="businesses-container">
           {!!user && context?.businesses && (
             <BusinessesList
               businesses={context?.businesses.filter(
-                (x) => x.category.toLocaleLowerCase() == filter.toLocaleLowerCase()
+                (x) =>
+                  x.category.toLocaleLowerCase() == filter.toLocaleLowerCase()
               )}
               setModalOpen={setModalOpen}
               setSelectedBusiness={setSelectedBusiness}

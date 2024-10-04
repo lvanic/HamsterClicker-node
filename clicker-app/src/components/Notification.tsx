@@ -12,22 +12,15 @@ const Notification = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const TIMEOUT = 3000;
     modalRef.current?.classList.add("visible");
 
-    setTimeout(() => {
+    return () => {
       modalRef.current?.classList.remove("visible");
-      modalRef.current?.classList.add("hidden");
-    }, TIMEOUT - 300);
-
-    setTimeout(() => {
-      onClose();
-    }, TIMEOUT);
-  }, [notify, onClose]);
+    };
+  }, [notify]);
 
   const overlayClickHandle = () => {
     modalRef.current?.classList.remove("visible");
-    modalRef.current?.classList.add("hidden");
     onClose();
   };
 
@@ -61,13 +54,6 @@ const Notification = ({
               <SuccessSvg />
             ) : null}
           </div>
-          {/* <div className="text-white mt-2 text-sm">
-    {notify.status == "task"
-    ? "Сonfirmed"
-    : notify.status == "ok"
-    ? "Success"
-    : "Something went wrong"}
-    </div> */}
           {notify.closeButton && (
             <button
               className="text-white px-6 py-2 relative top-8 rounded-lg"

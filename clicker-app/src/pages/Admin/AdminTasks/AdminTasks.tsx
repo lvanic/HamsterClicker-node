@@ -94,7 +94,7 @@ export const AdminTasks = () => {
 
       <div
         className="flex flex-col space-y-2"
-        style={{ maxHeight: "80vh", overflow: "scroll" }}
+        style={{ maxHeight: "65vh", overflow: "scroll" }}
       >
         {tasks.map((task) => (
           <div

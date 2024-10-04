@@ -16,6 +16,7 @@ import { useSettings } from "../../hooks/useSettings";
 import { LevelStatus } from "../../components/LevelStatus";
 import { DailyOffer } from "../../components/DailyOffer";
 import { ComboGame } from "../../components/ComboGame";
+import { LanguageSelector } from "../../components/LanguageSelector";
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -116,13 +117,17 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
           <div className="flex flex-row justify-center items-center w-full mt-1 mb-3 gap-2">
-            <ScoreCounter clickCount={clickCount} />
+            <div className="w-full">
+              <ScoreCounter clickCount={clickCount} />
+              <LanguageSelector />
+            </div>
             <div className="flex flex-col justify-center items-center gap-1">
               <BoostButton />
               <League />
             </div>
             <LevelStatus />
           </div>
+
           <div className="flex flex-row justify-center items-center w-full mb-2  gap-4">
             <DailyOffer />
             <ComboGame />
