@@ -62,8 +62,10 @@ const main = async () => {
             console.log(isPremium);
             if (isPremium) {
               refUser.balance += appSettings.premiumReferralReward;
+              refUser.score += appSettings.premiumReferralReward;
             } else {
               refUser.balance += appSettings.referralReward;
+              refUser.score += appSettings.referralReward;
             }
             await refUser.save();
           }
