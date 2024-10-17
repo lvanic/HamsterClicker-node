@@ -74,7 +74,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         }
       });
 
-      setSubscribeDone(true);
+      // setSubscribeDone(true);
       return () => {
         webSocket.off("tasks");
         webSocket.off("businesses");
@@ -96,7 +96,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         webSocket.off("businessBought");
       };
     }
-  }, [webSocket, isSubscribeDone]);
+  }, [webSocket]);
 
   return (
     <DataContext.Provider

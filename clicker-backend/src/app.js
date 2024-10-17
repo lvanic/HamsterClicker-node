@@ -154,10 +154,53 @@ const main = async () => {
   socketServer.on("disconnect", async () => {
     const tgUserId = Number(socketServer.userId);
 
-    await User.findOneAndUpdate(
-      { tgId: tgUserId },
-      { lastOnlineTimestamp: new Date().getTime() }
-    );
+    if (buffer[tgUserId] > 0) {
+      const user = await User.findOne({ tgId: tgUserId });
+
+      if (user) {
+        const clickPower = user.clickPower;
+        let clickCount = buffer[tgUserId];
+
+        if (user.energy < clickCount) {
+          clickCount = user.energy;
+        }
+
+        const balanceIncrement = clickCount * clickPower;
+
+        try {
+          await User.findOneAndUpdate(
+            { tgId: tgUserId },
+            {
+              $inc: {
+                balance: balanceIncrement,
+                score: balanceIncrement,
+                energy: -clickCount,
+              },
+              lastOnlineTimestamp: new Date().getTime(),
+            }
+          );
+
+          delete buffer[tgUserId];
+        } catch (error) {
+          console.error(
+            "Ошибка обновления пользователя при отключении:",
+            error
+          );
+        }
+      }
+    } else {
+      try {
+        await User.findOneAndUpdate(
+          { tgId: tgUserId },
+          { lastOnlineTimestamp: new Date().getTime() }
+        );
+      } catch (error) {
+        console.error(
+          "Ошибка обновления времени последнего подключения:",
+          error
+        );
+      }
+    }
   });
 
   ensureAppSettings();

@@ -34,7 +34,7 @@ export const League = () => {
           }}
           className="rounded-xl"
         />
-        <div className="text-xs mt-2">
+        <div className="text-xs mt-2 b-2 text-nowrap">
           Score for UP {formatNumber(user?.league.maxScore)}
         </div>
       </div>

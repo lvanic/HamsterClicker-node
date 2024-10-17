@@ -41,8 +41,6 @@ interface LiteSyncData {
   maxEnergy: number;
   energyLevel: number;
   totalIncomePerHour?: number;
-  deltaAddedFromBusinesses: number;
-  deltaAddedEnergy: number;
   currentComboCompletions: any[];
 }
 
@@ -100,10 +98,8 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
         clickPower: data.clickPower || prev.clickPower,
         lastDailyRewardTimestamp:
           data.lastDailyRewardTimestamp || prev.lastDailyRewardTimestamp,
-        balance: prev.balance + data.deltaAddedFromBusinesses,
-        score: clickRef.current
-          ? prev.score + data.deltaAddedFromBusinesses
-          : prev.score + data.deltaAddedFromBusinesses,
+        balance: data.balance,
+        score: data.score,
         energyLevel: data.energyLevel || prev.energyLevel,
         maxEnergy: data.maxEnergy || prev.maxEnergy,
         energy:
@@ -187,15 +183,39 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       return;
     }
 
-    if (webSocket?.connected && user?.tgId) {
-      webSocket.on("liteSync", handleLiteSync);
-      webSocket.emit("subscribeLiteSync", user?.tgId);
-    }
-    return () => {
-      webSocket?.off("liteSync", handleLiteSync);
-      webSocket?.emit("unsubscribeLiteSync");
-    };
+    // if (webSocket?.connected && user?.tgId) {
+    //   webSocket.on("liteSync", handleLiteSync);
+    //   webSocket.emit("subscribeLiteSync", user?.tgId);
+    // }
+    // return () => {
+    //   webSocket?.off("liteSync", handleLiteSync);
+    //   webSocket?.emit("unsubscribeLiteSync");
+    // };
   }, [webSocket?.connected, handleLiteSync, user?.tgId, isSocketLive]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setUser((prev) => {
+        if (!prev || prev.energy >= prev.maxEnergy) {
+          // clearInterval(interval);
+          return prev;
+        }
+
+        const balanceIncreasePerSecond = prev.totalIncomePerHour / 3600;
+
+        const newEnergy = Math.min(prev.energy + 1, prev.maxEnergy);
+
+        return {
+          ...prev,
+          energy: newEnergy,
+          score: prev.score + balanceIncreasePerSecond,
+          balance: prev.balance + balanceIncreasePerSecond,
+        };
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [user?.tgUsername]);
 
   const handleRewardGet = (amount: number) => {
     setUser((prev) => {

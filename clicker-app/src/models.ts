@@ -22,6 +22,7 @@ export interface User {
   currentComboCompletions: string[];
   cachedIncome: number;
   lastOnlineTimestamp: number;
+  connectedWallet: string;
 }
 
 export interface Task {

@@ -263,7 +263,7 @@ export const initSocketsLogic = (io) => ({
         league: { id: userLeague._id, ...userLeague.toObject() },
         userLevel,
         maxLevel: leagues.length,
-        energyLevel: user.energyLevel,
+        energyLevel: user.energyLevel - (buffer[tgUserId] || 0),
         maxEnergy: 1000 + 500 * (user.energyLevel - 1),
         energy: +(user.energy - (buffer[user._id] || 0))
           .toString()
@@ -349,8 +349,8 @@ export const initSocketsLogic = (io) => ({
   },
   buyBusiness: async (data) => {
     let attempts = 0;
-    const maxAttempts = 10; // Максимальное количество попыток
-    const retryDelay = 950; // Задержка между попытками (в миллисекундах)
+    const maxAttempts = 10;
+    const retryDelay = 950;
     const parsedData = JSON.parse(data);
     const [userTgId, businessId] = parsedData;
 
@@ -413,7 +413,31 @@ export const initSocketsLogic = (io) => ({
         await session.commitTransaction();
         session.endSession();
 
-        io.emit("reward", finalPrice);
+        const updatedUser = await User.findOne({ tgId: userTgId }).populate(
+          "businesses businessUpgrades referrals completedTasks"
+        );
+
+        const businesses = await Business.find({
+          _id: { $in: updatedUser.businesses },
+        });
+
+        const totalIncomePerHour = businesses.reduce((sum, b) => {
+          const businessUpgrade = updatedUser.businessUpgrades.find(
+            (bu) => bu.businessId.toString() === b._id.toString()
+          );
+          const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+          return sum + b.rewardPerHour * 1.2 ** businessLevel;
+        }, 0);
+
+        io.emit("liteSync", {
+          balance: updatedUser.balance,
+          score: updatedUser.score,
+          energy: updatedUser.energy,
+          newBusinesses: businesses,
+          totalIncomePerHour: totalIncomePerHour,
+          // Добавьте сюда другую нужную информацию, например бизнес апгрейды и рефералов
+        });
+
         io.emit("businessBought", { success: true, id: businessId });
         break;
       } catch (error) {
@@ -571,18 +595,32 @@ export const initSocketsLogic = (io) => ({
           throw new Error("Insufficient balance");
         }
 
+        const updatedUserData = {
+          balance: user.balance - cost,
+          score: user.score,
+          clickPower: user.clickPower + 1,
+        };
+
         await User.findOneAndUpdate(
           { tgId: user.tgId },
           { $inc: { balance: -cost, clickPower: 1 } },
           { session }
         );
 
-        io.emit("reward", -cost);
-
         await session.commitTransaction();
         session.endSession();
 
         io.emit("clickPowerUpgraded", { success: true });
+
+        const liteSyncData = {
+          ...user.toObject(),
+          balance: updatedUserData.balance,
+          score: updatedUserData.score,
+          clickPower: updatedUserData.clickPower,
+        };
+
+        io.emit("liteSync", liteSyncData);
+
         return;
       } catch (error) {
         await session.abortTransaction();
@@ -600,234 +638,6 @@ export const initSocketsLogic = (io) => ({
       } finally {
         session.endSession();
       }
-    }
-  },
-
-  subscribeLiteSync: async (userId) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    let lastUserInfo = null;
-    while (lastUserInfo == null) {
-      try {
-        lastUserInfo = await User.findOne({ tgId: userId }).session(session);
-      } catch {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log("Retry");
-      }
-    }
-    await session.commitTransaction();
-    session.endSession();
-    // const businesses = await Business.find({});
-
-    if (!lastUserInfo) {
-      return;
-    }
-    let cachedIncome = null;
-
-    const interval = setInterval(async () => {
-      try {
-        let cachedClicks = buffer[lastUserInfo.tgId] || 0;
-
-        if ((buffer[lastUserInfo.tgId] || 0) < cachedClicks) {
-          cachedClicks = buffer[lastUserInfo.tgId] || 0;
-        }
-        // cachedClicks = (buffer[lastUserInfo.tgId] || 0) - cachedClicks;
-        const userEnergy = (
-          await User.findOne({ tgId: userId }).select("energy")
-        ).energy;
-
-        const energyToRestore =
-          userEnergy + 1 < 1000 + 500 * (lastUserInfo.energyLevel - 1)
-            ? userEnergy + 1
-            : 1000 + 500 * (lastUserInfo.energyLevel - 1);
-        const newUserInfo = await User.findOneAndUpdate(
-          { tgId: userId },
-          {
-            $inc: {
-              balance: (cachedIncome || 0) / 3600,
-              score: (cachedIncome || 0) / 3600,
-            },
-            $set: {
-              energy: energyToRestore,
-              lastOnlineTimestamp: new Date().getTime(),
-            },
-          }
-        );
-        let updatedInfo = {};
-        let isBusinessAdded = false;
-        let isBusinessUpgraded = false;
-
-        if (lastUserInfo.businesses.length !== newUserInfo.businesses.length) {
-          const businessIds = newUserInfo.businesses.filter(
-            (b) => !lastUserInfo.businesses.includes(b)
-          );
-
-          const businesses = await Business.find({
-            _id: { $in: businessIds },
-          });
-          updatedInfo.newBusinesses = businesses.map((b) => {
-            const businessUpgrade = newUserInfo.businessUpgrades.find(
-              (bu) => bu.businessId.toString() === b._id.toString()
-            );
-            const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
-            return {
-              id: b._id,
-              ...b.toObject(),
-              lastUpgradeTimestamp: !!businessUpgrade
-                ? businessUpgrade.timestamp
-                : null,
-              level: businessLevel,
-            };
-          });
-          isBusinessAdded = true;
-        }
-
-        const newBusinessUpgrades = newUserInfo.businessUpgrades.filter(
-          (bu) => {
-            const match = lastUserInfo.businessUpgrades.find(
-              (b) => b.businessId.toString() == bu.businessId.toString()
-            );
-            return !!match ? match.level != bu.level : true;
-          }
-        );
-        if (newBusinessUpgrades.length > 0) {
-          updatedInfo.businessUpgrades = newBusinessUpgrades;
-          isBusinessUpgraded = true;
-        }
-
-        if (isBusinessAdded || isBusinessUpgraded || cachedIncome == null) {
-          const businesses = await Business.find({
-            _id: { $in: newUserInfo.businesses },
-          });
-          const totalIncomePerHour = businesses.reduce((sum, b) => {
-            const businessUpgrade = newUserInfo.businessUpgrades.find(
-              (bu) => bu.businessId.toString() === b._id.toString()
-            );
-            const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
-            return sum + b.rewardPerHour * 1.2 ** businessLevel;
-          }, 0);
-          updatedInfo.totalIncomePerHour = totalIncomePerHour;
-          cachedIncome = totalIncomePerHour;
-        }
-
-        if (lastUserInfo.referrals.length !== newUserInfo.referrals.length) {
-          const referralIds = newUserInfo.referrals.filter(
-            (b) => !lastUserInfo.referrals.includes(b)
-          );
-          updatedInfo.referrals = await User.find({
-            _id: { $in: referralIds },
-          });
-        }
-
-        if (
-          lastUserInfo.completedTasks.length !==
-          newUserInfo.completedTasks.length
-        ) {
-          const completedTaskIds = newUserInfo.completedTasks.filter(
-            (b) => !lastUserInfo.completedTasks.includes(b)
-          );
-          updatedInfo.completedTasks = await Task.find({
-            _id: { $in: completedTaskIds },
-          });
-        }
-
-        if (lastUserInfo.clickPower !== newUserInfo.clickPower) {
-          updatedInfo.clickPower = newUserInfo.clickPower;
-        }
-
-        if (
-          lastUserInfo.lastDailyRewardTimestamp !==
-          newUserInfo.lastDailyRewardTimestamp
-        ) {
-          updatedInfo.lastDailyRewardTimestamp =
-            newUserInfo.lastDailyRewardTimestamp;
-        }
-
-        if (
-          lastUserInfo.fullEnergyActivates !== newUserInfo.fullEnergyActivates
-        ) {
-          updatedInfo.fullEnergyActivates = newUserInfo.fullEnergyActivates;
-        }
-
-        if (
-          lastUserInfo.lastFullEnergyTimestamp !==
-          newUserInfo.lastFullEnergyTimestamp
-        ) {
-          updatedInfo.lastFullEnergyTimestamp =
-            newUserInfo.lastFullEnergyTimestamp;
-        }
-
-        if (lastUserInfo.energyLevel !== newUserInfo.energyLevel) {
-          updatedInfo.energyLevel = newUserInfo.energyLevel;
-          updatedInfo.maxEnergy = 1000 + 500 * (newUserInfo.energyLevel - 1);
-        }
-
-        if (
-          lastUserInfo.currentComboCompletions.length !==
-          newUserInfo.currentComboCompletions.length
-        ) {
-          const competedComboIds = newUserInfo.currentComboCompletions.filter(
-            (b) => !lastUserInfo.currentComboCompletions.includes(b)
-          );
-          updatedInfo.currentComboCompletions = await Business.find({
-            _id: { $in: competedComboIds },
-          });
-        }
-
-        const leagues = await League.find({});
-        let userLeague = leagues.find(
-          (league) =>
-            league.minScore <= newUserInfo.score &&
-            league.maxScore >= newUserInfo.score
-        );
-
-        if (!userLeague) {
-          userLeague = leagues[leagues.length - 1];
-        }
-
-        const userPlaceInLeague = await User.countDocuments({
-          balance: { $lte: userLeague.maxScore, $gte: newUserInfo.score },
-        });
-
-        const deltaAddedFromBusinesses =
-          newUserInfo.addedFromBusinesses - lastUserInfo.addedFromBusinesses;
-        const deltaAddedEnergy =
-          newUserInfo.addedEnergy - lastUserInfo.addedEnergy;
-
-        lastUserInfo = newUserInfo;
-        const isEnergyUpdated =
-          newUserInfo.energy == newUserInfo.maxEnergy &&
-          buffer[newUserInfo.tgId];
-
-        io.emit("liteSync", {
-          ...updatedInfo,
-          deltaAddedFromBusinesses: cachedIncome / 3600,
-          deltaAddedEnergy: isEnergyUpdated ? 1 : newUserInfo.maxEnergy,
-          balance:
-            newUserInfo.balance +
-            (buffer[newUserInfo.tgId] || 0) * newUserInfo.clickPower,
-          score:
-            newUserInfo.score +
-            (buffer[newUserInfo.tgId] || 0) * newUserInfo.clickPower,
-          energy: newUserInfo.energy - (buffer[newUserInfo.tgId] || 0),
-          userPlaceInLeague,
-        });
-      } catch (e) {
-        console.log("error liteSync", e);
-      }
-    }, 1000);
-
-    const handleDisconnect = () => {
-      clearInterval(interval);
-      io.off("unsubscribeLiteSync", handleDisconnect);
-      io.off("disconnect", handleDisconnect);
-    };
-
-    if (!io.listenerCount("unsubscribeLiteSync")) {
-      io.on("unsubscribeLiteSync", handleDisconnect);
-    }
-    if (!io.listenerCount("disconnect")) {
-      io.on("disconnect", handleDisconnect);
     }
   },
 
@@ -900,7 +710,7 @@ export const initSocketsLogic = (io) => ({
           return;
         }
 
-        // Прямо изменяем необходимые поля
+        // Обновляем баланс и уровень бизнеса пользователя
         user.balance -= finalPrice;
 
         if (!businessUpgrade) {
@@ -937,12 +747,36 @@ export const initSocketsLogic = (io) => ({
 
         await session.commitTransaction();
         session.endSession();
-        io.emit(
-          "reward",
-          comboCompleted ? appSettings.comboReward - finalPrice : -finalPrice
-        );
+        // io.emit(
+        //   "reward",
+        //   comboCompleted ? appSettings.comboReward - finalPrice : -finalPrice
+        // );
         io.emit("businessBought", { success: true, id: businessId });
-        break; // Если транзакция прошла успешно, выходим из цикла
+
+        const businesses = await Business.find({
+          _id: { $in: user.businesses },
+        });
+
+        const totalIncomePerHour = businesses.reduce((sum, b) => {
+          const businessUpgrade = user.businessUpgrades.find(
+            (bu) => bu.businessId.toString() === b._id.toString()
+          );
+          const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+          return sum + b.rewardPerHour * 1.2 ** businessLevel;
+        }, 0);
+
+        const liteSyncData = {
+          ...user.toObject(),
+          balance: user.balance,
+          businesses: user.businesses,
+          businessUpgrades: user.businessUpgrades,
+          currentComboCompletions: user.currentComboCompletions,
+          totalIncomePerHour: totalIncomePerHour,
+        };
+
+        io.emit("liteSync", liteSyncData);
+
+        break;
       } catch (error) {
         await session.abortTransaction();
         session.endSession();
@@ -969,8 +803,8 @@ export const initSocketsLogic = (io) => ({
 
   upgradeEnergy: async (userId) => {
     let attempts = 0;
-    const maxAttempts = 10; // Максимальное количество попыток
-    const retryDelay = 1000; // Задержка между попытками (в миллисекундах)
+    const maxAttempts = 10;
+    const retryDelay = 1000;
 
     while (attempts < maxAttempts) {
       const session = await mongoose.startSession();
@@ -1009,23 +843,27 @@ export const initSocketsLogic = (io) => ({
           return;
         }
 
-        await User.findOneAndUpdate(
-          { tgId: user.tgId },
-          { $inc: { balance: -cost } },
-          {
-            session,
-          }
-        );
-        io.emit("reward", -cost);
-
+        // Обновляем баланс и уровень энергии пользователя в одной операции
+        user.balance -= cost;
         user.energyLevel += 1;
+
         await user.save({ session });
 
         await session.commitTransaction();
         session.endSession();
 
+        // io.emit("reward", -cost);
         io.emit("energyUpgraded", { success: true });
-        break;
+
+        const liteSyncData = {
+          ...user.toObject(),
+          balance: user.balance,
+          energyLevel: user.energyLevel,
+          score: user.score,
+        };
+
+        io.emit("liteSync", liteSyncData); // Передаем обновленные данные
+        break; // Выходим из цикла при успешном завершении
       } catch (error) {
         await session.abortTransaction();
         session.endSession();
@@ -1192,8 +1030,8 @@ export const registerEvents = (io) => {
   io.on("getTasks", socketsLogic.getTasks);
   io.on("activateBoost", socketsLogic.activateBoost);
   io.on("upgradeClick", socketsLogic.upgradeClick);
-  io.on("subscribeLiteSync", socketsLogic.subscribeLiteSync);
   io.on("upgradeBusiness", socketsLogic.upgradeBusiness);
   io.on("upgradeEnergy", socketsLogic.upgradeEnergy);
   io.on("userLeague", socketsLogic.userLeague);
+  
 };
