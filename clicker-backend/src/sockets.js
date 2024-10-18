@@ -4,53 +4,53 @@ import { mongoose } from "mongoose";
 
 export let buffer = {};
 
-setInterval(async () => {
-  const userIds = Object.keys(buffer);
-  console.info("Количество пользователей в buffer:", userIds.length);
+// setInterval(async () => {
+//   const userIds = Object.keys(buffer);
+//   console.info("Количество пользователей в buffer:", userIds.length);
 
-  const bulkOperations = [];
+//   const bulkOperations = [];
 
-  for (const userId of userIds) {
-    // console.log(userId, buffer[userId]);
+//   for (const userId of userIds) {
+//     // console.log(userId, buffer[userId]);
 
-    if (buffer[userId] > 0) {
-      const user = await User.findOne({ tgId: userId });
+//     if (buffer[userId] > 0) {
+//       const user = await User.findOne({ tgId: userId });
 
-      if (user) {
-        const clickPower = user.clickPower;
-        let clickCount = buffer[userId];
+//       if (user) {
+//         const clickPower = user.clickPower;
+//         let clickCount = buffer[userId];
 
-        if (user.energy < clickCount) {
-          clickCount = user.energy;
-        }
+//         if (user.energy < clickCount) {
+//           clickCount = user.energy;
+//         }
 
-        const balanceIncrement = clickCount * clickPower;
+//         const balanceIncrement = clickCount * clickPower;
 
-        bulkOperations.push({
-          updateOne: {
-            filter: { tgId: userId },
-            update: {
-              $inc: {
-                balance: balanceIncrement,
-                score: balanceIncrement,
-                energy: -clickCount,
-              },
-            },
-          },
-        });
-      }
-    }
-  }
+//         bulkOperations.push({
+//           updateOne: {
+//             filter: { tgId: userId },
+//             update: {
+//               $inc: {
+//                 balance: balanceIncrement,
+//                 score: balanceIncrement,
+//                 energy: -clickCount,
+//               },
+//             },
+//           },
+//         });
+//       }
+//     }
+//   }
 
-  if (bulkOperations.length > 0) {
-    try {
-      await User.bulkWrite(bulkOperations);
-      buffer = [];
-    } catch (error) {
-      console.error("Ошибка выполнения bulkWrite:", error);
-    }
-  }
-}, 10000);
+//   if (bulkOperations.length > 0) {
+//     try {
+//       await User.bulkWrite(bulkOperations);
+//       buffer = [];
+//     } catch (error) {
+//       console.error("Ошибка выполнения bulkWrite:", error);
+//     }
+//   }
+// }, 10000);
 
 export const initSocketsLogic = (io) => ({
   clickEvent: async (data) => {
@@ -957,7 +957,7 @@ export const handleSocketConnection = async (socket) => {
       const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
 
       const bufferClicks = buffer[tgUserId] || 0;
-      const energyToRestore = secondsOffline - bufferClicks;
+      const energyToRestore = secondsOffline - bufferClicks < user.maxEnergy ? secondsOffline - bufferClicks : user.maxEnergy;
 
       const businesses = await Business.find({}).session(session).exec();
 
