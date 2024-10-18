@@ -180,7 +180,7 @@ const main = async () => {
             }
           );
 
-          delete buffer[tgUserId];
+          buffer[tgUserId] = 0;
         } catch (error) {
           console.error(
             "Ошибка обновления пользователя при отключении:",
