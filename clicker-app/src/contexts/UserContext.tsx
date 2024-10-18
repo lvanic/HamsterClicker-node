@@ -248,10 +248,10 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     const tgUser = getTelegramUser();
 
     if (webSocket?.connected && tgUser.id !== -1) {
-      console.log("Get user", tgUser.id);
-
-      webSocket.on("user", handleGetUser);
-      webSocket.emit("getUser", tgUser.id);
+      setTimeout(() => {
+        webSocket.on("user", handleGetUser);
+        webSocket.emit("getUser", tgUser.id);
+      }, 300);
     }
     return () => {
       webSocket?.off("user", handleGetUser);
