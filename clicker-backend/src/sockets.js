@@ -957,8 +957,11 @@ export const handleSocketConnection = async (socket) => {
       const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
 
       const bufferClicks = buffer[tgUserId] || 0;
-      const energyToRestore = secondsOffline - bufferClicks < userMaxEnergy ? secondsOffline - bufferClicks : userMaxEnergy - user.energy;
-
+      const energyToRestore =
+        secondsOffline - bufferClicks < userMaxEnergy
+          ? secondsOffline - bufferClicks
+          : userMaxEnergy - user.energy;
+      console.log(secondsOffline - bufferClicks, userMaxEnergy, user.energy);
       const businesses = await Business.find({}).session(session).exec();
 
       const totalReward = user.businesses.reduce((sum, bId) => {
@@ -1033,5 +1036,4 @@ export const registerEvents = (io) => {
   io.on("upgradeBusiness", socketsLogic.upgradeBusiness);
   io.on("upgradeEnergy", socketsLogic.upgradeEnergy);
   io.on("userLeague", socketsLogic.userLeague);
-  
 };
