@@ -957,7 +957,7 @@ export const handleSocketConnection = async (socket) => {
       const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
 
       const bufferClicks = buffer[tgUserId] || 0;
-      const energyToRestore = secondsOffline - bufferClicks < user.maxEnergy ? secondsOffline - bufferClicks : user.maxEnergy;
+      const energyToRestore = secondsOffline - bufferClicks < userMaxEnergy ? secondsOffline - bufferClicks : userMaxEnergy - user.energy;
 
       const businesses = await Business.find({}).session(session).exec();
 
