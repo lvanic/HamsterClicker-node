@@ -10,23 +10,29 @@ const Notification = ({
   onClose: any;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-
+  const overlayRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     modalRef.current?.classList.add("visible");
-
+    overlayRef.current?.classList.add("visible");
     return () => {
       modalRef.current?.classList.remove("visible");
+      overlayRef.current?.classList.remove("visible");
     };
   }, [notify]);
 
   const overlayClickHandle = () => {
     modalRef.current?.classList.remove("visible");
+    overlayRef.current?.classList.remove("visible");
     onClose();
   };
 
   return (
     <>
-      <div className="overlay-safe" onClick={overlayClickHandle} />
+      <div
+        ref={overlayRef}
+        className="overlay-safe"
+        onClick={overlayClickHandle}
+      />
       <div
         id="modal"
         className={`modal ${notify.className}`}

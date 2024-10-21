@@ -86,7 +86,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       if (!prev) {
         return null;
       }
-      // alert(prev.maxEnergy)
+      //  alert(data.balance)
       return {
         ...prev,
         businesses: [...prev.businesses, ...(data.newBusinesses || [])],
@@ -183,14 +183,14 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       return;
     }
 
-    // if (webSocket?.connected && user?.tgId) {
-    //   webSocket.on("liteSync", handleLiteSync);
-    //   webSocket.emit("subscribeLiteSync", user?.tgId);
-    // }
-    // return () => {
-    //   webSocket?.off("liteSync", handleLiteSync);
-    //   webSocket?.emit("unsubscribeLiteSync");
-    // };
+    if (webSocket?.connected && user?.tgId) {
+      webSocket.on("liteSync", handleLiteSync);
+      // webSocket.emit("subscribeLiteSync", user?.tgId);
+    }
+    return () => {
+      webSocket?.off("liteSync", handleLiteSync);
+      // webSocket?.emit("unsubscribeLiteSync");
+    };
   }, [webSocket?.connected, handleLiteSync, user?.tgId, isSocketLive]);
 
   useEffect(() => {
@@ -251,7 +251,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       setTimeout(() => {
         webSocket.on("user", handleGetUser);
         webSocket.emit("getUser", tgUser.id);
-      }, 300);
+      }, 1000);
     }
     return () => {
       webSocket?.off("user", handleGetUser);
