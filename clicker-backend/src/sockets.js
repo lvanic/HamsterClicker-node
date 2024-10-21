@@ -189,11 +189,11 @@ export const initSocketsLogic = (io) => ({
   getUser: async (userId) => {
     const session = await mongoose.startSession();
     session.startTransaction();
-    // console.log("getUser", userId);
 
     try {
       const tgUserId = Number(userId);
       let user;
+
       while (true) {
         try {
           user = await User.findOne({ tgId: tgUserId })
@@ -217,6 +217,60 @@ export const initSocketsLogic = (io) => ({
         return;
       }
 
+      const secondsOffline =
+        (new Date().getTime() - user.lastOnlineTimestamp) / 1000;
+      const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
+      const bufferClicks = buffer[tgUserId] || 0;
+      const availableEnergy = userMaxEnergy - user.energy;
+
+      const energyToRestore = Math.min(
+        secondsOffline - bufferClicks,
+        availableEnergy
+      );
+      const businesses = await Business.find({}).session(session).exec();
+
+      const totalReward = user.businesses.reduce((sum, bId) => {
+        const business = businesses.find(
+          (b) => b._id.toString() === bId._id.toString()
+        );
+        if (!business) {
+          console.error(
+            "[FATAL]: Detected user with business that doesn't exist."
+          );
+          return sum;
+        }
+
+        const businessUpgrade = user.businessUpgrades.find(
+          (bu) => bu.businessId.toString() === business._id.toString()
+        );
+        const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
+        const levelAdjustedReward =
+          business.rewardPerHour * 1.2 ** businessLevel;
+        const normalizedReward =
+          user.lastOnlineTimestamp > Date.now() - 1000 * 60 * 60 * 3
+            ? (levelAdjustedReward * secondsOffline) / 3600
+            : levelAdjustedReward * 3;
+
+        return sum + normalizedReward;
+      }, 0);
+
+      await User.updateOne(
+        { tgId: tgUserId },
+        {
+          $inc: {
+            balance: totalReward + bufferClicks * user.clickPower,
+            score: totalReward + bufferClicks * user.clickPower,
+            addedFromBusinesses: totalReward,
+            energy: energyToRestore,
+          },
+          lastOnlineTimestamp: new Date().getTime(),
+        },
+        { session }
+      );
+
+      await session.commitTransaction();
+      session.endSession();
+
       const leagues = await League.find({});
       let userLeague = leagues.find(
         (league) =>
@@ -232,20 +286,14 @@ export const initSocketsLogic = (io) => ({
       const userPlaceInLeague = await User.countDocuments({
         score: { $lte: userLeague.maxScore, $gte: user.score },
       });
+
       const totalIncomePerHour = user.businesses.reduce((sum, b) => {
         const businessUpgrade = user.businessUpgrades.find(
           (bu) => bu.businessId.toString() === b._id.toString()
         );
-        const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+        const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
         return sum + b.rewardPerHour * 1.2 ** businessLevel;
       }, 0);
-
-      await session.commitTransaction();
-      session.endSession();
-      await User.findOneAndUpdate(
-        { tgId: tgUserId },
-        { lastOnlineTimestamp: new Date().getTime() }
-      );
 
       const userData = {
         id: user._id,
@@ -429,13 +477,17 @@ export const initSocketsLogic = (io) => ({
           return sum + b.rewardPerHour * 1.2 ** businessLevel;
         }, 0);
 
+        const currentComboBusinesses = businesses.filter((b) =>
+          user.currentComboCompletions.includes(b._id.toString())
+        );
+
         io.emit("liteSync", {
           balance: updatedUser.balance,
           score: updatedUser.score,
           energy: updatedUser.energy,
           newBusinesses: businesses,
           totalIncomePerHour: totalIncomePerHour,
-          // Добавьте сюда другую нужную информацию, например бизнес апгрейды и рефералов
+          currentComboCompletions: comboMatch ? currentComboBusinesses : null,
         });
 
         io.emit("businessBought", { success: true, id: businessId });
@@ -765,12 +817,16 @@ export const initSocketsLogic = (io) => ({
           return sum + b.rewardPerHour * 1.2 ** businessLevel;
         }, 0);
 
+        const currentComboBusinesses = businesses.filter((b) =>
+          user.currentComboCompletions.includes(b._id.toString())
+        );
+
         const liteSyncData = {
           ...user.toObject(),
           balance: user.balance,
           businesses: user.businesses,
           businessUpgrades: user.businessUpgrades,
-          currentComboCompletions: user.currentComboCompletions,
+          currentComboCompletions: comboMatch ? currentComboBusinesses : null,
           totalIncomePerHour: totalIncomePerHour,
         };
 
@@ -939,88 +995,6 @@ export const handleSocketConnection = async (socket) => {
 
   const userId = socket.handshake.query.user_id;
   socket.userId = userId;
-  const tgUserId = Number(userId);
-
-  let success = false;
-  let attempts = 0;
-  const maxAttempts = 10; // Максимальное количество попыток
-
-  while (!success && attempts < maxAttempts) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-      const user = await User.findOne({ tgId: tgUserId }).session(session);
-
-      const secondsOffline =
-        (new Date().getTime() - user.lastOnlineTimestamp) / 1000;
-      const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
-
-      const bufferClicks = buffer[tgUserId] || 0;
-      const availableEnergy = userMaxEnergy - user.energy;
-
-      const energyToRestore = Math.min(
-        secondsOffline - bufferClicks,
-        availableEnergy
-      );
-
-      const businesses = await Business.find({}).session(session).exec();
-
-      const totalReward = user.businesses.reduce((sum, bId) => {
-        const business = businesses.find(
-          (b) => b._id.toString() === bId.toString()
-        );
-        if (!business) {
-          console.error(
-            "[FATAL]: Detected user with business that doesn't exist."
-          );
-          return sum;
-        }
-
-        const businessUpgrade = user.businessUpgrades.find(
-          (bu) => bu.businessId.toString() === business._id.toString()
-        );
-        const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
-        const levelAdjustedReward =
-          business.rewardPerHour * 1.2 ** businessLevel;
-        const normalizedReward =
-          user.lastOnlineTimestamp > Date.now() - 1000 * 60 * 60 * 3
-            ? (levelAdjustedReward * secondsOffline) / 3600
-            : levelAdjustedReward * 3;
-
-        return sum + normalizedReward;
-      }, 0);
-
-      await User.updateOne(
-        { tgId: tgUserId },
-        {
-          $inc: {
-            balance: totalReward + bufferClicks * user.clickPower,
-            score: totalReward + bufferClicks * user.clickPower,
-            addedFromBusinesses: totalReward,
-            energy: energyToRestore,
-          },
-        },
-        { session }
-      );
-
-      await session.commitTransaction();
-      success = true; // Если транзакция завершена успешно
-    } catch (error) {
-      await session.abortTransaction();
-      console.error("[ERROR]: Transaction failed. Retrying...", error);
-      attempts += 1;
-    } finally {
-      session.endSession();
-    }
-  }
-
-  if (!success) {
-    console.error("[FATAL]: Transaction failed after multiple attempts.");
-    // Здесь можно добавить код для обработки ситуации, когда транзакция не удалась после всех попыток
-  } else {
-    buffer[tgUserId] = 0;
-  }
 };
 
 export const registerEvents = (io) => {
@@ -1038,4 +1012,58 @@ export const registerEvents = (io) => {
   io.on("upgradeBusiness", socketsLogic.upgradeBusiness);
   io.on("upgradeEnergy", socketsLogic.upgradeEnergy);
   io.on("userLeague", socketsLogic.userLeague);
+
+  io.on("disconnect", async (reason) => {
+    const tgUserId = Number(io.userId);
+
+    if (buffer[tgUserId] > 0) {
+      const user = await User.findOne({ tgId: tgUserId });
+
+      if (user) {
+        const clickPower = user.clickPower;
+        let clickCount = buffer[tgUserId];
+
+        if (user.energy < clickCount) {
+          clickCount = user.energy;
+        }
+
+        const balanceIncrement = clickCount * clickPower;
+
+        try {
+          await User.findOneAndUpdate(
+            { tgId: tgUserId },
+            {
+              $inc: {
+                balance: balanceIncrement,
+                score: balanceIncrement,
+                energy: -clickCount,
+              },
+              $set: {
+                lastOnlineTimestamp: new Date().getTime(),
+              },
+            }
+          );
+
+          delete buffer[tgUserId];
+        } catch (error) {
+          console.error(
+            "Ошибка обновления пользователя при отключении:",
+            error
+          );
+        }
+      }
+    } else {
+      try {
+        await User.findOneAndUpdate(
+          { tgId: tgUserId },
+          { lastOnlineTimestamp: new Date().getTime() }
+        );
+      } catch (error) {
+        console.error(
+          "Ошибка обновления времени последнего подключения:",
+          error
+        );
+      }
+    }
+  });
 };

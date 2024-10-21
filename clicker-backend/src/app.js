@@ -10,7 +10,7 @@ import { mongoose } from "mongoose";
 import { runEnergyRecover, runBusinesses, runCombos } from "./jobs.js";
 import dotenv from "dotenv";
 import { getAppSettings } from "./admin.js";
-import { User, AppSettings } from "./models.js";
+import { User, AppSettings, Business } from "./models.js";
 import bodyParser from "koa-bodyparser";
 
 dotenv.config();
@@ -151,62 +151,15 @@ const main = async () => {
 
   socketServer.on("connection", handleSocketConnection);
 
-  socketServer.on("disconnect", async () => {
-    const tgUserId = Number(socketServer.userId);
-
-    if (buffer[tgUserId] > 0) {
-      const user = await User.findOne({ tgId: tgUserId });
-
-      if (user) {
-        const clickPower = user.clickPower;
-        let clickCount = buffer[tgUserId];
-
-        if (user.energy < clickCount) {
-          clickCount = user.energy;
-        }
-
-        const balanceIncrement = clickCount * clickPower;
-
-        try {
-          await User.findOneAndUpdate(
-            { tgId: tgUserId },
-            {
-              $inc: {
-                balance: balanceIncrement,
-                score: balanceIncrement,
-                energy: -clickCount,
-              },
-              lastOnlineTimestamp: new Date().getTime(),
-            }
-          );
-
-          buffer[tgUserId] = 0;
-        } catch (error) {
-          console.error(
-            "Ошибка обновления пользователя при отключении:",
-            error
-          );
-        }
-      }
-    } else {
-      try {
-        await User.findOneAndUpdate(
-          { tgId: tgUserId },
-          { lastOnlineTimestamp: new Date().getTime() }
-        );
-      } catch (error) {
-        console.error(
-          "Ошибка обновления времени последнего подключения:",
-          error
-        );
-      }
-    }
-  });
+  // socketServer.on("disconnect", async () => {
+   
+  // });
 
   ensureAppSettings();
   runEnergyRecover();
   runBusinesses();
   runCombos();
+  cleanUpUserBusinesses();
 
   const port = 3001;
   server.listen(port, () => {
@@ -264,3 +217,30 @@ export const sendForAllUsers = async (message) => {
     console.error("Error sending broadcast to users:", error);
   }
 };
+
+async function cleanUpUserBusinesses() {
+  try {
+    const users = await User.find({
+      businesses: { $exists: true, $not: { $size: 0 } },
+    });
+
+    const validBusinesses = await Business.find({}, { _id: 1 });
+    const validBusinessIds = new Set(
+      validBusinesses.map((business) => business._id.toString())
+    );
+
+    for (const user of users) {
+      const filteredBusinesses = user.businesses.filter((businessId) =>
+        validBusinessIds.has(businessId.toString())
+      );
+
+      if (filteredBusinesses.length !== user.businesses.length) {
+        user.businesses = filteredBusinesses;
+        await user.save();
+        console.log(`Updated user ${user.tgId} - cleaned up businesses.`);
+      }
+    }
+  } catch (error) {
+    console.error("Error cleaning up user businesses:", error);
+  }
+}
