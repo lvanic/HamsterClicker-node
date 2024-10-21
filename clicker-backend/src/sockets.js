@@ -716,6 +716,7 @@ export const initSocketsLogic = (io) => ({
           }
         }
 
+        // Проверяем, есть ли у пользователя бизнес
         if (
           !user.businesses.some((b) => b.toString() === businessId.toString())
         ) {
@@ -745,6 +746,7 @@ export const initSocketsLogic = (io) => ({
           return;
         }
 
+        // Проверка уровня
         if (businessUpgrade && (businessUpgrade.level || 0) >= 10) {
           await session.abortTransaction();
           session.endSession();
@@ -755,6 +757,7 @@ export const initSocketsLogic = (io) => ({
         const newLevel = businessUpgrade ? businessUpgrade.level + 1 : 2;
         const finalPrice = Math.round(business.price * 1.2 ** (newLevel - 1));
 
+        // Проверка баланса
         if (user.balance + (buffer[userTgId] || 0) < finalPrice) {
           await session.abortTransaction();
           session.endSession();
@@ -763,7 +766,9 @@ export const initSocketsLogic = (io) => ({
         }
 
         // Обновляем баланс и уровень бизнеса пользователя
+        const currentVersion = user.version; // Сохраняем текущую версию
         user.balance -= finalPrice;
+        user.version += 1; // Увеличиваем версию
 
         if (!businessUpgrade) {
           user.businessUpgrades.push({
@@ -777,12 +782,10 @@ export const initSocketsLogic = (io) => ({
         }
 
         const appSettings = await getAppSettings();
-
         const comboMatch =
           appSettings.comboBusinesses.some((c) => c._id == businessId) &&
           user.currentComboCompletions.length < 3 &&
           !user.currentComboCompletions.includes(businessId);
-
         const comboCompleted =
           comboMatch && user.currentComboCompletions.length === 2;
 
@@ -795,20 +798,32 @@ export const initSocketsLogic = (io) => ({
           io.emit("comboCompleted", { reward: appSettings.comboReward });
         }
 
-        await user.save({ session });
+        // Попытка сохранить с проверкой версии
+        const result = await User.updateOne(
+          { tgId: userTgId, version: currentVersion }, // Проверяем, совпадает ли версия
+          {
+            $set: { balance: user.balance, version: user.version },
+            $push: { businessUpgrades: user.businessUpgrades },
+          },
+          { session }
+        );
+
+        if (result.nModified === 0) {
+          // Несоответствие версии, повторяем попытку
+          await session.abortTransaction();
+          session.endSession();
+          attempts++;
+          continue; // Повторяем транзакцию
+        }
 
         await session.commitTransaction();
         session.endSession();
-        // io.emit(
-        //   "reward",
-        //   comboCompleted ? appSettings.comboReward - finalPrice : -finalPrice
-        // );
         io.emit("businessBought", { success: true, id: businessId });
 
+        // Дополнительная логика доходов от бизнеса...
         const businesses = await Business.find({
           _id: { $in: user.businesses },
         });
-
         const totalIncomePerHour = businesses.reduce((sum, b) => {
           const businessUpgrade = user.businessUpgrades.find(
             (bu) => bu.businessId.toString() === b._id.toString()
