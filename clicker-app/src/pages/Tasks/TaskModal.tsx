@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Task } from "../../models";
 import { EggSvg } from "../Layout/EggSvg";
 import { LargerEggSvg } from "../Businesses/LargerEggSvg";
+import { getLocalization } from "../../localization/getLocalization";
 
 export const TaskModal = ({
   task,
@@ -51,7 +52,9 @@ export const TaskModal = ({
             }}
             onClick={onOpenLink}
           >
-            {task.type === "telegram" ? "Open Link" : "Go"}
+            {task.type === "telegram"
+              ? getLocalization("openLink")
+              : getLocalization("go")}
           </button>
         </div>
         <div className="flex flex-column justify-center items-center mt-4">
@@ -66,7 +69,7 @@ export const TaskModal = ({
             }}
             onClick={onCheckStatus}
           >
-            Check Status
+            {getLocalization("checkStatus")}
           </button>
         )}
       </div>

@@ -13,6 +13,7 @@ import { TaskList } from "./TaskList";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 import { DataContext } from "../../contexts/DataContext";
 import { Task } from "../../models";
+import { getLocalization } from "../../localization/getLocalization";
 
 export const Tasks = () => {
   const { webSocket } = useWebSocket();
@@ -38,13 +39,13 @@ export const Tasks = () => {
           let notify: NotifyMessage;
           if (finished) {
             notify = {
-              message: "Task completed!",
+              message: getLocalization("taskCompleted"),
               status: "task",
               className: "h-96",
             };
           } else {
             notify = {
-              message: "Task not completed yet.",
+              message: getLocalization("taskNotCompleted"),
               status: "error",
               className: "h-96",
             };
@@ -97,14 +98,15 @@ export const Tasks = () => {
   return (
     <>
       <div className="p-5 rounded-lg max-w-md mx-auto">
-        <div className="text-2xl text-center w-full">Earn more rewards</div>
+        <div className="text-2xl text-center w-full">
+          {getLocalization("earnMoreRewards")}
+        </div>
         <div className="w-full flex justify-center items-center mt-6 mb-6">
           <EggNimbus className="absolute w-40 h-52" />
           <EggSvg className="w-24 h-32" />
         </div>
         <div className="text-center">
-          Complete tasks and
-          <br /> get rewards
+          {getLocalization("completeTaskAndGetReward")}
         </div>
 
         {isDataLoading ? (
@@ -114,13 +116,13 @@ export const Tasks = () => {
             className="list-none p-0"
             style={{ maxHeight: window.innerHeight - 356, overflowY: "scroll" }}
           >
-            <div>Daily reward</div>
+            <div> {getLocalization("dailyReward")}</div>
             <TaskList
               tasks={dataContext?.tasks}
               handleTaskClick={handleTaskClick}
               filter="telegram"
             />
-            <div>List of tasks</div>
+            <div> {getLocalization("listOfTasks")}</div>
             <TaskList
               tasks={dataContext?.tasks}
               handleTaskClick={handleTaskClick}

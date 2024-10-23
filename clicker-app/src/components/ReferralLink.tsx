@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getReferralLink, getShareLink } from "../services/telegramService";
+import { getLocalization } from "../localization/getLocalization";
 
 export const ReferralLink = ({
   className,
@@ -59,7 +60,7 @@ export const ReferralLink = ({
               background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
             }}
           >
-            Share
+            {getLocalization("share")}
           </button>
         ) : (
           <button
@@ -69,7 +70,7 @@ export const ReferralLink = ({
               background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
             }}
           >
-            Copy link
+            {getLocalization("copyLink")}
           </button>
         )}
       </div>

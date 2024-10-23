@@ -119,7 +119,7 @@ export const Clicker: React.FC = () => {
           <div className="flex flex-row justify-center items-center w-full mt-1 mb-3 gap-2">
             <div className="w-full">
               <ScoreCounter clickCount={clickCount} />
-              {/* <LanguageSelector /> */}
+              <LanguageSelector />
             </div>
             <div className="flex flex-col justify-center items-center gap-1">
               <BoostButton />

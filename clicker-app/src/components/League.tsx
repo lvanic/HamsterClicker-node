@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
 import { formatNumber } from "../utils/formatNumber";
+import { getLocalization } from "../localization/getLocalization";
 
 export const League = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export const League = () => {
           className="rounded-xl"
         />
         <div className="text-xs mt-2 b-2 text-nowrap">
-          Score for UP {formatNumber(user?.league.maxScore)}
+          {getLocalization("scoreForUp")} {formatNumber(user?.league.maxScore)}
         </div>
       </div>
     </div>

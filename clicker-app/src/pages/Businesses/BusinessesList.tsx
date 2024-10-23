@@ -5,6 +5,7 @@ import { formatNumber } from "../../utils/formatNumber";
 import { EggSvg } from "../Layout/EggSvg";
 import Timer from "./Timer";
 import { SmallEggSvg } from "../../components/SmallEggSvg";
+import { getLocalization } from "../../localization/getLocalization";
 
 export const BusinessesList = memo(function BusinessesList({
   businesses,
@@ -86,7 +87,7 @@ export const BusinessesList = memo(function BusinessesList({
               <div>
                 <h3 style={{ fontSize: 10.2 }}>{business.name}</h3>
                 <div style={{ fontSize: 8 }} className="mt-2">
-                  Reward per hour:
+                  {getLocalization("rewardPerHour")}:
                   <div className="text-sm flex flex-col items-start">
                     <div className="text-xs text-left">
                       {formatNumber(business.rewardPerHour)}
@@ -106,7 +107,7 @@ export const BusinessesList = memo(function BusinessesList({
             </div>
             <div className="bg-[#5C5C5C] w-full h-10 rounded-xl flex items-center justify-between px-2">
               <div className="text-sm">
-                {business.level < 10 ? business.level : "MAX"} lvl
+                {business.level < 10 ? business.level : "MAX"} {getLocalization("lvl")}
               </div>
               <div>
                 <VerticalDivider />

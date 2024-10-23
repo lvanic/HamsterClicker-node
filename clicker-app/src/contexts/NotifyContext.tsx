@@ -10,6 +10,7 @@ import Notification from "../components/Notification";
 import { useWebSocket } from "../hooks/useWebsocket";
 import { UserContext } from "./UserContext";
 import { formatNumber } from "../utils/formatNumber";
+import { getLocalization } from "../localization/getLocalization";
 
 export interface NotifyMessage {
   message: string;
@@ -91,7 +92,7 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
 
       const notify: NotifyMessage = {
         status: "ok",
-        message: `During your absence you earned ${formatNumber(earned)}`,
+        message: `${getLocalization("youEarned")} ${formatNumber(earned)}`,
       };
 
       if (earned >= 1) {

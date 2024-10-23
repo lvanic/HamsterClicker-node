@@ -4,6 +4,7 @@ import { getTelegramUser } from "../../services/telegramService";
 import "./TonButton.css";
 import ConnectModal from "./ConnectModal";
 import { isAddress } from "web3-validator";
+import { getLocalization } from "../../localization/getLocalization";
 
 const EthereumButton = ({ className }: { className?: string }) => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -81,7 +82,7 @@ const EthereumButton = ({ className }: { className?: string }) => {
             onClick={() => setIsModalOpen(true)}
             className="connect-button px-4 py-2"
           >
-            Connect Ethereum Wallet
+            {getLocalization("connectEthereumWallet")}
           </button>
         ) : (
           <div className="border-2 border-white rounded-full py-1 px-4 flex items-center gap-2">
@@ -105,7 +106,7 @@ const EthereumButton = ({ className }: { className?: string }) => {
           <ConnectModal onClose={() => setIsModalOpen(false)}>
             <div className="flex flex-col items-center gap-4 mt-6">
               <div className="flex flex-col items-center gap-4">
-                <h2 className="">Enter Ethereum Wallet Address</h2>
+                <h2 className="">{getLocalization("enterEthereumWallet")}</h2>
                 <input
                   type="text"
                   value={inputAddress}
@@ -122,7 +123,7 @@ const EthereumButton = ({ className }: { className?: string }) => {
                     "linear-gradient(180deg, #ff4c64 0%, #f4895d 100%)",
                 }}
               >
-                Submit
+                {getLocalization("submit")}
               </button>
             </div>
           </ConnectModal>

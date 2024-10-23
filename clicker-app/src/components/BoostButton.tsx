@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { getLocalization } from "../localization/getLocalization";
 
 export const BoostButton = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export const BoostButton = () => {
           fill="#FD5C63"
         />
       </svg>
-      <div className="ml-3">Boost</div>
+      <div className="ml-3 text-nowrap">{getLocalization("boost")}</div>
     </div>
   );
 };

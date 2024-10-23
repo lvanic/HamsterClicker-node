@@ -8,6 +8,7 @@ import { useSettings } from "../../hooks/useSettings";
 import { Delimiter } from "./Delimiter";
 import { Reloader } from "./Reloader";
 import { useWebSocket } from "../../hooks/useWebsocket";
+import { getLocalization } from "../../localization/getLocalization";
 
 export const Referrals = () => {
   const { user, setUser } = useUser();
@@ -27,14 +28,16 @@ export const Referrals = () => {
   return (
     <div className="p-12 rounded-lg max-w-md mx-auto">
       <div className="text-center text-xl">
-        Invite friends and
-        <br /> earn coins!
+        {getLocalization("inviteFriends")}
       </div>
       <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-8 mb-8">
         <div className="absolute mb-20">
           <LargerEggSvg />
         </div>
-        <div className="mt-7 mb-7">1 friend = {referralReward} coins</div>
+        <div className="mt-7 mb-7">
+          1 {getLocalization("friend")} = {referralReward}{" "}
+          {getLocalization("coins")}
+        </div>
         <ReferralLink className="mt-20" share={true} />
       </div>
       <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-14 mb-8">
@@ -42,9 +45,12 @@ export const Referrals = () => {
           <LargerEggSvg />
         </div>
         <div className="mt-7 text-sm underline underline-offset-2">
-          If he has telegram premium
+          {getLocalization("isHeHasPremium")}
         </div>
-        <div className="mb-7">1 friend = {premiumReferralReward} coins</div>
+        <div className="mb-7">
+          1 {getLocalization("friend")} = {premiumReferralReward}{" "}
+          {getLocalization("coins")}
+        </div>
         <ReferralLink className="mt-24" share={false} />
       </div>
       <ul
@@ -54,7 +60,7 @@ export const Referrals = () => {
         <div onClick={updateReferals} className="absolute right-0 mr-16">
           <Reloader className={isReferralUpdate ? "animate-spin" : ""} />
         </div>
-        <div className="text-center mb-2">List of invited friends</div>
+        <div className="text-center mb-2">{getLocalization("listOfInvitedFriends")}</div>
 
         {referrals?.length && referrals?.length > 0 ? (
           referrals?.map((referral, index) => (
@@ -81,7 +87,7 @@ export const Referrals = () => {
         ) : (
           <div className="flex flex-col justify-center items-center">
             <div className="text-[#FD5463] text-xl">:(</div>
-            <div className="text-xs mt-2">You don't have invited friends</div>
+            <div className="text-xs mt-2">{getLocalization("noFriends")}</div>
           </div>
         )}
       </ul>

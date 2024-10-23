@@ -15,7 +15,8 @@ import { MassTapSvg } from "./MassTapSvg";
 import { BoostModal } from "./BoostModal";
 import { useSettings } from "../../hooks/useSettings";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getLocalization } from "../../localization/getLocalization";
 
 type Boost = {
   id: number;
@@ -31,29 +32,37 @@ const boosts: Boost[] = [
   {
     id: 0,
     Icon: RestoreSvg,
-    title: "Restore taps",
+    title: getLocalization("restoreTaps"),
     additionalInfo: (level: number) => ``,
-    description: "Restore your taps and continue mining!",
+    description: getLocalization("restoreTapsDesc"),
     eggIcon: false,
-    purchaseText: (nextCost: number) => "Get it for free",
+    purchaseText: (nextCost: number) => getLocalization("getItForFree"),
   },
   {
     id: 1,
     Icon: MassTapSvg,
-    title: "Mass tap",
-    description: "Increases the amount of currency per click",
-    additionalInfo: (level: number) => `Adds +1 tap for ${level} lvl`,
+    title: getLocalization("massTap"),
+    description: getLocalization("massTapDesc"),
+    additionalInfo: (level: number) =>
+      `${getLocalization("addOne")} ${level} ${getLocalization("lvl")}`,
     eggIcon: true,
-    purchaseText: (nextCost: number) => `Upgrade for ${nextCost} coins`,
+    purchaseText: (nextCost: number) =>
+      `${getLocalization("upgradeFor")} ${nextCost} ${getLocalization(
+        "coins"
+      )}`,
   },
   {
     id: 2,
     Icon: RestoreSvg,
-    title: "Upgrade energy",
-    description: "Increases the amount of energy available to the user",
-    additionalInfo: (level: number) => `Adds 500 energy for ${level} lvl`,
+    title: getLocalization("upgradeEnergy"),
+    description: getLocalization("upgradeEnergyDesc"),
+    additionalInfo: (level: number) =>
+      `${getLocalization("addEnergy")} ${level} ${getLocalization("lvl")}`,
     eggIcon: true,
-    purchaseText: (nextCost: number) => `Upgrade for ${nextCost} coins`,
+    purchaseText: (nextCost: number) =>
+      `${getLocalization("upgradeFor")} ${nextCost} ${getLocalization(
+        "coins"
+      )}`,
   },
 ];
 export const Boosts = () => {
@@ -65,6 +74,10 @@ export const Boosts = () => {
   const notifyContext = useContext(NotifyContext);
   const { maxClickLevel, maxEnergyLevel } = useSettings();
   const navigate = useNavigate();
+
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    localStorage.getItem("language") || "en"
+  );
 
   const [isEnergyUpgrading, setEnergyUpgrading] = useState(false);
   const [isEnergyRestoring, setEnergyRestroring] = useState(false);
@@ -90,8 +103,8 @@ export const Boosts = () => {
         const notify: NotifyMessage = {
           status: success ? "ok" : "error",
           message: success
-            ? "The power of your click has been enhanced"
-            : "The power of your click was not increased",
+            ? getLocalization("clickPowerImproved")
+            : getLocalization("clickPowerNotImproved"),
         };
         notifyContext?.setNotify(notify);
       });
@@ -101,8 +114,8 @@ export const Boosts = () => {
         const notify: NotifyMessage = {
           status: success ? "ok" : "error",
           message: success
-            ? "Your energy level has been enhanced"
-            : "Your energy level was not enhanced",
+            ? getLocalization("energyPowerImproved")
+            : getLocalization("energyPowerNotImproved"),
         };
         notifyContext?.setNotify(notify);
       });
@@ -135,7 +148,7 @@ export const Boosts = () => {
         setEnergyRestroring(true);
         webSocket.emit(
           "activateBoost",
-          JSON.stringify([user?.tgId, "fullEnergyBoost"])
+          JSON.stringify([user?.tgId, "fullEnergyBoost", selectedLanguage])
         );
         // const notify: NotifyMessage = {
         //   status: "ok",
@@ -157,7 +170,7 @@ export const Boosts = () => {
     if (!!user && user?.clickPower >= maxClickLevel) {
       const notify: NotifyMessage = {
         status: "unknown",
-        message: "You have reached the maximum clicker level",
+        message: getLocalization("maxClickerLevel"),
       };
       notifyContext?.setNotify(notify);
       return;
@@ -172,7 +185,7 @@ export const Boosts = () => {
     } else {
       const notify: NotifyMessage = {
         status: "error",
-        message: "You don't have enough balance",
+        message: getLocalization("notEnoughBalance"),
       };
       notifyContext?.setNotify(notify);
     }
@@ -182,7 +195,7 @@ export const Boosts = () => {
     if (!!user?.energyLevel && user.energyLevel >= maxEnergyLevel) {
       const notify: NotifyMessage = {
         status: "unknown",
-        message: "You have reached the maximum energy level",
+        message: getLocalization("maxEnergyLevel"),
       };
       notifyContext?.setNotify(notify);
       return;
@@ -198,7 +211,7 @@ export const Boosts = () => {
     } else {
       const notify: NotifyMessage = {
         status: "error",
-        message: "You don't have enough balance",
+        message: getLocalization("notEnoughBalance"),
       };
       notifyContext?.setNotify(notify);
     }
@@ -311,7 +324,9 @@ export const Boosts = () => {
                 <RestoreSvg />
               </div>
             </div>
-            <div className="flex justify-center mb-2 mt-5">Restore taps</div>
+            <div className="flex justify-center mb-2 mt-5">
+              {getLocalization("restoreTaps")}
+            </div>
             <div className="flex justify-center text-xl mb-1">
               {3 - fullEnergyActivates}/3
             </div>
@@ -326,7 +341,7 @@ export const Boosts = () => {
                 background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
               }}
             >
-              Restore
+              {getLocalization("restore")}
             </button>
           </div>
           <div

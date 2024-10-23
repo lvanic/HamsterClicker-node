@@ -18,6 +18,7 @@ import { FriendSvg } from "./FriendSvg";
 import { EarnSvg } from "./EarnSvg";
 import { EggSvg } from "./EggSvg";
 import { HomeSvg } from "../../components/HomeSvg";
+import { getLocalization } from "../../localization/getLocalization";
 
 export const Layout = () => {
   const { isPageLoading } = usePageLoading();
@@ -60,7 +61,7 @@ export const Layout = () => {
           }`}
         >
           <HomeSvg />
-          <span className="text-xs">Home</span>
+          <span className="text-xs">{getLocalization("home")}</span>
         </Link>
         <Link
           to="/referrals"
@@ -69,7 +70,7 @@ export const Layout = () => {
           }`}
         >
           <FriendSvg />
-          <span className="text-xs">Friends</span>
+          <span className="text-xs">{getLocalization("friends")}</span>
         </Link>
         <Link
           to="/businesses"
@@ -78,7 +79,7 @@ export const Layout = () => {
           }`}
         >
           <BusinessSvg />
-          <span className="text-xs">Mine</span>
+          <span className="text-xs">{getLocalization("mine")}</span>
         </Link>
         <Link
           to="/tasks"
@@ -87,7 +88,7 @@ export const Layout = () => {
           }`}
         >
           <EarnSvg />
-          <span className="text-xs">Earn</span>
+          <span className="text-xs">{getLocalization("earn")}</span>
         </Link>
         <Link
           to="/airdrop"
@@ -96,7 +97,7 @@ export const Layout = () => {
           }`}
         >
           <EggSvg />
-          <span className="text-xs">Airdrop</span>
+          <span className="text-xs">{getLocalization("airdrop")}</span>
         </Link>
       </nav>
     </>

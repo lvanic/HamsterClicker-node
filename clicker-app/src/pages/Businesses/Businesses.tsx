@@ -14,6 +14,7 @@ import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 import { BusinessesList } from "./BusinessesList";
 import { DataContext } from "../../contexts/DataContext";
 import { BusinessesFilter } from "./BusinessesFilter";
+import { getLocalization } from "../../localization/getLocalization";
 
 export const Businesses = () => {
   const { user } = useUser();
@@ -59,7 +60,9 @@ export const Businesses = () => {
           const notify: NotifyMessage = {
             status: "ok",
             message: `${business?.name} ${
-              business?.level === 0 ? "was purchased" : "was upgraded"
+              business?.level === 0
+                ? getLocalization("wasPurchased")
+                : getLocalization("wasUpgraded")
             }`,
             className: "h-72",
           };
@@ -67,7 +70,7 @@ export const Businesses = () => {
         } else {
           const notify: NotifyMessage = {
             status: "error",
-            message: `Deal fell through, try again later`,
+            message: getLocalization("tryLater"),
             className: "h-72",
           };
           notifyContext?.setNotify(notify);
@@ -92,7 +95,7 @@ export const Businesses = () => {
           width: "-webkit-fill-available",
         }}
       >
-        <div className="text-center">My balance</div>
+        <div className="text-center">{getLocalization("myBalance")}</div>
         <div className="flex justify-center items-center">
           <LargerEggSvg />
           <div className="text-5xl ml-2">
@@ -102,14 +105,14 @@ export const Businesses = () => {
       </div>
       <div className="mt-4 mb-4 flex justify-between">
         <div className="bg-[#323232] p-3 rounded-xl mr-1">
-          <div>Profit per tap</div>
+          <div>{getLocalization("profitPerTap")}</div>
           <div className="flex justify-center items-center">
             <MediumEggSvg />
             <div className="text-3xl ml-2">+{user?.clickPower}</div>
           </div>
         </div>
         <div className="bg-[#323232] p-3 rounded-xl mx-1">
-          <div>Coins for up</div>
+          <div>{getLocalization("scoreForUp")}</div>
           <div className="flex justify-center items-center">
             <div className="text-3xl">
               {formatNumber(user?.league.maxScore || 100000)}
@@ -117,7 +120,7 @@ export const Businesses = () => {
           </div>
         </div>
         <div className="bg-[#323232] p-3 rounded-xl ml-1">
-          <div>Profit per hour</div>
+          <div>{getLocalization("profitPerHour")}</div>
           <div className="flex justify-center items-center">
             <MediumEggSvg />
             <div className="text-3xl ml-2">

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { SmallEggSvg } from "../../components/SmallEggSvg";
 import { Business } from "../../models";
 import { formatNumber } from "../../utils/formatNumber";
+import { getLocalization } from "../../localization/getLocalization";
 
 export const BuyBusiness = ({
   business,
@@ -41,7 +42,7 @@ export const BuyBusiness = ({
         <div className="text-xs">{business?.description}</div>
         <div className="mt-6 flex">
           <div className="flex flex-col justify-center items-left">
-            <div className="text-xs">Profit per hour</div>
+            <div className="text-xs">{getLocalization("profitPerHour")}</div>
             <div className="flex justify-left items-center">
               <SmallEggSvg />
               <div className="ml-1">
@@ -50,7 +51,7 @@ export const BuyBusiness = ({
             </div>
           </div>
           <div className="flex flex-col justify-center items-left ml-2">
-            <div className="text-xs">Price</div>
+            <div className="text-xs">{getLocalization("price")}</div>
             <div className="flex justify-left items-center">
               <SmallEggSvg />
               <div className="ml-1">{formatNumber(business?.price)}</div>
@@ -66,7 +67,7 @@ export const BuyBusiness = ({
             background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
           }}
         >
-          Buy this
+          {getLocalization("buyThis")}
         </button>
       </div>
     </>

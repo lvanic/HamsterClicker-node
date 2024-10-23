@@ -1,6 +1,7 @@
 import { User, Task, League, Business } from "./models.js";
 import { getAppSettings } from "./admin.js";
 import { mongoose } from "mongoose";
+import { getLang } from "./getLang.js";
 
 export let buffer = {};
 
@@ -526,11 +527,11 @@ export const initSocketsLogic = (io) => ({
 
     while (attempt < maxRetries) {
       const session = await mongoose.startSession();
+      const parsedData = JSON.parse(data);
+      const [tgUserId, boostName, lang] = parsedData;
+
       try {
         session.startTransaction();
-
-        const parsedData = JSON.parse(data);
-        const [tgUserId, boostName] = parsedData;
 
         const dayMs = 1000 * 60 * 60 * 24;
         const appSettings = await getAppSettings();
@@ -551,15 +552,19 @@ export const initSocketsLogic = (io) => ({
           if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
             user.fullEnergyActivates++;
             user.energy = 1000 + 500 * (user.energyLevel - 1);
+            const message = getLang(lang, "energyRestored");
+
             io.emit("boostActivated", {
               success: true,
-              message: "Your energy has been restored",
+              message: message,
             });
             io.emit("energyRestored", { energy: user.energy });
           } else {
+            const message = getLang(lang, "fullEnergyLimit");
+
             io.emit("boostActivated", {
               success: false,
-              message: "Full energy boost limit reached for today",
+              message: message,
             });
           }
         } else if (boostName === "dailyReward") {
@@ -582,12 +587,12 @@ export const initSocketsLogic = (io) => ({
             io.emit("reward", appSettings.dailyReward);
             io.emit("boostActivated", {
               success: true,
-              message: `You received a daily reward of ${appSettings.dailyReward} coins`,
+              message: `${getLang(lang, "youReceived")} ${appSettings.dailyReward} ${getLang("", "coins")}`,
             });
           } else {
             io.emit("boostActivated", {
               success: false,
-              message: "Daily reward has already been claimed today",
+              message: getLang(lang, "dailyRewardAlready"),
             });
           }
         }
@@ -608,7 +613,7 @@ export const initSocketsLogic = (io) => ({
           console.log("Max retry attempts reached. Transaction failed.");
           io.emit("boostActivated", {
             success: false,
-            message: "Transaction failed after multiple attempts",
+            message: getLang(lang, "transactionFailed"),
           });
           break;
         }
@@ -1030,19 +1035,30 @@ export const registerEvents = (io) => {
 
   io.on("disconnect", async (reason) => {
     const tgUserId = Number(io.userId);
+    const user = await User.findOne({ tgId: tgUserId });
 
     if (buffer[tgUserId] > 0) {
-      const user = await User.findOne({ tgId: tgUserId });
-
       if (user) {
         const clickPower = user.clickPower;
-        let clickCount = buffer[tgUserId];
+        let clickCount = 0;
 
-        if (user.energy < clickCount) {
-          clickCount = user.energy;
+        const currentTime = new Date().getTime();
+        const timeDiff = (currentTime - user.lastOnlineTimestamp) / 1000;
+        const restoredEnergy = timeDiff;
+        const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
+
+        clickCount = Math.min(
+          user.energy + restoredEnergy - buffer[tgUserId],
+          userMaxEnergy
+        );
+
+        if (0 > clickCount) {
+          clickCount = 0;
         }
 
-        const balanceIncrement = clickCount * clickPower;
+        console.log(clickCount);
+
+        const balanceIncrement = buffer[tgUserId] * clickPower;
 
         try {
           await User.findOneAndUpdate(
@@ -1051,10 +1067,11 @@ export const registerEvents = (io) => {
               $inc: {
                 balance: balanceIncrement,
                 score: balanceIncrement,
-                energy: -clickCount,
+                // energy: -clickCount,
               },
               $set: {
-                lastOnlineTimestamp: new Date().getTime(),
+                lastOnlineTimestamp: currentTime,
+                energy: clickCount,
               },
             }
           );
@@ -1068,10 +1085,25 @@ export const registerEvents = (io) => {
         }
       }
     } else {
+      let clickCount = 0;
+
+      const currentTime = new Date().getTime();
+      const timeDiff = (currentTime - user.lastOnlineTimestamp) / 1000;
+      const restoredEnergy = timeDiff;
+      const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
+
+      clickCount = Math.min(user.energy + restoredEnergy, userMaxEnergy);
+
+      if (0 > clickCount) {
+        clickCount = 0;
+      }
+
+      console.log(restoredEnergy);
+
       try {
         await User.findOneAndUpdate(
           { tgId: tgUserId },
-          { lastOnlineTimestamp: new Date().getTime() }
+          { lastOnlineTimestamp: new Date().getTime(), energy: clickCount }
         );
       } catch (error) {
         console.error(

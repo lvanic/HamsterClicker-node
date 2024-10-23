@@ -1,6 +1,6 @@
 {
   "chickenTap": "Chicken Tap",
-  "techicalWorks": "Techical Works",
+  "techicalWorks": "Technical Works",
   "serviceNotAvailable": "Sorry right now our service is not available",
   "boost": "Boost",
   "scoreForUp": "Score for UP",
@@ -57,5 +57,10 @@
   "maxEnergyLevel": "You have reached the maximum energy level",
   "tryLater": "Deal fell through, try again later",
   "taskCompleted": "Task completed!",
-  "taskNotCompleted": "Task not completed yet."
+  "taskNotCompleted": "Task not completed yet.",
+  "upgradeFor": "Upgrade for",
+  "noFriends": "You don't have invited friends",
+  "share" : "Share",
+  "copyLink": "Copy link",
+  "rewardPerHour": "Reward per hour"
 }

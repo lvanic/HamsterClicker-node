@@ -3,6 +3,7 @@ import { useWebSocket } from "../hooks/useWebsocket";
 import { NotifyContext } from "../contexts/NotifyContext";
 import { useUser } from "../hooks/useUser";
 import { DataContext } from "../contexts/DataContext";
+import { getLocalization } from "../localization/getLocalization";
 
 export const ComboGame = () => {
   const notifyContext = useContext(NotifyContext);
@@ -43,7 +44,7 @@ export const ComboGame = () => {
             className="rounded-lg bg-[#373737CC] flex flex-col items-center justify-center text-white gap-0.5"
             style={{ width: "60px", height: "60px" }}
           >
-            <div className="text-xs">Combo #{unlockedCombos.length + index + 1}</div>
+            <div className="text-xs">{getLocalization("combo")} #{unlockedCombos.length + index + 1}</div>
             <svg
               width="29"
               height="35"
