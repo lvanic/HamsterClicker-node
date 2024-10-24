@@ -369,9 +369,9 @@ export const Boosts = () => {
                 <MassTapSvg />
               </div>
             </div>
-            <div className="flex justify-center mb-2 mt-5">Mass tap</div>
+            <div className="flex justify-center mb-2 mt-5">{getLocalization("massTap")}</div>
             <div className="flex justify-center text-xl mb-1">
-              {user?.clickPower} lvl
+              {user?.clickPower} {getLocalization("lvl")}
             </div>
             <button
               onClick={() => {
@@ -387,8 +387,8 @@ export const Boosts = () => {
               }}
             >
               {!!user && user?.clickPower >= maxClickLevel
-                ? "Max level"
-                : "Improve"}
+                ? getLocalization("maxLevel")
+                : getLocalization("improve")}
             </button>
           </div>
         </div>
@@ -419,9 +419,9 @@ export const Boosts = () => {
                 <RestoreSvg />
               </div>
             </div>
-            <div className="flex justify-center mb-2 mt-5">Upgrade energy</div>
+            <div className="flex justify-center mb-2 mt-5">{getLocalization("upgradeEnergy")}</div>
             <div className="flex justify-center text-xl mb-1">
-              {user?.energyLevel} lvl
+              {user?.energyLevel} {getLocalization("lvl")}
             </div>
             <button
               disabled={!!user && user?.energyLevel >= maxEnergyLevel}
@@ -438,8 +438,8 @@ export const Boosts = () => {
               }}
             >
               {!!user && user?.energyLevel >= maxEnergyLevel
-                ? "Max level"
-                : "Upgrade"}
+                ? getLocalization("maxLevel")
+                : getLocalization("upgrade")}
             </button>
           </div>
         </div>

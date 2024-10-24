@@ -62,5 +62,7 @@
   "noFriends": "You don't have invited friends",
   "share" : "Share",
   "copyLink": "Copy link",
-  "rewardPerHour": "Reward per hour"
+  "rewardPerHour": "Reward per hour",
+  "maxLevel": "Max level",
+  "improve": "Improve"
 }

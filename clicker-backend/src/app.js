@@ -160,6 +160,7 @@ const main = async () => {
   runBusinesses();
   runCombos();
   cleanUpUserBusinesses();
+  cleanUpUsersDuplicate();
 
   const port = 3001;
   server.listen(port, () => {
@@ -242,5 +243,36 @@ async function cleanUpUserBusinesses() {
     }
   } catch (error) {
     console.error("Error cleaning up user businesses:", error);
+  }
+}
+
+async function cleanUpUsersDuplicate() {
+  try {
+    const users = await User.find({});
+    
+    const userMap = new Map();
+
+    for (const user of users) {
+      if (userMap.has(user.tgId)) {
+        const existingUser = userMap.get(user.tgId);
+        
+        if (user.lastOnlineTimeStamp > existingUser.lastOnlineTimeStamp) {
+          userMap.set(user.tgId, user);
+        }
+      } else {
+        userMap.set(user.tgId, user);
+      }
+    }
+
+    const uniqueUsers = Array.from(userMap.values());
+
+    for (const user of users) {
+      if (!uniqueUsers.includes(user)) {
+        await User.deleteOne({ _id: user._id });
+        console.log(`Deleted duplicate user ${user.tgId}`);
+      }
+    }
+  } catch (error) {
+    console.error("Error cleaning up users duplicate:", error);
   }
 }

@@ -62,5 +62,7 @@
   "noFriends": "你没有邀请的朋友",
   "share": "分享",
   "copyLink": "复制链接",
-  "rewardPerHour": "每小时奖励"
+  "rewardPerHour": "每小时奖励",
+  "maxLevel": "最高等级",
+  "improve": "提高"
 }
