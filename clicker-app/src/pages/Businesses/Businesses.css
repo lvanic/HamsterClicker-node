@@ -31,6 +31,10 @@
   opacity: 0;
 }
 
+.overlay-safe.hidden{
+  display: none;
+}
+
 .modal.visible {
   transform: translateY(0%);
   opacity: 1;
