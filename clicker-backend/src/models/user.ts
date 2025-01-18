@@ -1,5 +1,5 @@
 import { Min } from "class-validator";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, Tree, TreeChildren } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, Tree, TreeChildren, TreeParent } from "typeorm";
 import { Business } from "./business";
 import { Task } from "./task";
 
@@ -10,7 +10,7 @@ export class User {
   tgId: number
 
   @Column()
-  tsUsername: string
+  tgUsername: string
 
   @Column()
   firstName: string
@@ -55,7 +55,7 @@ export class User {
   energyLevel: number
 
   @Column()
-  lastOnlineTimestamp: number
+  lastOnlineTimeStamp: number
 
   @ManyToMany(() => Business)
   @JoinTable()
@@ -71,4 +71,7 @@ export class User {
   @ManyToMany(() => Business)
   @JoinTable()
   businesses: Business[]
+
+  @TreeParent()
+  parent: User
 }
