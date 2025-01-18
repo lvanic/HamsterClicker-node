@@ -193,7 +193,7 @@ export const registerAdminRoutes = (router) => {
       description: ctx.request.body.description,
       avatarUrl: ctx.request.body.avatarUrl,
       rewardPerHour: ctx.request.body.rewardPerHour,
-      refsToUnlock: !!ctx.request.body.refsToUnlock
+      refsToUnlock: ctx.request.body.refsToUnlock
         ? ctx.request.body.refsToUnlock
         : 0,
       price: ctx.request.body.price,

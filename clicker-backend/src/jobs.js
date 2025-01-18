@@ -1,7 +1,6 @@
 import { getAppSettings } from "./admin.js";
-import { Business, User, AppSettings } from "./models.js";
+import { Business, User } from "./models.js";
 
-const BUSINESS_UPDATE_IN_SECOND = 1;
 const ENERGY_UPDATE_INTERVAL_IN_SECOND = 1;
 const COMBO_UPDATE_IN_SECOND = 60 * 60;
 

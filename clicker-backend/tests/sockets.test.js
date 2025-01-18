@@ -20,10 +20,13 @@ test('getUserInfo returns valid user info', async () => {
 });
 
 test('upgrade business works', async () => {
+    let result;
     const io = {emit: (topic, data) => {result = {topic, data}}};
     const socketsLogic = initSocketsLogic(io);
 
     await socketsLogic.upgradeBusiness(571484499, '6697fbfbb11a70c448080b35');
+
+    expect(result.data).toBeDefined();
 });
 
 // test('upgradeClick works', async () => {
