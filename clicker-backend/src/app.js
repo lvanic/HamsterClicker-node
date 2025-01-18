@@ -8,14 +8,11 @@ import { registerAdminRoutes } from "./admin.js";
 import { handleSocketConnection } from "./sockets.js";
 import { mongoose } from "mongoose";
 import { runEnergyRecover, runBusinesses, runCombos } from "./jobs.js";
-import dotenv from "dotenv";
 import { getAppSettings } from "./admin.js";
 import { User, AppSettings, Business } from "./models.js";
 import bodyParser from "koa-bodyparser";
+import { config } from "./core/config.js";
 
-dotenv.config();
-
-let config = process.env;
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 
 const main = async () => {

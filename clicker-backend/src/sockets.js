@@ -2,6 +2,7 @@ import { User, Task, League, Business } from "./models.js";
 import { getAppSettings } from "./admin.js";
 import { mongoose } from "mongoose";
 import { getLang } from "./getLang.js";
+import { config } from "./core/config.js";
 
 export let buffer = {};
 
@@ -60,7 +61,7 @@ export const initSocketsLogic = (io) => ({
           const tgChatId = slices[slices.length - 1];
 
           const res = await fetch(
-            `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/getChatMember?chat_id=@${tgChatId}&user_id=${tgUserId}`
+            `https://api.telegram.org/bot${config.TG_BOT_TOKEN}/getChatMember?chat_id=@${tgChatId}&user_id=${tgUserId}`
           );
           const data = await res.json();
 
