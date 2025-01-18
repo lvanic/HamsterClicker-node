@@ -2,6 +2,7 @@ import Koa from "koa";
 import Router from "@koa/router";
 import http from "http";
 import cors from "@koa/cors";
+import "reflect-metadata";
 import { Telegraf } from "telegraf";
 import { Server } from "socket.io";
 import { registerAdminRoutes } from "./admin.js";
