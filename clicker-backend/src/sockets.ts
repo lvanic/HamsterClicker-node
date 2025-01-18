@@ -535,7 +535,7 @@ export const initSocketsLogic = (io: Socket) => ({
             io.emit("reward", appSettings.dailyReward);
             io.emit("boostActivated", {
               success: true,
-              message: `${getLang(lang, "youReceived")} ${appSettings.dailyReward} ${getLang("", "coins")}`,
+              message: `${getLang(lang, "youReceived")} ${appSettings.dailyReward} ${getLang("en", "coins")}`,
             });
           } else {
             io.emit("boostActivated", {
