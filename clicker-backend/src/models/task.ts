@@ -1,6 +1,10 @@
-import { Column } from "typeorm"
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
+@Entity()
 export class Task {
+  @PrimaryGeneratedColumn()
+  id: number
+
   @Column()
   rewardAmount: number
 

@@ -1,7 +1,11 @@
-import { Column, JoinTable, ManyToMany } from "typeorm";
-import { Business } from "./business.js";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Business } from "./business";
 
+@Entity()
 export class AppSettings {
+  @PrimaryGeneratedColumn()
+  id: number
+
   @Column()
   energyPerSecond: number
 
@@ -22,11 +26,23 @@ export class AppSettings {
 
   @Column()
   maxClickLevel: number
+
+  @Column()
   startClickUpgradeCost: number
+
+  @Column()
   maxEnergyLevel: number
+
+  @Column()
   startEnergyUpgradeCost: number
+
+  @Column()
   comboReward: number
+
+  @Column()
   comboUpdateDayHour: number
+
+  @Column()
   lastComboUpdateTimestamp: number
 
   @ManyToMany(() => Business)

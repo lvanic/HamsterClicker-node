@@ -1,7 +1,7 @@
 import { Min } from "class-validator";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, Tree, TreeChildren } from "typeorm";
-import { Business } from "./business.js";
-import { Task } from "./task.js";
+import { Business } from "./business";
+import { Task } from "./task";
 
 @Entity()
 @Tree("closure-table")
@@ -61,7 +61,6 @@ export class User {
   @JoinTable()
   currentComboCompletions: Business[]
 
-  @Column()
   @TreeChildren()
   referrals: User[]
 

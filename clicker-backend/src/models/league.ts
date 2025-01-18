@@ -1,6 +1,11 @@
-import { Column } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity()
 
 export class League {
+  @PrimaryGeneratedColumn()
+  id: number
+
   @Column()
   name: string
 

@@ -1,5 +1,5 @@
-import { Task, User, AppSettings, League, Business } from "./models.js";
-import { sendForAllUsers } from "./app.js";
+import { Task, User, AppSettings, League, Business } from "./models";
+import { sendForAllUsers } from "./app";
 import { DefaultState, DefaultContext } from "koa";
 import Router from "@koa/router";
 
