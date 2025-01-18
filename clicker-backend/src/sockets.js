@@ -5,68 +5,15 @@ import { getLang } from "./getLang.js";
 
 export let buffer = {};
 
-// setInterval(async () => {
-//   const userIds = Object.keys(buffer);
-//   console.info("Количество пользователей в buffer:", userIds.length);
-
-//   const bulkOperations = [];
-
-//   for (const userId of userIds) {
-//     // console.log(userId, buffer[userId]);
-
-//     if (buffer[userId] > 0) {
-//       const user = await User.findOne({ tgId: userId });
-
-//       if (user) {
-//         const clickPower = user.clickPower;
-//         let clickCount = buffer[userId];
-
-//         if (user.energy < clickCount) {
-//           clickCount = user.energy;
-//         }
-
-//         const balanceIncrement = clickCount * clickPower;
-
-//         bulkOperations.push({
-//           updateOne: {
-//             filter: { tgId: userId },
-//             update: {
-//               $inc: {
-//                 balance: balanceIncrement,
-//                 score: balanceIncrement,
-//                 energy: -clickCount,
-//               },
-//             },
-//           },
-//         });
-//       }
-//     }
-//   }
-
-//   if (bulkOperations.length > 0) {
-//     try {
-//       await User.bulkWrite(bulkOperations);
-//       buffer = [];
-//     } catch (error) {
-//       console.error("Ошибка выполнения bulkWrite:", error);
-//     }
-//   }
-// }, 10000);
-
 export const initSocketsLogic = (io) => ({
   clickEvent: async (data) => {
     try {
       const parsedData = JSON.parse(data);
       const tgUserId = parsedData["user_id"];
 
-      // const user = await User.findOne({ tgId: tgUserId });
       if (!buffer[tgUserId]) {
         buffer[tgUserId] = 0;
       }
-
-      // if (user.energy - buffer[tgUserId] <= 0) {
-      //   return;
-      // }
 
       buffer[tgUserId]++;
     } catch (e) {
@@ -924,7 +871,6 @@ export const initSocketsLogic = (io) => ({
         await session.commitTransaction();
         session.endSession();
 
-        // io.emit("reward", -cost);
         io.emit("energyUpgraded", { success: true });
 
         const liteSyncData = {
@@ -1063,7 +1009,6 @@ export const registerEvents = (io) => {
               $inc: {
                 balance: balanceIncrement,
                 score: balanceIncrement,
-                // energy: -clickCount,
               },
               $set: {
                 lastOnlineTimestamp: currentTime,
