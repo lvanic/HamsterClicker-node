@@ -374,7 +374,7 @@ export const initSocketsLogic = (io) => ({
       const businessUpgrade = user.businessUpgrades.find(
         (bu) => bu.businessId.toString() === b._id.toString()
       );
-      const businessLevel = !!businessUpgrade
+      const businessLevel = businessUpgrade
         ? businessUpgrade.level
         : user.businesses.some((bu) => bu.toString() == b._id.toString())
         ? 1
@@ -388,7 +388,7 @@ export const initSocketsLogic = (io) => ({
           b.rewardPerHour * 1.2 ** businessLevel,
         price: b.price * 1.2 ** businessLevel,
         level: businessLevel,
-        lastUpgradeTimestamp: !!businessUpgrade
+        lastUpgradeTimestamp: businessUpgrade
           ? businessUpgrade.timestamp
           : null,
       };
@@ -441,10 +441,6 @@ export const initSocketsLogic = (io) => ({
         const comboCompleted =
           comboMatch && user.currentComboCompletions.length == 2;
 
-        const finalPrice = comboCompleted
-          ? appSettings.comboReward - business.price
-          : -business.price;
-
         user.balance -= business.price;
         user.businesses.push(business._id);
 
@@ -474,7 +470,7 @@ export const initSocketsLogic = (io) => ({
           const businessUpgrade = updatedUser.businessUpgrades.find(
             (bu) => bu.businessId.toString() === b._id.toString()
           );
-          const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+          const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
           return sum + b.rewardPerHour * 1.2 ** businessLevel;
         }, 0);
 
@@ -601,7 +597,7 @@ export const initSocketsLogic = (io) => ({
         await session.commitTransaction();
         session.endSession();
         return; // Успешное завершение, выходим из функции
-      } catch (error) {
+      } catch {
         await session.abortTransaction();
         session.endSession();
 
@@ -679,7 +675,7 @@ export const initSocketsLogic = (io) => ({
         io.emit("liteSync", liteSyncData);
 
         return;
-      } catch (error) {
+      } catch {
         await session.abortTransaction();
         session.endSession();
 
@@ -833,7 +829,7 @@ export const initSocketsLogic = (io) => ({
           const businessUpgrade = user.businessUpgrades.find(
             (bu) => bu.businessId.toString() === b._id.toString()
           );
-          const businessLevel = !!businessUpgrade ? businessUpgrade.level : 1;
+          const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
           return sum + b.rewardPerHour * 1.2 ** businessLevel;
         }, 0);
 
@@ -1033,7 +1029,7 @@ export const registerEvents = (io) => {
   io.on("upgradeEnergy", socketsLogic.upgradeEnergy);
   io.on("userLeague", socketsLogic.userLeague);
 
-  io.on("disconnect", async (reason) => {
+  io.on("disconnect", async () => {
     const tgUserId = Number(io.userId);
     const user = await User.findOne({ tgId: tgUserId });
 

@@ -53,7 +53,7 @@ const main = async () => {
           lastOnlineTimestamp: new Date().getTime(),
         });
 
-        if (!!refId) {
+        if (refId) {
           const refUser = await User.findOne({ tgId: refId });
           if (refUser) {
             const appSettings = await getAppSettings();
