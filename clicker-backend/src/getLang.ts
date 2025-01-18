@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const loadTranslations = (lang) => {
+const loadTranslations = (lang: string) => {
   const filePath = path.join(__dirname, `${lang}.json`);
 
   try {
@@ -14,11 +14,11 @@ const loadTranslations = (lang) => {
 };
 
 const translations = {
-  en: loadTranslations("en"),
-  zh: loadTranslations("zh"),
+  en: loadTranslations("en") as Record<string, string>,
+  zh: loadTranslations("zh") as Record<string, string>,
 };
 
-export const getLang = (lang, word) => {
+export const getLang = (lang: keyof typeof translations, word: string) => {
   const localized = translations[lang || "en"];
   return localized ? localized[word] || word : word;
 };
