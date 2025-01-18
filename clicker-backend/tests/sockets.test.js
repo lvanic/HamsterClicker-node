@@ -1,4 +1,4 @@
-import { initSocketsLogic } from '../sockets';
+import { initSocketsLogic } from '../src/sockets.js';
 import { mongoose } from "mongoose";
 import dotenv from "dotenv";
 
@@ -20,7 +20,6 @@ test('getUserInfo returns valid user info', async () => {
 });
 
 test('upgrade business works', async () => {
-    let result;
     const io = {emit: (topic, data) => {result = {topic, data}}};
     const socketsLogic = initSocketsLogic(io);
 
