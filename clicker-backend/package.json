@@ -1,7 +1,9 @@
 {
   "scripts": {
     "start": "node ./src/app.js",
-    "test": "jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
   },
   "dependencies": {
     "@koa/cors": "^5.0.0",
