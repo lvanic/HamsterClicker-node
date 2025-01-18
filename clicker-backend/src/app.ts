@@ -6,17 +6,17 @@ import { Telegraf } from "telegraf";
 import { Server } from "socket.io";
 import { registerAdminRoutes } from "./admin.js";
 import { handleSocketConnection } from "./sockets.js";
-import { mongoose } from "mongoose";
+import mongoose from "mongoose";
 import { runEnergyRecover, runBusinesses, runCombos } from "./jobs.js";
 import { getAppSettings } from "./admin.js";
 import { User, AppSettings, Business } from "./models.js";
 import bodyParser from "koa-bodyparser";
-import { config } from "./core/config.js";
+import { config } from "./core/config";
 
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 
 const main = async () => {
-  const processError = (e) => {
+  const processError = (e: Error) => {
     console.log(e);
   };
 
@@ -102,7 +102,7 @@ const main = async () => {
   });
 
   router.post("/wallet-address", async (ctx) => {
-    const { walletAddress, userTgId } = ctx.request.body;
+    const { walletAddress, userTgId } = ctx.request.body as { walletAddress: string, userTgId: string};
     const user = await User.findOne({ tgId: userTgId });
 
     if (!user) {
@@ -200,7 +200,7 @@ async function ensureAppSettings() {
   }
 }
 
-export const sendForAllUsers = async (message) => {
+export const sendForAllUsers = async (message: string) => {
   try {
     const users = await User.find({}, "tgId");
     for (const user of users) {
@@ -224,11 +224,11 @@ async function cleanUpUserBusinesses() {
 
     const validBusinesses = await Business.find({}, { _id: 1 });
     const validBusinessIds = new Set(
-      validBusinesses.map((business) => business._id.toString())
+      validBusinesses.map((business: { _id: string }) => business._id.toString())
     );
 
     for (const user of users) {
-      const filteredBusinesses = user.businesses.filter((businessId) =>
+      const filteredBusinesses = user.businesses.filter((businessId: string) =>
         validBusinessIds.has(businessId.toString())
       );
 

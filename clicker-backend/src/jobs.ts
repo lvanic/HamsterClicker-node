@@ -102,7 +102,7 @@ const updateCombos = async () => {
     if (businesses.length < 3) {
       return;
     }
-    const randomIndexes = [];
+    const randomIndexes: number[] = [];
 
     while (true) {
       const randomIndex = Math.floor(Math.random() * businesses.length);

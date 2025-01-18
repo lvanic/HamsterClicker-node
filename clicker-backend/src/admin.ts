@@ -1,5 +1,7 @@
 import { Task, User, AppSettings, League, Business } from "./models.js";
 import { sendForAllUsers } from "./app.js";
+import { DefaultState, DefaultContext } from "koa";
+import Router from "@koa/router";
 
 export const getAppSettings = async () => {
   const appSettings = await AppSettings.find({}).populate("comboBusinesses");
@@ -12,16 +14,16 @@ export const getAppSettings = async () => {
   return appSettings[0];
 };
 
-export const registerAdminRoutes = (router) => {
-  router.get("/admin/settings", async (ctx) => {
+export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>) => {
+  router.get("/admin/settings", async (ctx: { body: any; }) => {
     const settings = await getAppSettings();
     ctx.body = {
       ...settings.toObject(),
-      comboBusinesses: settings.comboBusinesses.map((b) => b.toObject()),
+      comboBusinesses: settings.comboBusinesses.map((b: { toObject: () => any; }) => b.toObject()),
     };
   });
 
-  router.post("/admin/settings", async (ctx) => {
+  router.post("/admin/settings", async (ctx: { request: { body: any; }; body: any; }) => {
     let settings = await getAppSettings();
     const newSettings = ctx.request.body;
 
@@ -37,7 +39,7 @@ export const registerAdminRoutes = (router) => {
     ctx.body = settings;
   });
 
-  router.get("/admin/users", async (ctx) => {
+  router.get("/admin/users", async (ctx: { query: { take: any; skip: any; balanceSort: any; }; body: { data: any; skip: any; take: any; total: any; }; }) => {
     const { take, skip, balanceSort } = ctx.query;
     const users = await User.find()
       .sort({ balance: balanceSort === "desc" ? -1 : 1 })
@@ -53,13 +55,13 @@ export const registerAdminRoutes = (router) => {
     };
   });
 
-  router.get("/admin/users/:id", async (ctx) => {
+  router.get("/admin/users/:id", async (ctx: { params: { id: any; }; body: any; }) => {
     const user = await User.findById(ctx.params.id);
     ctx.body = user;
   });
 
-  router.get("/admin/tasks", async (ctx) => {
-    const filter = ctx.query.filter;
+  router.get("/admin/tasks", async (ctx: { query: any[]; body: any; }) => {
+    const filter = ctx.query.filter as unknown as string;
     let query = {};
 
     if (filter === "active") {
@@ -69,7 +71,7 @@ export const registerAdminRoutes = (router) => {
     }
 
     const tasks = await Task.find(query);
-    ctx.body = tasks.map((task) => ({
+    ctx.body = tasks.map((task: { id: any; name: any; description: any; type: any; rewardAmount: any; avatarUrl: any; active: any; }) => ({
       id: task.id,
       name: task.name,
       description: task.description,
@@ -80,21 +82,21 @@ export const registerAdminRoutes = (router) => {
     }));
   });
 
-  router.post("/admin/tasks/:id/deactivate", async (ctx) => {
+  router.post("/admin/tasks/:id/deactivate", async (ctx: { params: { id: any; }; body: any; }) => {
     const task = await Task.findById(ctx.params.id);
     task.active = false;
     await task.save();
     ctx.body = task;
   });
 
-  router.post("/admin/tasks/:id/activate", async (ctx) => {
+  router.post("/admin/tasks/:id/activate", async (ctx: { params: { id: any; }; body: any; }) => {
     const task = await Task.findById(ctx.params.id);
     task.active = true;
     await task.save();
     ctx.body = task;
   });
 
-  router.post("/admin/tasks", async (ctx) => {
+  router.post("/admin/tasks", async (ctx: { request: { body: { name: any; type: any; activateUrl: any; description: any; rewardAmount: any; avatarUrl: any; }; }; body: any; }) => {
     console.log(ctx.request);
     const task = Task.create({
       name: ctx.request.body.name,
@@ -109,12 +111,12 @@ export const registerAdminRoutes = (router) => {
     ctx.body = task;
   });
 
-  router.get("/admin/tasks/:id", async (ctx) => {
+  router.get("/admin/tasks/:id", async (ctx: { params: { id: any; }; body: any; }) => {
     const task = await Task.findById(ctx.params.id);
     ctx.body = task;
   });
 
-  router.put("/admin/tasks/:id", async (ctx) => {
+  router.put("/admin/tasks/:id", async (ctx: { params: { id: any; }; request: { body: { name: any; description: any; avatarUrl: any; type: any; activateUrl: any; rewardAmount: any; }; }; body: any; }) => {
     const task = await Task.findById(ctx.params.id);
     task.name = ctx.request.body.name;
     task.description = ctx.request.body.description;
@@ -128,12 +130,12 @@ export const registerAdminRoutes = (router) => {
     ctx.body = task;
   });
 
-  router.get("/admin/leagues", async (ctx) => {
+  router.get("/admin/leagues", async (ctx: { body: any; }) => {
     const leagues = await League.find({});
-    ctx.body = leagues.map((l) => ({ id: l._id, ...l.toObject() }));
+    ctx.body = leagues.map((l: { _id: any; toObject: () => any; }) => ({ id: l._id, ...l.toObject() }));
   });
 
-  router.post("/admin/leagues", async (ctx) => {
+  router.post("/admin/leagues", async (ctx: { request: { body: { minScore: number; maxScore: number; name: any; description: any; avatarUrl: any; }; }; status: number; body: string; }) => {
     if (ctx.request.body.minScore > ctx.request.body.maxScore) {
       ctx.status = 400;
       ctx.body = "Min balance must be less than max balance";
@@ -151,17 +153,17 @@ export const registerAdminRoutes = (router) => {
     ctx.body = league;
   });
 
-  router.delete("/admin/leagues/:id", async (ctx) => {
+  router.delete("/admin/leagues/:id", async (ctx: { params: { id: any; }; }) => {
     const league = await League.findById(ctx.params.id);
     await league.remove();
   });
 
-  router.get("/admin/leagues/:id", async (ctx) => {
+  router.get("/admin/leagues/:id", async (ctx: { params: { id: any; }; body: any; }) => {
     const league = await League.findById(ctx.params.id);
     ctx.body = league;
   });
 
-  router.put("/admin/leagues/:id", async (ctx) => {
+  router.put("/admin/leagues/:id", async (ctx: { params: { id: any; }; request: { body: { name: any; description: any; avatarUrl: any; minScore: any; maxScore: any; }; }; body: any; }) => {
     const league = await League.findById(ctx.params.id);
     league.name = ctx.request.body.name;
     league.description = ctx.request.body.description;
@@ -174,20 +176,20 @@ export const registerAdminRoutes = (router) => {
     ctx.body = league;
   });
 
-  router.get("/admin/businesses", async (ctx) => {
+  router.get("/admin/businesses", async (ctx: { body: any; }) => {
     const businesses = await Business.find({ isDeleted: false });
-    ctx.body = businesses.map((business) => ({
+    ctx.body = businesses.map((business: { id: any; toObject: () => any; }) => ({
       id: business.id,
       ...business.toObject(),
     }));
   });
 
-  router.get("/admin/businesses/:id", async (ctx) => {
+  router.get("/admin/businesses/:id", async (ctx: { params: { id: any; }; body: any; }) => {
     const business = await Business.findById(ctx.params.id);
     ctx.body = business;
   });
 
-  router.post("/admin/businesses", async (ctx) => {
+  router.post("/admin/businesses", async (ctx: { request: { body: { name: any; description: any; avatarUrl: any; rewardPerHour: any; refsToUnlock: any; price: any; category: any; }; }; body: any; }) => {
     const business = await Business.create({
       name: ctx.request.body.name,
       description: ctx.request.body.description,
@@ -204,13 +206,13 @@ export const registerAdminRoutes = (router) => {
     ctx.body = business;
   });
 
-  router.delete("/admin/businesses/:id", async (ctx) => {
+  router.delete("/admin/businesses/:id", async (ctx: { params: { id: any; }; }) => {
     const business = await Business.findById(ctx.params.id);
     business.isDeleted = true;
     await business.save();
   });
 
-  router.put("/admin/businesses/:id", async (ctx) => {
+  router.put("/admin/businesses/:id", async (ctx: { params: { id: any; }; request: { body: { name: any; description: any; avatarUrl: any; rewardPerHour: any; refsToUnlock: any; price: any; category: any; }; }; body: any; }) => {
     const business = await Business.findById(ctx.params.id);
     business.name = ctx.request.body.name;
     business.description = ctx.request.body.description;
@@ -225,7 +227,7 @@ export const registerAdminRoutes = (router) => {
     ctx.body = business;
   });
 
-  router.get("/admin/reset-users", async (ctx) => {
+  router.get("/admin/reset-users", async (ctx: { body: string; }) => {
     await User.updateMany(
       {},
       {
@@ -247,7 +249,7 @@ export const registerAdminRoutes = (router) => {
     return;
   });
 
-  router.post("/admin/broadcast", async (ctx) => {
+  router.post("/admin/broadcast", async (ctx: { request: { body: { message: any; }; }; status: number; body: string; }) => {
     const { message } = ctx.request.body;
 
     if (!message) {

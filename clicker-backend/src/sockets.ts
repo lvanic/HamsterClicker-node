@@ -1,13 +1,14 @@
 import { User, Task, League, Business } from "./models.js";
 import { getAppSettings } from "./admin.js";
-import { mongoose } from "mongoose";
+import mongoose from "mongoose";
 import { getLang } from "./getLang.js";
 import { config } from "./core/config.js";
+import { Socket } from "socket.io";
 
-export let buffer = {};
+export let buffer: Record<string, number> = {};
 
-export const initSocketsLogic = (io) => ({
-  clickEvent: async (data) => {
+export const initSocketsLogic = (io: Socket) => ({
+  clickEvent: async (data: string) => {
     try {
       const parsedData = JSON.parse(data);
       const tgUserId = parsedData["user_id"];
@@ -21,7 +22,7 @@ export const initSocketsLogic = (io) => ({
       console.error(e);
     }
   },
-  checkTaskStatus: async (data) => {
+  checkTaskStatus: async (data: string) => {
     let attempts = 0;
     const maxAttempts = 10;
     const retryDelay = 1000;
@@ -49,7 +50,7 @@ export const initSocketsLogic = (io) => ({
         }
 
         if (
-          user.completedTasks.find((ut) => ut.toString() === task.id.toString())
+          user.completedTasks.find((ut: string) => ut.toString() === task.id.toString())
         ) {
           await session.abortTransaction();
           session.endSession();
@@ -63,7 +64,10 @@ export const initSocketsLogic = (io) => ({
           const res = await fetch(
             `https://api.telegram.org/bot${config.TG_BOT_TOKEN}/getChatMember?chat_id=@${tgChatId}&user_id=${tgUserId}`
           );
-          const data = await res.json();
+          const data = await res.json() as {
+            ok: boolean,
+            result: { status: string }
+          };
 
           if (
             data.ok &&
@@ -135,7 +139,7 @@ export const initSocketsLogic = (io) => ({
       attempts++;
     }
   },
-  getUser: async (userId) => {
+  getUser: async (userId: string) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -178,9 +182,9 @@ export const initSocketsLogic = (io) => ({
       );
       const businesses = await Business.find({}).session(session).exec();
 
-      const totalReward = user.businesses.reduce((sum, bId) => {
+      const totalReward = user.businesses.reduce((sum: number, bId: { _id: string}) => {
         const business = businesses.find(
-          (b) => b._id.toString() === bId._id.toString()
+          (b: { _id: string }) => b._id.toString() === bId._id.toString()
         );
         if (!business) {
           console.error(
@@ -190,7 +194,7 @@ export const initSocketsLogic = (io) => ({
         }
 
         const businessUpgrade = user.businessUpgrades.find(
-          (bu) => bu.businessId.toString() === business._id.toString()
+          (bu: { businessId: string }) => bu.businessId.toString() === business._id.toString()
         );
         const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
         const levelAdjustedReward =
@@ -222,7 +226,7 @@ export const initSocketsLogic = (io) => ({
 
       const leagues = await League.find({});
       let userLeague = leagues.find(
-        (league) =>
+        (league: { minScore: number, maxScore: number}) =>
           league.minScore <= user.score && league.maxScore >= user.score
       );
       if (!userLeague) {
@@ -230,15 +234,15 @@ export const initSocketsLogic = (io) => ({
       }
       const userLevel =
         leagues
-          .sort((a, b) => a.minScore - b.minScore)
-          .findIndex((l) => l._id.toString() === userLeague._id.toString()) + 1;
+          .sort((a: {minScore: number}, b: {minScore: number}) => a.minScore - b.minScore)
+          .findIndex((l: {_id: string}) => l._id.toString() === userLeague._id.toString()) + 1;
       const userPlaceInLeague = await User.countDocuments({
         score: { $lte: userLeague.maxScore, $gte: user.score },
       });
 
-      const totalIncomePerHour = user.businesses.reduce((sum, b) => {
+      const totalIncomePerHour = user.businesses.reduce((sum: number, b: {rewardPerHour: number, _id: string}) => {
         const businessUpgrade = user.businessUpgrades.find(
-          (bu) => bu.businessId.toString() === b._id.toString()
+          (bu: {businessId: string}) => bu.businessId.toString() === b._id.toString()
         );
         const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
         return sum + b.rewardPerHour * 1.2 ** businessLevel;
@@ -249,11 +253,11 @@ export const initSocketsLogic = (io) => ({
         ...user.toObject(),
         balance: user.balance + (buffer[tgUserId] || 0) * user.clickPower,
         score: user.score + (buffer[tgUserId] || 0) * user.clickPower,
-        referrals: user.referrals.map((r) => ({ id: r._id, ...r.toObject() })),
+        referrals: user.referrals.map((r: { _id: string, toObject: () => object  }) => ({ id: r._id, ...r.toObject() })),
         clickPower: user.clickPower,
         userPlaceInLeague: userPlaceInLeague + 1,
         totalIncomePerHour,
-        completedTasks: user.completedTasks.map((t) => ({
+        completedTasks: user.completedTasks.map((t: { _id: string, toObject: () => object }) => ({
           id: t._id,
           ...t.toObject(),
         })),
@@ -272,7 +276,7 @@ export const initSocketsLogic = (io) => ({
       console.log("error on getting user");
     }
   },
-  getLeagueInfo: async ({ leagueId, topUsersCount }) => {
+  getLeagueInfo: async ({ leagueId, topUsersCount }: { leagueId: string, topUsersCount: number}) => {
     try {
       const leagues = await League.find({});
 
@@ -314,17 +318,17 @@ export const initSocketsLogic = (io) => ({
       console.log("error get league");
     }
   },
-  getBusinessesToBuy: async (userTgId) => {
+  getBusinessesToBuy: async (userTgId: string) => {
     const user = await User.findOne({ tgId: userTgId });
     const businesses = await Business.find({ isDeleted: false });
 
-    const finalBusinesses = businesses.map((b) => {
+    const finalBusinesses = businesses.map((b: { rewardPerHour: number, price: number, _id: string, toObject: () => object}) => {
       const businessUpgrade = user.businessUpgrades.find(
-        (bu) => bu.businessId.toString() === b._id.toString()
+        (bu: { businessId: string }) => bu.businessId.toString() === b._id.toString()
       );
       const businessLevel = businessUpgrade
         ? businessUpgrade.level
-        : user.businesses.some((bu) => bu.toString() == b._id.toString())
+        : user.businesses.some((bu: string) => bu.toString() == b._id.toString())
         ? 1
         : 0;
 
@@ -344,7 +348,7 @@ export const initSocketsLogic = (io) => ({
 
     io.emit("businesses", finalBusinesses);
   },
-  buyBusiness: async (data) => {
+  buyBusiness: async (data: string) => {
     let attempts = 0;
     const maxAttempts = 10;
     const retryDelay = 950;
@@ -383,7 +387,7 @@ export const initSocketsLogic = (io) => ({
         const appSettings = await getAppSettings();
 
         const comboMatch =
-          appSettings.comboBusinesses.some((c) => c._id == businessId) &&
+          appSettings.comboBusinesses.some((c: {_id: string}) => c._id == businessId) &&
           user.currentComboCompletions.length < 3 &&
           !user.currentComboCompletions.includes(businessId);
         const comboCompleted =
@@ -414,15 +418,15 @@ export const initSocketsLogic = (io) => ({
           _id: { $in: updatedUser.businesses },
         });
 
-        const totalIncomePerHour = businesses.reduce((sum, b) => {
+        const totalIncomePerHour = businesses.reduce((sum: number, b: { rewardPerHour: number, _id: string }) => {
           const businessUpgrade = updatedUser.businessUpgrades.find(
-            (bu) => bu.businessId.toString() === b._id.toString()
+            (bu: {businessId: string} ) => bu.businessId.toString() === b._id.toString()
           );
           const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
           return sum + b.rewardPerHour * 1.2 ** businessLevel;
         }, 0);
 
-        const currentComboBusinesses = businesses.filter((b) =>
+        const currentComboBusinesses = businesses.filter((b: {_id: string}) =>
           user.currentComboCompletions.includes(b._id.toString())
         );
 
@@ -465,7 +469,7 @@ export const initSocketsLogic = (io) => ({
     const tasks = await Task.find({ active: true });
     io.emit("tasks", tasks);
   },
-  activateBoost: async (data) => {
+  activateBoost: async (data: string) => {
     const maxRetries = 10;
     let attempt = 0;
 
@@ -567,7 +571,7 @@ export const initSocketsLogic = (io) => ({
     }
   },
 
-  upgradeClick: async (userId) => {
+  upgradeClick: async (userId: string) => {
     const maxRetries = 10;
     let attempt = 0;
 
@@ -642,7 +646,7 @@ export const initSocketsLogic = (io) => ({
     }
   },
 
-  upgradeBusiness: async (data) => {
+  upgradeBusiness: async (data: string) => {
     let attempts = 0;
     const maxAttempts = 10; // Максимальное количество попыток
     const retryDelay = 950; // Задержка между попытками (в миллисекундах)
@@ -667,7 +671,7 @@ export const initSocketsLogic = (io) => ({
 
         // Проверяем, есть ли у пользователя бизнес
         if (
-          !user.businesses.some((b) => b.toString() === businessId.toString())
+          !user.businesses.some((b: string) => b.toString() === businessId.toString())
         ) {
           console.warn(
             `User ${userTgId} tried to upgrade business ${businessId} but doesn't have it`
@@ -679,7 +683,7 @@ export const initSocketsLogic = (io) => ({
 
         const business = await Business.findById(businessId).session(session);
         const businessUpgrade = user.businessUpgrades?.find(
-          (b) => b.businessId.toString() === businessId.toString()
+          (b: {businessId: string}) => b.businessId.toString() === businessId.toString()
         );
 
         // Проверка таймера апгрейда
@@ -732,7 +736,7 @@ export const initSocketsLogic = (io) => ({
 
         const appSettings = await getAppSettings();
         const comboMatch =
-          appSettings.comboBusinesses.some((c) => c._id == businessId) &&
+          appSettings.comboBusinesses.some((c: {_id: string }) => c._id == businessId) &&
           user.currentComboCompletions.length < 3 &&
           !user.currentComboCompletions.includes(businessId);
         const comboCompleted =
@@ -773,15 +777,15 @@ export const initSocketsLogic = (io) => ({
         const businesses = await Business.find({
           _id: { $in: user.businesses },
         });
-        const totalIncomePerHour = businesses.reduce((sum, b) => {
+        const totalIncomePerHour = businesses.reduce((sum: number, b: { rewardPerHour: number, _id: string }) => {
           const businessUpgrade = user.businessUpgrades.find(
-            (bu) => bu.businessId.toString() === b._id.toString()
+            (bu: { businessId: string }) => bu.businessId.toString() === b._id.toString()
           );
           const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
           return sum + b.rewardPerHour * 1.2 ** businessLevel;
         }, 0);
 
-        const currentComboBusinesses = businesses.filter((b) =>
+        const currentComboBusinesses = businesses.filter((b: { _id: string }) =>
           user.currentComboCompletions.includes(b._id.toString())
         );
 
@@ -821,7 +825,7 @@ export const initSocketsLogic = (io) => ({
     }
   },
 
-  upgradeEnergy: async (userId) => {
+  upgradeEnergy: async (userId: string) => {
     let attempts = 0;
     const maxAttempts = 10;
     const retryDelay = 1000;
@@ -906,7 +910,7 @@ export const initSocketsLogic = (io) => ({
       attempts++;
     }
   },
-  userLeague: async (userId) => {
+  userLeague: async (userId: string) => {
     try {
       const tgUserId = Number(userId);
       let user;
@@ -931,7 +935,7 @@ export const initSocketsLogic = (io) => ({
       const leagues = await League.find({});
       const score = user.score + (buffer[tgUserId] || 0) * user.clickPower;
       let userLeague = leagues.find(
-        (league) => league.minScore <= score && league.maxScore >= score
+        (league: { minScore: number, maxScore: number }) => league.minScore <= score && league.maxScore >= score
       );
 
       if (!userLeague) {
@@ -940,8 +944,8 @@ export const initSocketsLogic = (io) => ({
 
       const userLevel =
         leagues
-          .sort((a, b) => a.minScore - b.minScore)
-          .findIndex((l) => l._id.toString() === userLeague._id.toString()) + 1;
+          .sort((a:{ minScore: number }, b:{ minScore: number }) => a.minScore - b.minScore)
+          .findIndex((l: {_id: string}) => l._id.toString() === userLeague._id.toString()) + 1;
 
       const userPlaceInLeague = await User.countDocuments({
         score: { $lte: userLeague.maxScore, $gte: user.score },
@@ -953,14 +957,14 @@ export const initSocketsLogic = (io) => ({
   },
 });
 
-export const handleSocketConnection = async (socket) => {
+export const handleSocketConnection = async (socket: Socket) => {
   registerEvents(socket);
 
   const userId = socket.handshake.query.user_id;
-  socket.userId = userId;
+  (socket as unknown as { userId: string }).userId = userId as string;
 };
 
-export const registerEvents = (io) => {
+export const registerEvents = (io: Socket) => {
   const socketsLogic = initSocketsLogic(io);
 
   io.on("clickEvent", socketsLogic.clickEvent);
@@ -977,7 +981,7 @@ export const registerEvents = (io) => {
   io.on("userLeague", socketsLogic.userLeague);
 
   io.on("disconnect", async () => {
-    const tgUserId = Number(io.userId);
+    const tgUserId = Number((io as unknown as { userId: string }).userId );
     const user = await User.findOne({ tgId: tgUserId });
 
     if (buffer[tgUserId] > 0) {
