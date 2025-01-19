@@ -94,10 +94,6 @@ const main = async () => {
 
   socketServer.on("connection", handleSocketConnection);
 
-  // socketServer.on("disconnect", async () => {
-   
-  // });
-
   ensureAppSettings();
   runEnergyRecover();
   runBusinesses();
