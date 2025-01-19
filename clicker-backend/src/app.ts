@@ -3,7 +3,6 @@ import Router from "@koa/router";
 import http from "http";
 import cors from "@koa/cors";
 import "reflect-metadata";
-import { Telegraf } from "telegraf";
 import { Server } from "socket.io";
 import { registerAdminRoutes } from "./admin.js";
 import { handleSocketConnection } from "./sockets.js";
@@ -13,8 +12,7 @@ import { getAppSettings } from "./admin.js";
 import { User, AppSettings, Business } from "./models.js";
 import bodyParser from "koa-bodyparser";
 import { config } from "./core/config";
-
-export const bot = new Telegraf(config.TG_BOT_TOKEN);
+import { bot } from "./bot";
 
 const main = async () => {
   const processError = (e: Error) => {
@@ -24,59 +22,6 @@ const main = async () => {
   process.on("uncaughtException", processError);
   process.on("unhandledRejection", processError);
 
-  bot.start(async (ctx) => {
-    try {
-      const [, refId] = ctx.message.text.split("ref_");
-      const tgUserId = ctx.message.chat.id;
-      console.log({ refId, tgUserId });
-
-      ctx.reply("Welcome").catch(() => {
-        console.log("i don't know how its work");
-      });
-
-      const existingUser = await User.findOne({ tgId: tgUserId });
-      if (!existingUser) {
-        const user = new User({
-          tgId: tgUserId,
-          tgUsername: ctx.message.from.username,
-          firstName: ctx.message.from.first_name,
-          lastName: ctx.message.from.last_name,
-          balance: 0,
-          score: 0,
-          energy: 1000,
-          maxEnergy: 1000,
-          clickPower: 1,
-          energyLevel: 1,
-          addedFromBusinesses: 0,
-          lastOnlineTimestamp: new Date().getTime(),
-        });
-
-        if (refId) {
-          const refUser = await User.findOne({ tgId: refId });
-          if (refUser) {
-            const appSettings = await getAppSettings();
-            refUser.referrals.push(user);
-            const isPremium = ctx.from.is_premium;
-            console.log(isPremium);
-            if (isPremium) {
-              refUser.balance += appSettings.premiumReferralReward;
-              refUser.score += appSettings.premiumReferralReward;
-            } else {
-              refUser.balance += appSettings.referralReward;
-              refUser.score += appSettings.referralReward;
-            }
-            await refUser.save();
-          }
-        }
-
-        await user.save();
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  });
-
-  bot.launch();
   await mongoose.connect(config.MONGO_DB);
 
   const appSettings = await AppSettings.find({});
