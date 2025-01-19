@@ -1,7 +1,7 @@
 import { Task, User, AppSettings, League, Business } from "./models";
-import { sendForAllUsers } from "./app";
 import { DefaultState, DefaultContext } from "koa";
 import Router from "@koa/router";
+import { sendForAllUsers } from "./services/botService";
 
 export const getAppSettings = async () => {
   const appSettings = await AppSettings.find({}).populate("comboBusinesses");

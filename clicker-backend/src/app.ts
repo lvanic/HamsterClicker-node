@@ -142,22 +142,6 @@ async function ensureAppSettings() {
   }
 }
 
-export const sendForAllUsers = async (message: string) => {
-  try {
-    const users = await User.find({}, "tgId");
-    for (const user of users) {
-      try {
-        await bot.telegram.sendMessage(user.tgId, message);
-      } catch (error) {
-        console.error(`Failed to send message to user ${user.tgId}:`, error);
-      }
-    }
-    console.log("Broadcast message sent to all users.");
-  } catch (error) {
-    console.error("Error sending broadcast to users:", error);
-  }
-};
-
 async function cleanUpUserBusinesses() {
   try {
     const users = await User.find({
