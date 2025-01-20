@@ -1,5 +1,8 @@
-import { getAppSettings } from "./admin.js";
-import { Business, User } from "./models.js";
+import { getAppSettings } from "./admin";
+import { appDataSource } from "./core/database";
+import { AppSettings } from "./models/appSettings";
+import { Business } from "./models/business";
+import { User } from "./models/user";
 
 const ENERGY_UPDATE_INTERVAL_IN_SECOND = 1;
 const COMBO_UPDATE_IN_SECOND = 60 * 60;
@@ -90,14 +93,17 @@ const updateCombos = async () => {
     const currentHours = new Date().getHours();
     if (
       appSettings.comboBusinesses.length !== 0 &&
-      appSettings.lastComboUpdateTimestamp + 1000 * 60 * 60 * 24 >
-        new Date().getTime() &&
+      appSettings.lastComboUpdateTimestamp + 1000 * 60 * 60 * 24 > new Date().getTime() &&
       currentHours >= appSettings.comboUpdateDayHour
     ) {
       return;
     }
 
-    const businesses = await Business.find({ isDeleted: false });
+    const businesses = await appDataSource.getRepository(Business).find({
+      where: {
+        isDeleted: false,
+      },
+    });
 
     if (businesses.length < 3) {
       return;
@@ -119,13 +125,20 @@ const updateCombos = async () => {
     }
 
     appSettings.comboBusinesses = [
-      businesses[randomIndexes[0]]._id,
-      businesses[randomIndexes[1]]._id,
-      businesses[randomIndexes[2]]._id,
+      businesses[randomIndexes[0]],
+      businesses[randomIndexes[1]],
+      businesses[randomIndexes[2]],
     ];
     appSettings.lastComboUpdateTimestamp = Date.now();
-    await appSettings.save();
-    await User.updateMany({}, { $set: { currentComboCompletions: [] } });
+    await appDataSource.getRepository(AppSettings).save(appSettings);
+    await appDataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .update()
+      .set({
+        currentComboCompletions: [],
+      })
+      .execute();
   } catch {
     console.log("error update combo");
   }

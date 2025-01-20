@@ -2,6 +2,7 @@ import { Min } from "class-validator";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, Tree, TreeChildren, TreeParent } from "typeorm";
 import { Business } from "./business";
 import { Task } from "./task";
+import { BusinessUpgrade } from "./businessUpgrade";
 
 @Entity()
 @Tree("closure-table")
@@ -74,4 +75,7 @@ export class User {
 
   @TreeParent()
   parent: User
+
+  @OneToMany(() => BusinessUpgrade, upgrade => upgrade.user)
+  businessUpgrades: BusinessUpgrade[]
 }

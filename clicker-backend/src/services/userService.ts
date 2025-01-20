@@ -30,3 +30,21 @@ export const updateUserByTgId = async (tgId: number, userData: DeepPartial<User>
 export const deleteUserByTgId = async (tgId: number): Promise<void> => {
   await userRepository.delete({ tgId });
 };
+
+export const findFullUserInfoByTgId = async (tgId: number): Promise<User> => {
+  const user = await userRepository.findOne({ relations: {
+    businesses: true,
+    referrals: true,
+    completedTasks: true,
+    currentComboCompletions: true,
+  }, where: {
+    tgId
+  } });
+
+  // TODO: add proper error handling
+  if (!user) {
+    throw Error("");
+  }
+
+  return user;
+};

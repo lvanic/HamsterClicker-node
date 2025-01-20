@@ -16,8 +16,8 @@ export class League {
   avatarUrl: string
 
   @Column()
-  minScore: string
+  minScore: number
 
   @Column()
-  maxScore: string
+  maxScore: number
 }

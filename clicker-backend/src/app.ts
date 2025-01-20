@@ -4,15 +4,14 @@ import http from "http";
 import cors from "@koa/cors";
 import "reflect-metadata";
 import { Server } from "socket.io";
-import { registerAdminRoutes } from "./admin.js";
-import { handleSocketConnection } from "./sockets.js";
-import mongoose from "mongoose";
-import { runEnergyRecover, runBusinesses, runCombos } from "./jobs.js";
-import { getAppSettings } from "./admin.js";
-import { User, AppSettings, Business } from "./models.js";
+import { registerAdminRoutes } from "./admin";
+import { handleSocketConnection } from "./sockets";
+import { runEnergyRecover, runBusinesses, runCombos } from "./jobs";
 import bodyParser from "koa-bodyparser";
 import { config } from "./core/config";
 import { bot } from "./bot";
+import { createAppSettings, getAllAppSettings, getAppSettingsWithBusinesses } from "./services/appSettingsService";
+import { deleteUserByTgId, findAllUsers, findUserByTgId, updateUserByTgId } from "./services/userService";
 
 const main = async () => {
   const processError = (e: Error) => {
@@ -22,19 +21,15 @@ const main = async () => {
   process.on("uncaughtException", processError);
   process.on("unhandledRejection", processError);
 
-  await mongoose.connect(config.MONGO_DB);
-
-  const appSettings = await AppSettings.find({});
+  const appSettings = await getAllAppSettings();
   if (!appSettings.length || appSettings.length === 0) {
-    const appSettings = new AppSettings({
+    await createAppSettings({
       energyPerSecond: 0.2,
       rewardPerClick: 1,
       fullEnergyBoostPerDay: 3,
       dailyReward: 50,
       referralReward: 500,
     });
-
-    await appSettings.save();
   }
 
   const app = new Koa();
@@ -42,21 +37,21 @@ const main = async () => {
   registerAdminRoutes(router);
 
   router.get("/app-settings", async (ctx) => {
-    const settings = await getAppSettings();
-    ctx.body = { ...settings.toObject() };
+    const settings = await getAppSettingsWithBusinesses();
+    ctx.body = { ...settings };
     return;
   });
 
   router.post("/wallet-address", async (ctx) => {
-    const { walletAddress, userTgId } = ctx.request.body as { walletAddress: string, userTgId: string};
-    const user = await User.findOne({ tgId: userTgId });
+    const { walletAddress, userTgId } = ctx.request.body as { walletAddress: string, userTgId: number};
+    const user = await findUserByTgId(userTgId);
 
     if (!user) {
       return;
     }
 
     user.connectedWallet = walletAddress;
-    await user.save();
+    await updateUserByTgId(userTgId, user);
     ctx.body = "ok";
   });
 
@@ -98,7 +93,6 @@ const main = async () => {
   runEnergyRecover();
   runBusinesses();
   runCombos();
-  cleanUpUserBusinesses();
   cleanUpUsersDuplicate();
 
   const port = 3001;
@@ -113,12 +107,12 @@ try {
 }
 async function ensureAppSettings() {
   try {
-    const appSettings = await AppSettings.findOne({});
+    const appSettings = (await getAllAppSettings())[0];
     if (appSettings) {
       return appSettings;
     }
 
-    const newAppSettings = new AppSettings({
+    const newAppSettings = await createAppSettings({
       energyPerSecond: 1,
       rewardPerClick: 1,
       fullEnergyBoostPerDay: 1,
@@ -134,7 +128,6 @@ async function ensureAppSettings() {
       lastComboUpdateTimestamp: 0,
     });
 
-    await newAppSettings.save();
     return newAppSettings;
   } catch (error) {
     console.error("Error ensuring app settings:", error);
@@ -142,36 +135,9 @@ async function ensureAppSettings() {
   }
 }
 
-async function cleanUpUserBusinesses() {
-  try {
-    const users = await User.find({
-      businesses: { $exists: true, $not: { $size: 0 } },
-    });
-
-    const validBusinesses = await Business.find({}, { _id: 1 });
-    const validBusinessIds = new Set(
-      validBusinesses.map((business: { _id: string }) => business._id.toString())
-    );
-
-    for (const user of users) {
-      const filteredBusinesses = user.businesses.filter((businessId: string) =>
-        validBusinessIds.has(businessId.toString())
-      );
-
-      if (filteredBusinesses.length !== user.businesses.length) {
-        user.businesses = filteredBusinesses;
-        await user.save();
-        console.log(`Updated user ${user.tgId} - cleaned up businesses.`);
-      }
-    }
-  } catch (error) {
-    console.error("Error cleaning up user businesses:", error);
-  }
-}
-
 async function cleanUpUsersDuplicate() {
   try {
-    const users = await User.find({});
+    const users = await findAllUsers();
     
     const userMap = new Map();
 
@@ -191,7 +157,7 @@ async function cleanUpUsersDuplicate() {
 
     for (const user of users) {
       if (!uniqueUsers.includes(user)) {
-        await User.deleteOne({ _id: user._id });
+        await deleteUserByTgId(user.tgId);
         console.log(`Deleted duplicate user ${user.tgId}`);
       }
     }
@@ -199,3 +165,7 @@ async function cleanUpUsersDuplicate() {
     console.error("Error cleaning up users duplicate:", error);
   }
 }
+
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'))
+process.once('SIGTERM', () => bot.stop('SIGTERM'))

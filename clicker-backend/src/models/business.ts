@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BusinessUpgrade } from "./businessUpgrade";
 
 @Entity()
 export class Business {
@@ -28,4 +29,7 @@ export class Business {
 
   @Column()
   category: string
+
+  @OneToMany(() => BusinessUpgrade, upgrade => upgrade.business)
+  upgrades: BusinessUpgrade[];
 }

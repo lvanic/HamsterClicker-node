@@ -1,14 +1,19 @@
-import { Task, User, AppSettings, League, Business } from "./models";
 import { DefaultState, DefaultContext } from "koa";
 import Router from "@koa/router";
 import { sendForAllUsers } from "./services/botService";
+import { appDataSource } from "./core/database";
+import { AppSettings } from "./models/appSettings";
+import { User } from "./models/user";
+import { Task } from "./models/task";
+import { League } from "./models/league";
+import { Business } from "./models/business";
 
-export const getAppSettings = async () => {
-  const appSettings = await AppSettings.find({}).populate("comboBusinesses");
+export const getAppSettings = async (): Promise<AppSettings> => {
+  const appSettings = await appDataSource.getRepository(AppSettings).find({ relations: ["comboBusinesses"] });
 
   if (!appSettings.length || appSettings.length === 0) {
     console.error("[FATAL] App settings not found");
-    return {};
+    throw new Error("");
   }
 
   return appSettings[0];
@@ -18,8 +23,8 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
   router.get("/admin/settings", async (ctx: { body: any; }) => {
     const settings = await getAppSettings();
     ctx.body = {
-      ...settings.toObject(),
-      comboBusinesses: settings.comboBusinesses.map((b: { toObject: () => any; }) => b.toObject()),
+      ...settings,
+      comboBusinesses: settings.comboBusinesses,
     };
   });
 
@@ -27,7 +32,7 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
     let settings = await getAppSettings();
     const newSettings = ctx.request.body;
 
-    settings.set(newSettings);
+    Object.assign(settings, newSettings);
 
     // .energyPerSecond = newSettings.energyPerSecond;
     // settings.rewardPerClick = newSettings.rewardPerClick;
@@ -35,17 +40,20 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
     // settings.dailyReward = newSettings.dailyReward;
     // settings.referralReward = newSettings.referralReward;
 
-    await settings.save();
+    await appDataSource.getRepository(AppSettings).save(settings);
     ctx.body = settings;
   });
 
   router.get("/admin/users", async (ctx: { query: { take: any; skip: any; balanceSort: any; }; body: { data: any; skip: any; take: any; total: any; }; }) => {
     const { take, skip, balanceSort } = ctx.query;
-    const users = await User.find()
-      .sort({ balance: balanceSort === "desc" ? -1 : 1 })
+    const users = await appDataSource.getRepository(User)
+      .createQueryBuilder("user")
+      .orderBy("user.balance", balanceSort === "desc" ? "DESC" : "ASC")
       .skip(skip)
-      .limit(take);
-    const usersCount = await User.countDocuments({});
+      .take(take)
+      .getMany();
+
+    const usersCount = await appDataSource.getRepository(User).count();
 
     ctx.body = {
       data: users,
@@ -56,7 +64,7 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
   });
 
   router.get("/admin/users/:id", async (ctx: { params: { id: any; }; body: any; }) => {
-    const user = await User.findById(ctx.params.id);
+    const user = await appDataSource.getRepository(User).findOne(ctx.params.id);
     ctx.body = user;
   });
 
@@ -70,7 +78,7 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
       query = { active: false };
     }
 
-    const tasks = await Task.find(query);
+    const tasks = await appDataSource.getRepository(Task).find({ where: query });
     ctx.body = tasks.map((task: { id: any; name: any; description: any; type: any; rewardAmount: any; avatarUrl: any; active: any; }) => ({
       id: task.id,
       name: task.name,
@@ -83,22 +91,21 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
   });
 
   router.post("/admin/tasks/:id/deactivate", async (ctx: { params: { id: any; }; body: any; }) => {
-    const task = await Task.findById(ctx.params.id);
+    const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
     task.active = false;
-    await task.save();
+    await appDataSource.getRepository(Task).save(task);
     ctx.body = task;
   });
 
   router.post("/admin/tasks/:id/activate", async (ctx: { params: { id: any; }; body: any; }) => {
-    const task = await Task.findById(ctx.params.id);
+    const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
     task.active = true;
-    await task.save();
+    await appDataSource.getRepository(Task).save(task);
     ctx.body = task;
   });
 
   router.post("/admin/tasks", async (ctx: { request: { body: { name: any; type: any; activateUrl: any; description: any; rewardAmount: any; avatarUrl: any; }; }; body: any; }) => {
-    console.log(ctx.request);
-    const task = Task.create({
+    const task = await appDataSource.getRepository(Task).create({
       name: ctx.request.body.name,
       type: ctx.request.body.type,
       activateUrl: ctx.request.body.activateUrl,
@@ -108,16 +115,18 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
       active: true,
     });
 
+    await appDataSource.getRepository(Task).save(task);
+
     ctx.body = task;
   });
 
   router.get("/admin/tasks/:id", async (ctx: { params: { id: any; }; body: any; }) => {
-    const task = await Task.findById(ctx.params.id);
+    const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
     ctx.body = task;
   });
 
   router.put("/admin/tasks/:id", async (ctx: { params: { id: any; }; request: { body: { name: any; description: any; avatarUrl: any; type: any; activateUrl: any; rewardAmount: any; }; }; body: any; }) => {
-    const task = await Task.findById(ctx.params.id);
+    const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
     task.name = ctx.request.body.name;
     task.description = ctx.request.body.description;
     task.avatarUrl = ctx.request.body.avatarUrl;
@@ -125,14 +134,14 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
     task.activateUrl = ctx.request.body.activateUrl;
     task.rewardAmount = ctx.request.body.rewardAmount;
 
-    await task.save();
+    await appDataSource.getRepository(Task).save(task);
 
     ctx.body = task;
   });
 
   router.get("/admin/leagues", async (ctx: { body: any; }) => {
-    const leagues = await League.find({});
-    ctx.body = leagues.map((l: { _id: any; toObject: () => any; }) => ({ id: l._id, ...l.toObject() }));
+    const leagues = await appDataSource.getRepository(League).find();
+    ctx.body = leagues;
   });
 
   router.post("/admin/leagues", async (ctx: { request: { body: { minScore: number; maxScore: number; name: any; description: any; avatarUrl: any; }; }; status: number; body: string; }) => {
@@ -142,7 +151,7 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
       return;
     }
 
-    const league = await League.create({
+    const league = await appDataSource.getRepository(League).create({
       name: ctx.request.body.name,
       description: ctx.request.body.description,
       avatarUrl: ctx.request.body.avatarUrl,
@@ -150,47 +159,50 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
       maxScore: ctx.request.body.maxScore,
     });
 
-    ctx.body = league;
+    await appDataSource.getRepository(League).save(league);
+
+    ctx.body = JSON.stringify(league);
   });
 
   router.delete("/admin/leagues/:id", async (ctx: { params: { id: any; }; }) => {
-    const league = await League.findById(ctx.params.id);
-    await league.remove();
+    const league = await appDataSource.getRepository(League).findOneOrFail(ctx.params.id);
+    await appDataSource.getRepository(League).remove(league);
   });
 
   router.get("/admin/leagues/:id", async (ctx: { params: { id: any; }; body: any; }) => {
-    const league = await League.findById(ctx.params.id);
+    const league = await appDataSource.getRepository(League).findOneOrFail(ctx.params.id);
     ctx.body = league;
   });
 
   router.put("/admin/leagues/:id", async (ctx: { params: { id: any; }; request: { body: { name: any; description: any; avatarUrl: any; minScore: any; maxScore: any; }; }; body: any; }) => {
-    const league = await League.findById(ctx.params.id);
+    const league = await appDataSource.getRepository(League).findOneOrFail(ctx.params.id);
     league.name = ctx.request.body.name;
     league.description = ctx.request.body.description;
     league.avatarUrl = ctx.request.body.avatarUrl;
     league.minScore = ctx.request.body.minScore;
     league.maxScore = ctx.request.body.maxScore;
 
-    await league.save();
+    await appDataSource.getRepository(League).save(league);
 
     ctx.body = league;
   });
 
   router.get("/admin/businesses", async (ctx: { body: any; }) => {
-    const businesses = await Business.find({ isDeleted: false });
-    ctx.body = businesses.map((business: { id: any; toObject: () => any; }) => ({
-      id: business.id,
-      ...business.toObject(),
-    }));
+    const businesses = await appDataSource.getRepository(Business).find({
+      where: {
+        isDeleted: false
+      }
+    });
+    ctx.body = businesses;
   });
 
   router.get("/admin/businesses/:id", async (ctx: { params: { id: any; }; body: any; }) => {
-    const business = await Business.findById(ctx.params.id);
+    const business = await appDataSource.getRepository(Business).findOneOrFail(ctx.params.id);
     ctx.body = business;
   });
 
   router.post("/admin/businesses", async (ctx: { request: { body: { name: any; description: any; avatarUrl: any; rewardPerHour: any; refsToUnlock: any; price: any; category: any; }; }; body: any; }) => {
-    const business = await Business.create({
+    const business = await appDataSource.getRepository(Business).create({
       name: ctx.request.body.name,
       description: ctx.request.body.description,
       avatarUrl: ctx.request.body.avatarUrl,
@@ -203,17 +215,19 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
       isDeleted: false,
     });
 
+    await appDataSource.getRepository(Business).save(business);
+
     ctx.body = business;
   });
 
   router.delete("/admin/businesses/:id", async (ctx: { params: { id: any; }; }) => {
-    const business = await Business.findById(ctx.params.id);
+    const business = await appDataSource.getRepository(Business).findOneOrFail(ctx.params.id);
     business.isDeleted = true;
-    await business.save();
+    await appDataSource.getRepository(Business).save(business);
   });
 
   router.put("/admin/businesses/:id", async (ctx: { params: { id: any; }; request: { body: { name: any; description: any; avatarUrl: any; rewardPerHour: any; refsToUnlock: any; price: any; category: any; }; }; body: any; }) => {
-    const business = await Business.findById(ctx.params.id);
+    const business = await appDataSource.getRepository(Business).findOneOrFail(ctx.params.id);
     business.name = ctx.request.body.name;
     business.description = ctx.request.body.description;
     business.avatarUrl = ctx.request.body.avatarUrl;
@@ -222,29 +236,28 @@ export const registerAdminRoutes = (router: Router<DefaultState, DefaultContext>
     business.price = ctx.request.body.price;
     business.category = ctx.request.body.category;
 
-    await business.save();
+    await appDataSource.getRepository(Business).save(business);
 
     ctx.body = business;
   });
 
   router.get("/admin/reset-users", async (ctx: { body: string; }) => {
-    await User.updateMany(
-      {},
-      {
-        $set: {
-          addedFromBusinesses: 0,
-          balance: 0,
-          score: 0,
-          energy: 1000,
-          clickPower: 1,
-          energyLevel: 1,
-          currentComboCompletions: [],
-          completedTasks: [],
-          businesses: [],
-          businessUpgrades: [],
-        },
-      }
-    );
+    await appDataSource.getRepository(User)
+      .createQueryBuilder()
+      .update()
+      .set({
+        addedFromBusinesses: 0,
+        balance: 0,
+        score: 0,
+        energy: 1000,
+        clickPower: 1,
+        energyLevel: 1,
+        currentComboCompletions: [],
+        completedTasks: [],
+        businesses: [],
+        businessUpgrades: [],
+      })
+      .execute();
     ctx.body = "Users reset";
     return;
   });
