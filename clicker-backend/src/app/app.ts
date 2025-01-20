@@ -1,16 +1,16 @@
 import Koa from "koa";
 import Router from "@koa/router";
-import { registerAdminRoutes } from "../admin";
 import { getAppSettingsWithBusinesses } from "../services/appSettingsService";
 import { findUserByTgId, updateUserByTgId } from "../services/userService";
 import bodyParser from "koa-bodyparser";
 import cors from "@koa/cors";
 import { config } from "../core/config";
+import adminRoutes from "./routes/adminRoutes";
 
 export const app = new Koa();
 const router = new Router();
 
-registerAdminRoutes(router);
+router.use(adminRoutes.routes());
 
 router.get("/app-settings", async (ctx) => {
   const settings = await getAppSettingsWithBusinesses();

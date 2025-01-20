@@ -2,7 +2,6 @@ import { Socket } from "socket.io";
 import { appDataSource } from "../core/database";
 import { Business } from "../models/business";
 import { User } from "../models/user";
-import { getAppSettings } from "../admin";
 import { getAppSettingsWithBusinesses } from "./appSettingsService";
 import { findFullUserInfoByTgId, updateUserByTgId } from "./userService";
 

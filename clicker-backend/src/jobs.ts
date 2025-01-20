@@ -1,8 +1,8 @@
-import { getAppSettings } from "./admin";
 import { appDataSource } from "./core/database";
 import { AppSettings } from "./models/appSettings";
 import { Business } from "./models/business";
 import { User } from "./models/user";
+import { getAppSettings } from "./services/appSettingsService";
 
 const ENERGY_UPDATE_INTERVAL_IN_SECOND = 1;
 const COMBO_UPDATE_IN_SECOND = 60 * 60;
