@@ -1,14 +1,15 @@
-import { getLang } from "./getLang";
-import { config } from "./core/config";
 import { Socket } from "socket.io";
-import { User } from "./models/user";
-import { appDataSource } from "./core/database";
-import { Task } from "./models/task";
-import { Business } from "./models/business";;
-import { League } from "./models/league";
-import { Between, In, MoreThan } from "typeorm";
-import { getAppSettingsWithBusinesses } from "./services/appSettingsService";
+import { Between, MoreThan, In } from "typeorm";
+import { appDataSource } from "../../core/database";
+import { getLang } from "../../getLang";
+import { Business } from "../../models/business";
+import { League } from "../../models/league";
+import { Task } from "../../models/task";
+import { User } from "../../models/user";
+import { getAppSettingsWithBusinesses } from "../../services/appSettingsService";
+import { config } from "../../core/config";
 
+// TODO: get rid from the buffer
 export let buffer: Record<string, number> = {};
 
 export const initSocketsLogic = (io: Socket) => ({
@@ -672,33 +673,9 @@ export const initSocketsLogic = (io: Socket) => ({
     } catch (e) {
       console.error(e);
     }
-  }
-});
+  },
 
-export const handleSocketConnection = async (socket: Socket) => {
-  registerEvents(socket);
-
-  const userId = socket.handshake.query.user_id;
-  (socket as unknown as { userId: string }).userId = userId as string;
-};
-
-export const registerEvents = (io: Socket) => {
-  const socketsLogic = initSocketsLogic(io);
-
-  io.on("clickEvent", socketsLogic.clickEvent);
-  io.on("checkTaskStatus", socketsLogic.checkTaskStatus);
-  io.on("getUser", socketsLogic.getUser);
-  io.on("getLeagueInfo", socketsLogic.getLeagueInfo);
-  io.on("getBusinessesToBuy", socketsLogic.getBusinessesToBuy);
-  io.on("buyBusiness", socketsLogic.buyBusiness);
-  io.on("getTasks", socketsLogic.getTasks);
-  io.on("activateBoost", socketsLogic.activateBoost);
-  io.on("upgradeClick", socketsLogic.upgradeClick);
-  io.on("upgradeBusiness", socketsLogic.upgradeBusiness);
-  io.on("upgradeEnergy", socketsLogic.upgradeEnergy);
-  io.on("userLeague", socketsLogic.userLeague);
-
-  io.on("disconnect", async () => {
+  disconnect: async () => {
     const tgUserId = Number((io as unknown as { userId: string }).userId);
     const user = await appDataSource.getRepository(User).findOneOrFail({ where: { tgId: tgUserId } });
 
@@ -759,5 +736,5 @@ export const registerEvents = (io: Socket) => {
         console.error("Ошибка обновления времени последнего подключения:", error);
       }
     }
-  });
-};
+  }
+});

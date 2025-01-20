@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
-import { config } from "./core/config";
-import { createUser, findUserByTgId, updateUserByTgId } from "./services/userService";
-import { getAppSettingsWithBusinesses } from "./services/appSettingsService";
+import { config } from "../core/config";
+import { createUser, findUserByTgId, updateUserByTgId } from "../services/userService";
+import { getAppSettingsWithBusinesses } from "../services/appSettingsService";
 
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 

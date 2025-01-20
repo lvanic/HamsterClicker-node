@@ -1,4 +1,4 @@
-import { bot } from "../bot";
+import { bot } from "../bot/bot";
 import { findAllUsers } from "./userService";
 
 export const sendForAllUsers = async (message: string) => {

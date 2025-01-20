@@ -1,4 +1,4 @@
-import { initSocketsLogic } from '../src/sockets.js';
+import { initSocketsLogic } from '../src/socket/socket.js';
 import { mongoose } from "mongoose";
 import dotenv from "dotenv";
 
