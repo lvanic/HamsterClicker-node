@@ -11,7 +11,7 @@ import bodyParser from "koa-bodyparser";
 import { config } from "./core/config";
 import { bot } from "./bot";
 import { getAppSettingsWithBusinesses, initializeAppSettingsIfNotExists } from "./services/appSettingsService";
-import { deleteUserByTgId, findAllUsers, findUserByTgId, updateUserByTgId } from "./services/userService";
+import { findUserByTgId, updateUserByTgId } from "./services/userService";
 import { initializeDatabase } from "./core/database";
 
 const main = async () => {
@@ -85,7 +85,6 @@ const main = async () => {
   runEnergyRecover();
   runBusinesses();
   runCombos();
-  cleanUpUsersDuplicate();
 
   const port = 3001;
   server.listen(port, () => {
@@ -96,37 +95,6 @@ try {
   main();
 } catch (e) {
   console.log(e);
-}
-
-async function cleanUpUsersDuplicate() {
-  try {
-    const users = await findAllUsers();
-    
-    const userMap = new Map();
-
-    for (const user of users) {
-      if (userMap.has(user.tgId)) {
-        const existingUser = userMap.get(user.tgId);
-        
-        if (user.lastOnlineTimeStamp > existingUser.lastOnlineTimeStamp) {
-          userMap.set(user.tgId, user);
-        }
-      } else {
-        userMap.set(user.tgId, user);
-      }
-    }
-
-    const uniqueUsers = Array.from(userMap.values());
-
-    for (const user of users) {
-      if (!uniqueUsers.includes(user)) {
-        await deleteUserByTgId(user.tgId);
-        console.log(`Deleted duplicate user ${user.tgId}`);
-      }
-    }
-  } catch (error) {
-    console.error("Error cleaning up users duplicate:", error);
-  }
 }
 
 // Enable graceful stop
