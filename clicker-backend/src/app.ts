@@ -6,7 +6,7 @@ import "reflect-metadata";
 import { Server } from "socket.io";
 import { registerAdminRoutes } from "./admin";
 import { handleSocketConnection } from "./sockets";
-import { runEnergyRecover, runBusinesses, runCombos } from "./jobs";
+import { runCombos } from "./jobs";
 import bodyParser from "koa-bodyparser";
 import { config } from "./core/config";
 import { bot } from "./bot";
@@ -82,8 +82,6 @@ const main = async () => {
 
   socketServer.on("connection", handleSocketConnection);
 
-  runEnergyRecover();
-  runBusinesses();
   runCombos();
 
   const port = 3001;
