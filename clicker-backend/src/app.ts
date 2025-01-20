@@ -10,8 +10,9 @@ import { runEnergyRecover, runBusinesses, runCombos } from "./jobs";
 import bodyParser from "koa-bodyparser";
 import { config } from "./core/config";
 import { bot } from "./bot";
-import { createAppSettings, getAllAppSettings, getAppSettingsWithBusinesses } from "./services/appSettingsService";
+import { getAppSettingsWithBusinesses, initializeAppSettingsIfNotExists } from "./services/appSettingsService";
 import { deleteUserByTgId, findAllUsers, findUserByTgId, updateUserByTgId } from "./services/userService";
+import { initializeDatabase } from "./core/database";
 
 const main = async () => {
   const processError = (e: Error) => {
@@ -21,16 +22,8 @@ const main = async () => {
   process.on("uncaughtException", processError);
   process.on("unhandledRejection", processError);
 
-  const appSettings = await getAllAppSettings();
-  if (!appSettings.length || appSettings.length === 0) {
-    await createAppSettings({
-      energyPerSecond: 0.2,
-      rewardPerClick: 1,
-      fullEnergyBoostPerDay: 3,
-      dailyReward: 50,
-      referralReward: 500,
-    });
-  }
+  await initializeDatabase();
+  await initializeAppSettingsIfNotExists();
 
   const app = new Koa();
   const router = new Router();
@@ -89,7 +82,6 @@ const main = async () => {
 
   socketServer.on("connection", handleSocketConnection);
 
-  ensureAppSettings();
   runEnergyRecover();
   runBusinesses();
   runCombos();
@@ -104,35 +96,6 @@ try {
   main();
 } catch (e) {
   console.log(e);
-}
-async function ensureAppSettings() {
-  try {
-    const appSettings = (await getAllAppSettings())[0];
-    if (appSettings) {
-      return appSettings;
-    }
-
-    const newAppSettings = await createAppSettings({
-      energyPerSecond: 1,
-      rewardPerClick: 1,
-      fullEnergyBoostPerDay: 1,
-      dailyReward: 1,
-      referralReward: 1,
-      maxClickLevel: 1,
-      startClickUpgradeCost: 1,
-      premiumReferralReward: 1,
-      maxEnergyLevel: 1,
-      startEnergyUpgradeCost: 1,
-      comboReward: 1,
-      comboUpdateDayHour: 0,
-      lastComboUpdateTimestamp: 0,
-    });
-
-    return newAppSettings;
-  } catch (error) {
-    console.error("Error ensuring app settings:", error);
-    throw error;
-  }
 }
 
 async function cleanUpUsersDuplicate() {

@@ -1,11 +1,12 @@
 import { DeepPartial } from "typeorm";
-import { appDataSource } from "../core/database"
+import { appDataSource } from "../core/database";
 import { AppSettings } from "../models/appSettings";
+import { DEFAULT_APP_SETTINGS } from "../core/constants";
 
 const appSettingsRepository = appDataSource.getRepository(AppSettings);
 
-export const getAllAppSettings = async (): Promise<AppSettings[]> => {
-  const appSettings = appSettingsRepository.find();
+export const getAppSettings = (): Promise<AppSettings> => {
+  const appSettings = appSettingsRepository.findOneOrFail({});
 
   return appSettings;
 };
@@ -13,15 +14,29 @@ export const getAllAppSettings = async (): Promise<AppSettings[]> => {
 export const getAppSettingsWithBusinesses = async (): Promise<AppSettings> => {
   const appSettings = await appSettingsRepository.findOneOrFail({
     relations: {
-      comboBusinesses: true
-    }
+      comboBusinesses: true,
+    },
   });
 
   return appSettings;
 };
 
-export const createAppSettings = async (appSettingsData: DeepPartial<AppSettings>): Promise<AppSettings> => {
-  const user = appSettingsRepository.create(appSettingsData);
+// TODO: add validation
+export const createAppSettings = (appSettingsData: DeepPartial<AppSettings>): Promise<AppSettings> => {
+  const appSettings = appSettingsRepository.create(appSettingsData);
 
-  return appSettingsRepository.save(user);
+  return appSettingsRepository.save(appSettings);
+};
+
+// TODO: logging
+export const initializeAppSettingsIfNotExists = async (): Promise<void> => {
+  try {
+    const isAppSettingsExists = await appSettingsRepository.exists({});
+
+    if (!isAppSettingsExists) {
+      await appSettingsRepository.save(DEFAULT_APP_SETTINGS);
+    }
+  } catch (error) {
+    throw error;
+  }
 };
