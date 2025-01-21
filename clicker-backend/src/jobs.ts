@@ -12,8 +12,9 @@ const updateCombos = async () => {
     const appSettings = await getAppSettings();
 
     const currentHours = new Date().getHours();
+    
     if (
-      appSettings.comboBusinesses.length !== 0 &&
+      appSettings.comboBusinesses == undefined &&
       appSettings.lastComboUpdateTimestamp + 1000 * 60 * 60 * 24 > new Date().getTime() &&
       currentHours >= appSettings.comboUpdateDayHour
     ) {
@@ -60,8 +61,8 @@ const updateCombos = async () => {
         currentComboCompletions: [],
       })
       .execute();
-  } catch {
-    console.log("error update combo");
+  } catch(e) {
+    console.log("error update combo", e);
   }
 };
 

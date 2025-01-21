@@ -87,7 +87,7 @@ export const AdminUsers = () => {
       </div>
 
       <div className="flex flex-col space-y-2 overflow-scroll max-h-[70vh]">
-        {users.map((user, index) => (
+        {users?.map((user, index) => (
           <div
             className="flex flex-row items-center bg-white py-2 px-4 shadow rounded"
             key={user.tgId}
@@ -105,7 +105,7 @@ export const AdminUsers = () => {
 
             <div className="flex flex-col justify-items-start w-1/5">
               <div className="text-xs">balance: {user.balance}</div>
-              <div className="text-xs">refs: {user.referrals.length}</div>
+              <div className="text-xs">refs: {user?.referrals?.length}</div>
             </div>
 
             {user.connectedWallet && (

@@ -121,8 +121,8 @@ export const initSocketsLogic = (io: Socket) => ({
           });
 
           break;
-        } catch {
-          console.log("Retry");
+        } catch(e) {
+          console.log("Error get user", e);
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
