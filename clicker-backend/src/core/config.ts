@@ -7,7 +7,6 @@ dotenv.config();
 const configSchema = z.object({
   TG_BOT_TOKEN: z.string(),
   ADMIN_TOKEN: z.string(),
-  MONGO_DB: z.string(),
   DB_PATH: z.string().default("db.sqlite"),
 });
 

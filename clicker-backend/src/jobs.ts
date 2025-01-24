@@ -1,10 +1,9 @@
 import { appDataSource } from "./core/database";
 import { AppSettings } from "./models/appSettings";
-import { Business } from "./models/business";
 import { User } from "./models/user";
 import { getAppSettings } from "./services/appSettingsService";
+import { getNotDeletedBusinesses } from "./services/businessService";
 
-const ENERGY_UPDATE_INTERVAL_IN_SECOND = 1;
 const COMBO_UPDATE_IN_SECOND = 60 * 60;
 
 const updateCombos = async () => {
@@ -21,11 +20,7 @@ const updateCombos = async () => {
       return;
     }
 
-    const businesses = await appDataSource.getRepository(Business).find({
-      where: {
-        isDeleted: false,
-      },
-    });
+    const businesses = await getNotDeletedBusinesses();
 
     if (businesses.length < 3) {
       return;

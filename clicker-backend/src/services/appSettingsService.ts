@@ -6,10 +6,9 @@ import { DEFAULT_APP_SETTINGS } from "../core/constants";
 const appSettingsRepository = appDataSource.getRepository(AppSettings);
 
 export const getAppSettings = async(): Promise<AppSettings> => {
-  const appSettings = await appSettingsRepository.find({ take: 1 });
-  const firstAppSetting = appSettings[0]; // Get the first item
+  const appSettings = await appSettingsRepository.findOneByOrFail({});
   
-  return firstAppSetting;
+  return appSettings;
 };
 
 export const getAppSettingsWithBusinesses = async (): Promise<AppSettings> => {

@@ -7,13 +7,11 @@ import { sendForAllUsers } from "../../services/botService";
 import { Task } from "../../models/task";
 import { League } from "../../models/league";
 import { Business } from "../../models/business";
+import { findUserByTgId } from "../../services/userService";
 
 export const getAppSettings = async (ctx: Context) => {
   const settings = await AppSettingsService.getAppSettings();
-  ctx.body = {
-    ...settings,
-    comboBusinesses: settings.comboBusinesses,
-  };
+  ctx.body = settings;
 };
 
 export const updateAppSettings = async (ctx: Context) => {
@@ -50,7 +48,7 @@ export const getUsers = async (ctx: {
 };
 
 export const getUserById = async (ctx: Context) => {
-  const user = await appDataSource.getRepository(User).findOne(ctx.params.id);
+  const user = await findUserByTgId(ctx.params.id);
   ctx.body = user;
 };
 
@@ -178,7 +176,12 @@ export const updateLeague = async (ctx: {
   request: { body: { name: any; description: any; avatarUrl: any; minScore: any; maxScore: any } };
   body: any;
 }) => {
-  const league = await appDataSource.getRepository(League).findOneOrFail(ctx.params.id);
+  console.log(ctx.params.id);
+  const league = await appDataSource.getRepository(League).findOneOrFail({
+    where: {
+      id: ctx.params.id
+    }
+  });
   league.name = ctx.request.body.name;
   league.description = ctx.request.body.description;
   league.avatarUrl = ctx.request.body.avatarUrl;
