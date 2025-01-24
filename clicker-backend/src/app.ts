@@ -11,6 +11,8 @@ import { initializeAppSettingsIfNotExists } from "./services/appSettingsService"
 const main = async () => {
   await initializeDatabase();
   await initializeAppSettingsIfNotExists();
+  
+  bot.launch();
 
   const server = http.createServer(app.callback());
   const socketServer = new Server(server, {

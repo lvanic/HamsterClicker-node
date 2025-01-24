@@ -88,7 +88,7 @@ export const AdminSettings = () => {
         <h2 className="text-white">Current combos:</h2>
 
         <div className="flex space-x-2">
-          {comboBusinesses.map((business: any) => (
+          {comboBusinesses?.map((business: any) => (
             <div className="bg-slate-50 px-2 py-1 rounded-md flex justify-center items-center">
               <img src={business.avatarUrl} className="w-6 h-6" />
               <div className="text-xs ml-2">{business.name}</div>

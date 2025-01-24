@@ -1,8 +1,9 @@
 import { Min } from "class-validator";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, Tree, TreeChildren, TreeParent } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, Tree, TreeChildren, TreeParent } from "typeorm";
 import { Business } from "./business";
 import { Task } from "./task";
 import { BusinessUpgrade } from "./businessUpgrade";
+import { League } from "./league";
 
 @Entity()
 @Tree("closure-table")
@@ -23,7 +24,7 @@ export class User {
   @Min(0)
   addedFromBusinesses: number
 
-  @Column()
+  @Column({nullable: true})
   @Min(0)
   addedEnergy: number
 
@@ -37,16 +38,16 @@ export class User {
   @Column()
   energy: number
 
-  @Column()
+  @Column({nullable: true})
   connectedWallet: string
 
-  @Column()
+  @Column({nullable: true})
   lastDailyRewardTimestamp: number
 
-  @Column()
+  @Column({nullable: true})
   lastFullEnergyTimestamp: number
 
-  @Column()
+  @Column({nullable: true})
   fullEnergyActivates: number
 
   @Column()
@@ -78,4 +79,7 @@ export class User {
 
   @OneToMany(() => BusinessUpgrade, upgrade => upgrade.user)
   businessUpgrades: BusinessUpgrade[]
+
+  @ManyToOne(() => League, { nullable: true })
+  league: League;
 }
