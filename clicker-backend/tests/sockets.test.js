@@ -1,11 +1,9 @@
 import { initSocketsLogic } from '../src/socket/socket.js';
-import { mongoose } from "mongoose";
 import dotenv from "dotenv";
 
 beforeAll(async () => {
     dotenv.config();
     let config = process.env;
-    await mongoose.connect(config.MONGO_DB);
 });
 
 test('getUserInfo returns valid user info', async () => {
