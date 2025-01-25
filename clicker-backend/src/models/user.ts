@@ -1,85 +1,111 @@
 import { Min } from "class-validator";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, Tree, TreeChildren, TreeParent } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Business } from "./business";
 import { Task } from "./task";
 import { BusinessUpgrade } from "./businessUpgrade";
 import { League } from "./league";
 
 @Entity()
-@Tree("closure-table")
 export class User {
   @PrimaryColumn()
-  tgId: number
-
-  @Column()
-  tgUsername: string
-
-  @Column()
-  firstName: string
+  tgId: number;
 
   @Column({ nullable: true })
-  lastName: string
+  tgUsername: string;
+
+  @Column()
+  firstName: string;
+
+  @Column({ nullable: true })
+  lastName: string;
 
   @Column()
   @Min(0)
-  addedFromBusinesses: number
+  addedFromBusinesses: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   @Min(0)
-  addedEnergy: number
+  addedEnergy: number;
 
   @Column()
-  balance: number
+  balance: number;
 
   @Column()
   @Min(0)
-  score: number
+  score: number;
 
   @Column()
-  energy: number
+  energy: number;
 
-  @Column({nullable: true})
-  connectedWallet: string
+  @Column({ nullable: true })
+  connectedWallet: string;
 
-  @Column({nullable: true})
-  lastDailyRewardTimestamp: number
+  @Column({ nullable: true })
+  lastDailyRewardTimestamp: number;
 
-  @Column({nullable: true})
-  lastFullEnergyTimestamp: number
+  @Column({ nullable: true })
+  lastFullEnergyTimestamp: number;
 
-  @Column({nullable: true})
-  fullEnergyActivates: number
-
-  @Column()
-  clickPower: number
+  @Column({ nullable: true })
+  fullEnergyActivates: number;
 
   @Column()
-  energyLevel: number
+  clickPower: number;
 
   @Column()
-  lastOnlineTimeStamp: number
+  energyLevel: number;
+
+  @Column()
+  lastOnlineTimeStamp: number;
 
   @ManyToMany(() => Business)
   @JoinTable()
-  currentComboCompletions: Business[]
+  currentComboCompletions: Business[];
 
-  @TreeChildren()
-  referrals: User[]
+  @OneToMany(() => User, (user) => user.parent)
+  referrals: User[];
 
   @ManyToMany(() => Task)
   @JoinTable()
-  completedTasks: Task[]
+  completedTasks: Task[];
 
   @ManyToMany(() => Business)
   @JoinTable()
-  businesses: Business[]
+  businesses: Business[];
 
-  @TreeParent()
-  parent: User
+  @ManyToOne(() => User, (user) => user.referrals, { nullable: true })
+  parent: User;
 
-  @OneToMany(() => BusinessUpgrade, upgrade => upgrade.user)
-  businessUpgrades: BusinessUpgrade[]
+  @OneToMany(() => BusinessUpgrade, (upgrade) => upgrade.user)
+  businessUpgrades: BusinessUpgrade[];
 
   @ManyToOne(() => League, { nullable: true })
   league: League;
+
+  @Column({ default: 1 })
+  level: number;
+}
+
+@Entity()
+export class UserClosure {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  ancestor: User;
+
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  descendant: User;
+
+  @Column()
+  depth: number;
 }

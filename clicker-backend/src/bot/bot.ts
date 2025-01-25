@@ -2,6 +2,8 @@ import { Telegraf } from "telegraf";
 import { config } from "../core/config";
 import { createUser, findUserByTgId, updateUserByTgId } from "../services/userService";
 import { getAppSettingsWithBusinesses } from "../services/appSettingsService";
+import { appDataSource } from "../core/database";
+import { User } from "../models/user";
 
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 
@@ -17,7 +19,7 @@ bot.start(async (ctx) => {
     const isUserExist = !!(await findUserByTgId(tgUserId));
 
     if (!isUserExist) {
-      const user = await createUser({
+      const user = appDataSource.getRepository(User).create({
         tgId: tgUserId,
         tgUsername: ctx.message.from.username,
         firstName: ctx.message.from.first_name,
@@ -35,21 +37,10 @@ bot.start(async (ctx) => {
 
       if (refId) {
         const refUser = await findUserByTgId(+refId);
-        if (refUser) {
-          const appSettings = await getAppSettingsWithBusinesses();
-          refUser.referrals.push(user);
-          const isPremium = ctx.from.is_premium;
-          console.log(isPremium);
-          if (isPremium) {
-            refUser.balance += appSettings.premiumReferralReward;
-            refUser.score += appSettings.premiumReferralReward;
-          } else {
-            refUser.balance += appSettings.referralReward;
-            refUser.score += appSettings.referralReward;
-          }
-          await updateUserByTgId(refUser.tgId, refUser);
-        }
+        user.parent = refUser!;
       }
+
+      await createUser(user);
     }
   } catch (e){
     console.log("Error welcome bot", e);
