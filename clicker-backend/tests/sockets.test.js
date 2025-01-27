@@ -1,11 +1,9 @@
-import { initSocketsLogic } from '../sockets';
-import { mongoose } from "mongoose";
+import { initSocketsLogic } from '../src/socket/socket.js';
 import dotenv from "dotenv";
 
 beforeAll(async () => {
     dotenv.config();
     let config = process.env;
-    await mongoose.connect(config.MONGO_DB);
 });
 
 test('getUserInfo returns valid user info', async () => {
@@ -25,6 +23,8 @@ test('upgrade business works', async () => {
     const socketsLogic = initSocketsLogic(io);
 
     await socketsLogic.upgradeBusiness(571484499, '6697fbfbb11a70c448080b35');
+
+    expect(result.data).toBeDefined();
 });
 
 // test('upgradeClick works', async () => {

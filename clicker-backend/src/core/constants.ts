@@ -1,0 +1,18 @@
+import { AppSettings } from "../models/appSettings";
+
+export const DEFAULT_APP_SETTINGS: Omit<AppSettings, "id"> = {
+  energyPerSecond: 1,
+  rewardPerClick: 1,
+  fullEnergyBoostPerDay: 1,
+  dailyReward: 1,
+  referralReward: 1,
+  maxClickLevel: 1,
+  startClickUpgradeCost: 1,
+  premiumReferralReward: 1,
+  maxEnergyLevel: 1,
+  startEnergyUpgradeCost: 1,
+  comboReward: 1,
+  comboUpdateDayHour: 0,
+  lastComboUpdateTimestamp: 0,
+  comboBusinesses: [],
+};
