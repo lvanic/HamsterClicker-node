@@ -57,14 +57,15 @@ const Notification = ({
           <div className="text-lg text-center">{notify.message}</div>
           <div className="mt-8">
             {notify.status == "task" || notify.status == "ok" ? (
-              <SuccessSvg />
+              // <SuccessSvg /> 
+              null
             ) : null}
           </div>
           {notify.closeButton && (
             <button
               className="text-white px-6 py-2 relative top-8 rounded-lg"
               style={{
-                background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+                background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
               }}
             >
               Сompleted

@@ -45,7 +45,7 @@ export const ComboGame = () => {
             style={{ width: "60px", height: "60px" }}
           >
             <div className="text-xs">{getLocalization("combo")} #{unlockedCombos.length + index + 1}</div>
-            <svg
+            {/* <svg
               width="29"
               height="35"
               viewBox="0 0 29 35"
@@ -90,7 +90,7 @@ export const ComboGame = () => {
                   fill="#E58D08"
                 />
               </g>
-            </svg>
+            </svg> */}
           </div>
         )
       )}

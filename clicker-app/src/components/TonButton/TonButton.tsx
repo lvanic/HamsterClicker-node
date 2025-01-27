@@ -80,7 +80,7 @@ const EthereumButton = ({ className }: { className?: string }) => {
         {!walletAddress ? (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="connect-button px-4 py-2"
+            className="connect-button px-4 py-2 text-black"
           >
             {getLocalization("connectEthereumWallet")}
           </button>
@@ -120,7 +120,7 @@ const EthereumButton = ({ className }: { className?: string }) => {
                 className="px-4 py-2 rounded-lg"
                 style={{
                   background:
-                    "linear-gradient(180deg, #ff4c64 0%, #f4895d 100%)",
+                    "linear-gradient(180deg, #FFAE4C 0%, #FFCB83 100%)",
                 }}
               >
                 {getLocalization("submit")}

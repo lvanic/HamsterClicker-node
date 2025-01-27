@@ -51,9 +51,9 @@ export const BoostModal = ({
         ref={modalRef}
       >
         <div
-          className="flex h-16 w-16 items-center mt-5 justify-center bg-[#FD5C63] rounded-full p-2"
+          className="flex h-16 w-16 items-center mt-5 justify-center bg-[#FFAE4C] rounded-full p-2"
           style={{
-            boxShadow: "0px 0px 48.28px 0px #FF4C64",
+            boxShadow: "0px 0px 48.28px 0px #FFAE4C",
           }}
         >
           <Icon />
@@ -71,12 +71,12 @@ export const BoostModal = ({
           onClick={purchaseHandler}
           className="mt-4 py-2 px-6 text-sm rounded-lg flex justify-center items-center"
           style={{
-            background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+            background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
           }}
         >
           {eggIcon && (
             <div className="mr-2">
-              <MediumEggSvg />
+              {/* <MediumEggSvg /> */}
             </div>
           )}
           <div>{purchaseText}</div>

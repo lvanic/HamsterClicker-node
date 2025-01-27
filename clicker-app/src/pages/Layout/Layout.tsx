@@ -56,8 +56,8 @@ export const Layout = () => {
       <nav className="fixed bottom-0 left-0 w-full bg-[#2525258C] border-t border-gray-700 flex justify-around pt-2 pb-4 shadow-lg flex items-center justify-center">
         <Link
           to="/"
-          className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-            activeTab === "/" ? "bg-[#FD5463]" : ""
+          className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/" ? "border border-[#FFAE4C]" : ""
           }`}
         >
           <HomeSvg />
@@ -65,8 +65,8 @@ export const Layout = () => {
         </Link>
         <Link
           to="/referrals"
-          className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-            activeTab === "/referrals" ? "bg-[#FD5463]" : ""
+          className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/referrals" ? "border border-[#FFAE4C]" : ""
           }`}
         >
           <FriendSvg />
@@ -74,8 +74,8 @@ export const Layout = () => {
         </Link>
         <Link
           to="/businesses"
-          className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-            activeTab === "/businesses" ? "bg-[#FD5463]" : ""
+          className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/businesses" ? "border border-[#FFAE4C]" : ""
           }`}
         >
           <BusinessSvg />
@@ -83,8 +83,8 @@ export const Layout = () => {
         </Link>
         <Link
           to="/tasks"
-          className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-            activeTab === "/tasks" ? "bg-[#FD5463]" : ""
+          className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/tasks" ? "border border-[#FFAE4C]" : ""
           }`}
         >
           <EarnSvg />
@@ -92,8 +92,8 @@ export const Layout = () => {
         </Link>
         <Link
           to="/airdrop"
-          className={`w-16 h-14 text-white text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-            activeTab === "/airdrop" ? "bg-[#FD5463]" : ""
+          className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            activeTab === "/airdrop" ? "border border-[#FFAE4C]" : ""
           }`}
         >
           <EggSvg />

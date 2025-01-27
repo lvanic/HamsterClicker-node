@@ -86,7 +86,7 @@ export const Referrals = () => {
           ))
         ) : (
           <div className="flex flex-col justify-center items-center">
-            <div className="text-[#FD5463] text-xl">:(</div>
+            <div className="text-[#FFAE4C] text-xl">:(</div>
             <div className="text-xs mt-2">{getLocalization("noFriends")}</div>
           </div>
         )}

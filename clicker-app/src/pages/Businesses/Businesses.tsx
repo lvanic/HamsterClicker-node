@@ -87,9 +87,9 @@ export const Businesses = () => {
   return (
     <div className="p-5 pt-0 rounded-lg max-w-md mx-auto">
       <div
-        className="relative h-28 mx-5 rounded-b-xl pt-4"
+        className="relative h-28 mx-5 rounded-b-xl pt-4 text-black"
         style={{
-          background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+          background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
           left: "0px",
           top: "0px",
           width: "-webkit-fill-available",

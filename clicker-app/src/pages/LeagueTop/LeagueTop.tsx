@@ -82,7 +82,7 @@ export const LeagueTop = () => {
                   <div>{userL.firstName || "Anonimus"}</div>
                   <div> {formatNumber(userL.score)}</div>
                 </div>
-                <div className="flex text-2xl font-bold justify-center items-center bg-[#FD5463] rounded-full w-10 h-10">
+                <div className="flex text-2xl font-bold justify-center items-center bg-[#FFAE4C] rounded-full w-10 h-10">
                   {index + 1}
                 </div>
               </li>

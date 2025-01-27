@@ -13,14 +13,14 @@ export const Statistics = () => {
       <div>
         <div className="text-sm">{getLocalization("profitPerTap")}</div>
         <div className="flex flex-row justify-center items-center">
-          <EggSvg />
+          {/* <EggSvg /> */}
           <div className="ml-2 text-xl">+{user?.clickPower}</div>
         </div>
       </div>
       <div>
         <div className="text-sm">{getLocalization("profitPerHour")}</div>
         <div className="flex flex-row justify-center items-center">
-          <EggSvg />
+          {/* <EggSvg /> */}
           <div className="ml-2 text-xl">
             +{formatNumber(user?.totalIncomePerHour || 0)}
           </div>

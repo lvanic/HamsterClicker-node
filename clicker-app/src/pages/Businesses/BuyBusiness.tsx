@@ -64,7 +64,7 @@ export const BuyBusiness = ({
           }}
           className="mt-4 py-2 px-6 text-sm rounded-lg"
           style={{
-            background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+            background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
           }}
         >
           {getLocalization("buyThis")}

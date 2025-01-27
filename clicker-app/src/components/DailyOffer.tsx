@@ -60,7 +60,7 @@ export const DailyOffer = () => {
     >
       {isLoading && <div className="loader absolute top-4 left-4" />}
       <div className="text-xs">{getLocalization("dailyReward")}</div>
-      <svg
+      {/* <svg
         width="29"
         height="35"
         viewBox="0 0 29 35"
@@ -266,7 +266,7 @@ export const DailyOffer = () => {
             <stop offset="1" stop-color="#F9B122" />
           </linearGradient>
         </defs>
-      </svg>
+      </svg> */}
     </div>
   );
 };

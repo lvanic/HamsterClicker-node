@@ -55,9 +55,9 @@ export const ReferralLink = ({
         {share ? (
           <button
             onClick={handleShare}
-            className="text-white text-xs px-10 py-2 rounded-md transition duration-300"
+            className="text-black text-xs px-10 py-2 rounded-md transition duration-300"
             style={{
-              background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+              background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
             }}
           >
             {getLocalization("share")}
@@ -65,9 +65,9 @@ export const ReferralLink = ({
         ) : (
           <button
             onClick={handleCopy}
-            className="text-white text-xs px-10 py-2 rounded-md transition duration-300"
+            className="text-black text-xs px-10 py-2 rounded-md transition duration-300"
             style={{
-              background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+              background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
             }}
           >
             {getLocalization("copyLink")}

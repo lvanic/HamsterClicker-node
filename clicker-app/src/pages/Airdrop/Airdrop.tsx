@@ -9,7 +9,7 @@ export const Airdrop = () => {
       <div className="text-2xl mb-6 mt-8">
         {getLocalization("airdropAnyDay")}
       </div>
-      <BigEggSvg />
+      {/* <BigEggSvg /> */}
       <div className="text-center my-4">
         {getLocalization("completeTaskAndDrop")}
       </div>

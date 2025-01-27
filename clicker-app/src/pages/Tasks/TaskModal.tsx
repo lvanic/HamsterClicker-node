@@ -48,7 +48,7 @@ export const TaskModal = ({
           <button
             className="py-2 px-6 text-sm rounded-lg flex justify-center items-center"
             style={{
-              background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+              background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
             }}
             onClick={onOpenLink}
           >
@@ -65,7 +65,7 @@ export const TaskModal = ({
           <button
             className="mt-4 py-2 px-8 text-sm rounded-lg flex justify-center items-center"
             style={{
-              background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+              background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
             }}
             onClick={onCheckStatus}
           >

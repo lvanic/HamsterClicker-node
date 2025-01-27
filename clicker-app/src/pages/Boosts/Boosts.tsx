@@ -315,7 +315,7 @@ export const Boosts = () => {
             )}
             <div className="flex justify-center h-0">
               <div
-                className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"
+                className="w-16 h-16 relative bg-[#FFAE4C] rounded-full flex justify-center items-center"
                 style={{
                   top: "-50px",
                   boxShadow: "0px 0px 25.56px 0px #438EFE",
@@ -338,7 +338,7 @@ export const Boosts = () => {
               }}
               className="p-1 rounded-lg"
               style={{
-                background: "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+                background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
               }}
             >
               {getLocalization("restore")}
@@ -360,7 +360,7 @@ export const Boosts = () => {
             )}
             <div className="flex justify-center h-0">
               <div
-                className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"
+                className="w-16 h-16 relative bg-[#FFAE4C] rounded-full flex justify-center items-center"
                 style={{
                   top: "-50px",
                   boxShadow: "0px 0px 25.56px 0px #438EFE",
@@ -383,7 +383,7 @@ export const Boosts = () => {
                 background:
                   !!user && user?.clickPower >= maxClickLevel
                     ? "linear-gradient(180deg, #C2C2C2 0%, #A1A1A1 100%)"
-                    : "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+                    : "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
               }}
             >
               {!!user && user?.clickPower >= maxClickLevel
@@ -410,7 +410,7 @@ export const Boosts = () => {
             )}
             <div className="flex justify-center h-0">
               <div
-                className="w-16 h-16 relative bg-[#FD5C63] rounded-full flex justify-center items-center"
+                className="w-16 h-16 relative bg-[#FFAE4C] rounded-full flex justify-center items-center"
                 style={{
                   top: "-50px",
                   boxShadow: "0px 0px 25.56px 0px #438EFE",
@@ -434,7 +434,7 @@ export const Boosts = () => {
                 background:
                   !!user && user?.energyLevel >= maxEnergyLevel
                     ? "linear-gradient(180deg, #C2C2C2 0%, #A1A1A1 100%)"
-                    : "linear-gradient(180deg, #F4895D 0%, #FF4C64 100%)",
+                    : "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
               }}
             >
               {!!user && user?.energyLevel >= maxEnergyLevel
