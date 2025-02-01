@@ -1,9 +1,6 @@
 import { useUser } from "../hooks/useUser";
 import { getLocalization } from "../localization/getLocalization";
-import { MediumEggSvg } from "../pages/Businesses/MediumEggSvg";
-import { EggSvg } from "../pages/Layout/EggSvg";
 import { formatNumber } from "../utils/formatNumber";
-import { SmallEggSvg } from "./SmallEggSvg";
 
 export const Statistics = () => {
   const { user } = useUser();

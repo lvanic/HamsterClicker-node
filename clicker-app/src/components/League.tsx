@@ -20,24 +20,24 @@ export const League = () => {
     >
       <div
         style={{
-          height: "5px",
+          height: "14px",
           width: "100%",
-          backgroundColor: "#e0e0e0",
+          backgroundColor: "#00000080",
         }}
-        className="rounded-xl"
+        className="rounded-xl overflow-hidden"
       >
         <div
           style={{
             height: "100%",
             maxWidth: "100%",
             width: (user?.score / user?.league.maxScore) * 100 + "%",
-            backgroundColor: "#FF5064",
+            background: "linear-gradient(180deg, #FFCB83 46%, #FFAE4C 54.5%)",
           }}
           className="rounded-xl"
         />
-        <div className="text-xs mt-2 b-2 text-nowrap">
+        {/* <div className="text-xs mt-2 b-2 text-nowrap">
           {getLocalization("scoreForUp")} {formatNumber(user?.league.maxScore)}
-        </div>
+        </div> */}
       </div>
     </div>
   );

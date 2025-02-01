@@ -41,39 +41,23 @@ export const ReferralLink = ({
   };
 
   return (
-    <>
-      <div
-        className={`absolute w-full px-20 transition-all duration-300 ease-in-out ${
-          isCopied ? "top-[100px] opacity-100" : "top-[58px]  opacity-0"
-        } overflow-hidden`}
-      >
-        <div className="bg-[#383838] rounded-b-lg px-3 py-2 border border-t-none">
-          Link has been copied
-        </div>
-      </div>
-      <div className={`absolute flex justify-center ${className}`}>
-        {share ? (
-          <button
-            onClick={handleShare}
-            className="text-black text-xs px-10 py-2 rounded-md transition duration-300"
-            style={{
-              background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
-            }}
-          >
-            {getLocalization("share")}
-          </button>
-        ) : (
-          <button
-            onClick={handleCopy}
-            className="text-black text-xs px-10 py-2 rounded-md transition duration-300"
-            style={{
-              background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
-            }}
-          >
-            {getLocalization("copyLink")}
-          </button>
-        )}
-      </div>
-    </>
+    <div className={` flex justify-center ${className}`}>
+      {share ? (
+        <button
+          onClick={handleShare}
+          className="text-white px-3 py-1 rounded-md transition duration-300 bg-[#BA580F]"
+        >
+          {getLocalization("share")}
+        </button>
+      ) : (
+        <button
+          onClick={handleCopy}
+          className="flex gap-1.5 items-center text-white px-3 py-1 rounded-md transition duration-300 bg-[#BA580F]"
+        >
+          <img src="/img/copy.png" className="w-3.5" />
+          <div>{getLocalization("copyLink")}</div>
+        </button>
+      )}
+    </div>
   );
 };

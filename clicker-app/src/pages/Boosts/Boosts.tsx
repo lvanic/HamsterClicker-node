@@ -1,178 +1,85 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useContext,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { useWebSocket } from "../../hooks/useWebsocket";
 import { useUser } from "../../hooks/useUser";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { BoostButton } from "../../components/BoostButton";
-import { RestoreSvg } from "./RestoreSvg";
-import { MassTapSvg } from "./MassTapSvg";
 import { BoostModal } from "./BoostModal";
 import { useSettings } from "../../hooks/useSettings";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
-import { useLocation, useNavigate } from "react-router-dom";
 import { getLocalization } from "../../localization/getLocalization";
 
-type Boost = {
-  id: number;
-  Icon: any;
-  title: string;
-  description: string;
-  additionalInfo?: (level: number) => string;
-  eggIcon: boolean;
-  purchaseText: (nextCost: number) => string;
-};
-
-const boosts: Boost[] = [
-  {
-    id: 0,
-    Icon: RestoreSvg,
-    title: getLocalization("restoreTaps"),
-    additionalInfo: (level: number) => ``,
-    description: getLocalization("restoreTapsDesc"),
-    eggIcon: false,
-    purchaseText: (nextCost: number) => getLocalization("getItForFree"),
-  },
-  {
-    id: 1,
-    Icon: MassTapSvg,
-    title: getLocalization("massTap"),
-    description: getLocalization("massTapDesc"),
-    additionalInfo: (level: number) =>
-      `${getLocalization("addOne")} ${level} ${getLocalization("lvl")}`,
-    eggIcon: true,
-    purchaseText: (nextCost: number) =>
-      `${getLocalization("upgradeFor")} ${nextCost} ${getLocalization(
-        "coins"
-      )}`,
-  },
-  {
-    id: 2,
-    Icon: RestoreSvg,
-    title: getLocalization("upgradeEnergy"),
-    description: getLocalization("upgradeEnergyDesc"),
-    additionalInfo: (level: number) =>
-      `${getLocalization("addEnergy")} ${level} ${getLocalization("lvl")}`,
-    eggIcon: true,
-    purchaseText: (nextCost: number) =>
-      `${getLocalization("upgradeFor")} ${nextCost} ${getLocalization(
-        "coins"
-      )}`,
-  },
-];
 export const Boosts = () => {
   const { webSocket } = useWebSocket();
   const { user } = useUser();
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedBoost, setSelectedBoost] = useState<Boost | null>(null);
-  const { startClickUpgradeCost, startEnergyUpgradeCost } = useSettings();
+  const {
+    maxClickLevel,
+    maxEnergyLevel,
+    startClickUpgradeCost,
+    startEnergyUpgradeCost,
+  } = useSettings();
   const notifyContext = useContext(NotifyContext);
-  const { maxClickLevel, maxEnergyLevel } = useSettings();
-  const navigate = useNavigate();
-
-  const [selectedLanguage, setSelectedLanguage] = useState(
-    localStorage.getItem("language") || "en"
-  );
-
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedBoost, setSelectedBoost] = useState<any>(null);
   const [isEnergyUpgrading, setEnergyUpgrading] = useState(false);
-  const [isEnergyRestoring, setEnergyRestroring] = useState(false);
   const [isClickUpgrading, setClickUpgrading] = useState(false);
+  const [isEnergyRestoring, setEnergyRestoring] = useState(false);
+  const selectedLanguage = localStorage.getItem("language") || "en";
+
+  const settings = useSettings();
 
   useEffect(() => {
     if (webSocket) {
-      const handleBoostActivated = ({ success, message }: any) => {
-        const notify: NotifyMessage = {
-          status: "ok",
-          message: message,
-        };
-        setEnergyRestroring(false);
-        notifyContext?.setNotify(notify);
-      };
-
-      webSocket.on("boostActivated", handleBoostActivated);
+      webSocket.on("boostActivated", ({ success, message }) => {
+        setEnergyRestoring(false);
+        notifyContext?.setNotify({ status: "ok", message });
+      });
 
       webSocket.on("clickPowerUpgraded", ({ success }) => {
         setClickUpgrading(false);
-        console.log("clickPowerUpgraded", success);
-
-        const notify: NotifyMessage = {
+        notifyContext?.setNotify({
           status: success ? "ok" : "error",
           message: success
             ? getLocalization("clickPowerImproved")
             : getLocalization("clickPowerNotImproved"),
-        };
-        notifyContext?.setNotify(notify);
+        });
       });
 
       webSocket.on("energyUpgraded", ({ success }) => {
         setEnergyUpgrading(false);
-        const notify: NotifyMessage = {
+        notifyContext?.setNotify({
           status: success ? "ok" : "error",
           message: success
             ? getLocalization("energyPowerImproved")
             : getLocalization("energyPowerNotImproved"),
-        };
-        notifyContext?.setNotify(notify);
+        });
       });
+
       return () => {
-        webSocket.off("boostActivated", handleBoostActivated);
+        webSocket.off("boostActivated");
         webSocket.off("clickPowerUpgraded");
+        webSocket.off("energyUpgraded");
       };
     }
   }, [webSocket]);
 
-  useEffect(() => {
-    if (typeof window.Telegram.WebApp !== "undefined") {
-      console.log("show");
-
-      window.Telegram.WebApp.BackButton.show();
-      window.Telegram.WebApp.BackButton.onClick(function () {
-        window.history.back();
-      });
-    }
-    return () => {
-      if (typeof window.Telegram.WebApp !== "undefined") {
-        window.Telegram.WebApp.BackButton.hide();
-      }
-    };
-  }, []);
-
   const activateFullEnergyBoost = () => {
-    if (webSocket) {
-      if (fullEnergyActivates < 3) {
-        setEnergyRestroring(true);
-        webSocket.emit(
-          "activateBoost",
-          JSON.stringify([user?.tgId, "fullEnergyBoost", selectedLanguage])
-        );
-        // const notify: NotifyMessage = {
-        //   status: "ok",
-        //   className: "h-72",
-        //   message: "The energy has been restored",
-        // };
-        // notifyContext?.setNotify(notify);
-      } else {
-        // const notify: NotifyMessage = {
-        //   status: "error",
-        //   message: "You can't restore energy today",
-        // };
-        // notifyContext?.setNotify(notify);
-      }
+    if (
+      webSocket &&
+      user?.fullEnergyActivates &&
+      user?.fullEnergyActivates < settings.fullEnergyBoostPerDay
+    ) {
+      setEnergyRestoring(true);
+      webSocket.emit(
+        "activateBoost",
+        JSON.stringify([user?.tgId, "fullEnergyBoost", selectedLanguage])
+      );
     }
   };
 
   const improveClick = () => {
-    if (!!user && user?.clickPower >= maxClickLevel) {
-      const notify: NotifyMessage = {
+    if (user?.clickPower && user?.clickPower >= maxClickLevel) {
+      notifyContext?.setNotify({
         status: "unknown",
         message: getLocalization("maxClickerLevel"),
-      };
-      notifyContext?.setNotify(notify);
+      });
       return;
     }
     if (
@@ -183,37 +90,33 @@ export const Boosts = () => {
       setClickUpgrading(true);
       webSocket.emit("upgradeClick", user?.tgId);
     } else {
-      const notify: NotifyMessage = {
+      notifyContext?.setNotify({
         status: "error",
         message: getLocalization("notEnoughBalance"),
-      };
-      notifyContext?.setNotify(notify);
+      });
     }
   };
 
   const upgradeEnergy = () => {
-    if (!!user?.energyLevel && user.energyLevel >= maxEnergyLevel) {
-      const notify: NotifyMessage = {
+    if ((user?.energyLevel || 0) >= maxEnergyLevel) {
+      notifyContext?.setNotify({
         status: "unknown",
         message: getLocalization("maxEnergyLevel"),
-      };
-      notifyContext?.setNotify(notify);
+      });
       return;
     }
-
     if (
       webSocket &&
       startEnergyUpgradeCost * 2 ** ((user?.energyLevel || 2) - 1) <=
         (user?.balance || 0)
     ) {
-      webSocket.emit("upgradeEnergy", user?.tgId);
       setEnergyUpgrading(true);
+      webSocket.emit("upgradeEnergy", user?.tgId);
     } else {
-      const notify: NotifyMessage = {
+      notifyContext?.setNotify({
         status: "error",
         message: getLocalization("notEnoughBalance"),
-      };
-      notifyContext?.setNotify(notify);
+      });
     }
   };
 
@@ -221,7 +124,7 @@ export const Boosts = () => {
     if (user) {
       return (
         Date.now() - user?.lastFullEnergyTimestamp < 1000 * 60 * 60 * 24 &&
-        user?.fullEnergyActivates >= 3
+        user?.fullEnergyActivates >= settings.fullEnergyBoostPerDay
       );
     } else {
       return true;
@@ -237,224 +140,115 @@ export const Boosts = () => {
     return user?.fullEnergyActivates || 0;
   }, [user]);
 
-  const onClose = () => {
-    setModalOpen(false);
-  };
-  const onPurchase = () => {
-    // onClose();
+  const boosts = [
+    {
+      id: 1,
+      Icon: <img src="/img/multitap.png" className="w-8" />,
+      title: getLocalization("massTap"),
+      description: getLocalization("massTapDesc"),
+      action: improveClick,
+      buttonLabel: getLocalization("improve"),
+      level: user?.clickPower,
+    },
+    {
+      id: 2,
+      Icon: <img src="/img/energy-limit.png" className="w-8" />,
+      title: getLocalization("upgradeEnergy"),
+      description: getLocalization("upgradeEnergyDesc"),
+      action: upgradeEnergy,
+      buttonLabel: getLocalization("upgrade"),
+      level: user?.energyLevel,
+    },
+  ];
 
-    switch (selectedBoost?.id) {
-      case 0:
-        activateFullEnergyBoost();
-        break;
-      case 1:
-        improveClick();
-        break;
-      case 2:
-        upgradeEnergy();
-        break;
-    }
-  };
-
-  const purchaseText = useMemo(() => {
-    switch (selectedBoost?.id) {
-      case 0:
-        return selectedBoost.purchaseText(1);
-      case 1:
-        return selectedBoost.purchaseText(
-          startClickUpgradeCost * 2 ** ((user?.clickPower || 2) - 1)
-        );
-      case 2:
-        return selectedBoost.purchaseText(
-          startEnergyUpgradeCost * 2 ** ((user?.energyLevel || 2) - 1)
-        );
-      default:
-        return "";
-    }
-  }, [selectedBoost, user]);
-
-  const additionalInfo = useMemo(() => {
-    if (!selectedBoost?.additionalInfo) {
-      return "";
-    }
-    switch (selectedBoost?.id) {
-      case 0:
-        return "";
-      case 1:
-        return selectedBoost.additionalInfo((user?.clickPower || 1) + 1);
-      case 2:
-        return selectedBoost.additionalInfo((user?.energyLevel || 1) + 1);
-
-      default:
-        return "";
-    }
-  }, [selectedBoost, user]);
+  const remainingBoosts = settings.fullEnergyBoostPerDay - fullEnergyActivates;
 
   return (
-    <div className="p-5 pt-0 rounded-lg max-w-md mx-auto">
-      <div className="mt-4">
-        <div className="flex justify-center w-full mb-8">
-          <div className="w-min">
-            <BoostButton />
-          </div>
-        </div>
-        <div className="flex justify-around">
+    <div className="px-3 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <img src="/img/boost.png" />
+        <div>
+          <div className="uppercase text-lg">Your daily Boosters</div>
           <div
+            onClick={activateFullEnergyBoost}
+            className="pl-3 py-2 pr-0 my-1 rounded-md flex items-center shadow-sm w-full relative overflow-hidden gap-2"
             style={{
-              width: "-webkit-fill-available",
+              background: "linear-gradient(57.26deg, #761B3F 0%, #78490D 100%)",
             }}
-            className={
-              "flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2 " +
-              (isEnergyRestoring ? "opacity-50" : "opacity-100")
-            }
           >
-            {isEnergyRestoring && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-center rounded-2xl">
-                <div className="loader"></div>
-              </div>
-            )}
-            <div className="flex justify-center h-0">
-              <div
-                className="w-16 h-16 relative bg-[#FFAE4C] rounded-full flex justify-center items-center"
-                style={{
-                  top: "-50px",
-                  boxShadow: "0px 0px 25.56px 0px #438EFE",
-                }}
-              >
-                <RestoreSvg />
-              </div>
-            </div>
-            <div className="flex justify-center mb-2 mt-5">
-              {getLocalization("restoreTaps")}
-            </div>
-            <div className="flex justify-center text-xl mb-1">
-              {3 - fullEnergyActivates}/3
-            </div>
-            <button
-              disabled={energyDisabled}
-              onClick={() => {
-                setModalOpen(true);
-                setSelectedBoost(boosts[0]);
-              }}
-              className="p-1 rounded-lg"
-              style={{
-                background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
-              }}
-            >
-              {getLocalization("restore")}
-            </button>
-          </div>
-          <div
-            style={{
-              width: "-webkit-fill-available",
-            }}
-            className={
-              "relative flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2 " +
-              (isClickUpgrading ? "opacity-50" : "opacity-100")
-            }
-          >
-            {isClickUpgrading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-center rounded-2xl">
-                <div className="loader"></div>
-              </div>
-            )}
-            <div className="flex justify-center h-0">
-              <div
-                className="w-16 h-16 relative bg-[#FFAE4C] rounded-full flex justify-center items-center"
-                style={{
-                  top: "-50px",
-                  boxShadow: "0px 0px 25.56px 0px #438EFE",
-                }}
-              >
-                <MassTapSvg />
-              </div>
-            </div>
-            <div className="flex justify-center mb-2 mt-5">{getLocalization("massTap")}</div>
-            <div className="flex justify-center text-xl mb-1">
-              {user?.clickPower} {getLocalization("lvl")}
-            </div>
-            <button
-              onClick={() => {
-                setModalOpen(true);
-                setSelectedBoost(boosts[1]);
-              }}
-              className="p-1 rounded-lg"
-              style={{
-                background:
-                  !!user && user?.clickPower >= maxClickLevel
-                    ? "linear-gradient(180deg, #C2C2C2 0%, #A1A1A1 100%)"
-                    : "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
-              }}
-            >
-              {!!user && user?.clickPower >= maxClickLevel
-                ? getLocalization("maxLevel")
-                : getLocalization("improve")}
-            </button>
-          </div>
-        </div>
+            <img
+              className="absolute w-full h-full left-0 top-0"
+              src="/img/friend-mask.png"
+            />
+            <img src="/img/lightning.png" className="w-8" />
+            <div className="w-full">
+              <div>Full Refilment Energy</div>
+              <div className="flex w-full">
+                <div className="text-[#F7B84B] w-1/4">
+                  {remainingBoosts}/{settings.fullEnergyBoostPerDay}
+                </div>
+                <div className="flex gap-2 items-center w-full justify-between pr-4">
+                  {[...Array(remainingBoosts)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="rounded-full bg-[#F7B84B] h-2 w-full"
+                    />
+                  ))}
 
-        <div className="flex justify-around mt-12">
-          <div
-            style={{
-              width: "-webkit-fill-available",
-            }}
-            className={
-              "relative flex flex-col justify-center bg-[#383838] p-4 rounded-xl mx-2 " +
-              (isEnergyUpgrading ? "opacity-50" : "opacity-100")
-            }
-          >
-            {isEnergyUpgrading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 text-white text-center rounded-2xl">
-                <div className="loader"></div>
-              </div>
-            )}
-            <div className="flex justify-center h-0">
-              <div
-                className="w-16 h-16 relative bg-[#FFAE4C] rounded-full flex justify-center items-center"
-                style={{
-                  top: "-50px",
-                  boxShadow: "0px 0px 25.56px 0px #438EFE",
-                }}
-              >
-                <RestoreSvg />
+                  {[...Array(fullEnergyActivates)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="rounded-full bg-[#00000080] h-2 w-full"
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="flex justify-center mb-2 mt-5">{getLocalization("upgradeEnergy")}</div>
-            <div className="flex justify-center text-xl mb-1">
-              {user?.energyLevel} {getLocalization("lvl")}
-            </div>
-            <button
-              disabled={!!user && user?.energyLevel >= maxEnergyLevel}
+          </div>
+        </div>
+        <div>
+          <div className="uppercase text-lg">Boosts</div>
+          {boosts.map((boost) => (
+            <div
+              key={boost.id}
               onClick={() => {
+                setSelectedBoost(boost);
                 setModalOpen(true);
-                setSelectedBoost(boosts[2]);
               }}
-              className="p-1 rounded-lg"
+              className="pl-3 py-2 pr-0 my-1 rounded-md flex items-center shadow-sm w-full relative overflow-hidden gap-2"
               style={{
                 background:
-                  !!user && user?.energyLevel >= maxEnergyLevel
-                    ? "linear-gradient(180deg, #C2C2C2 0%, #A1A1A1 100%)"
-                    : "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
+                  "linear-gradient(57.26deg, #761B3F 0%, #78490D 100%)",
               }}
             >
-              {!!user && user?.energyLevel >= maxEnergyLevel
-                ? getLocalization("maxLevel")
-                : getLocalization("upgrade")}
-            </button>
-          </div>
+              <img
+                className="absolute w-full h-full left-0 top-0"
+                src="/img/friend-mask.png"
+              />
+              {boost.Icon}
+              <div className="w-full">
+                <div>{boost.title}</div>
+                <div className="flex items-center gap-2">
+                  <div className="text-[#F7B84B]">
+                    {boost.title == "Mass tap" ? "+1" : "+500"}
+                  </div>
+                  <div className="font-light">|</div>
+                  <div className="text-md font-light">level {boost.level}</div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
       {isModalOpen && selectedBoost && (
         <BoostModal
           Icon={selectedBoost.Icon}
-          eggIcon={selectedBoost.eggIcon}
           title={selectedBoost.title}
-          purchaseText={purchaseText}
-          additionalInfo={additionalInfo}
-          onClose={onClose}
-          onPurchase={onPurchase}
           description={selectedBoost.description}
+          onClose={() => setModalOpen(false)}
+          onPurchase={selectedBoost.action}
+          eggIcon={false}
+          purchaseText={selectedBoost.buttonLabel}
         />
       )}
     </div>

@@ -2,7 +2,6 @@ import { memo } from "react";
 import { VerticalDivider } from "../../components/VerticalDivider";
 import { Business, User } from "../../models";
 import { formatNumber } from "../../utils/formatNumber";
-import { EggSvg } from "../Layout/EggSvg";
 import Timer from "./Timer";
 import { SmallEggSvg } from "../../components/SmallEggSvg";
 import { getLocalization } from "../../localization/getLocalization";

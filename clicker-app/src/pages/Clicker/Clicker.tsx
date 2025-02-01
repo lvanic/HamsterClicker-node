@@ -17,6 +17,7 @@ import { LevelStatus } from "../../components/LevelStatus";
 import { DailyOffer } from "../../components/DailyOffer";
 import { ComboGame } from "../../components/ComboGame";
 import { LanguageSelector } from "../../components/LanguageSelector";
+import { getTelegramUser } from "../../services/telegramService";
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -98,15 +99,6 @@ export const Clicker: React.FC = () => {
     event.preventDefault();
   };
 
-  // const handleClickEvent = () => {
-  //   if (user) {
-  //     handleClick({
-  //       user_id: user.tgId,
-  //       position: { x: 100, y: 200 },
-  //       time_stamp: Date.now(),
-  //     });
-  //   }
-  // };
   return (
     <div
       className="text-center p-4 pt-0 relative flex flex-col items-center"
@@ -116,51 +108,38 @@ export const Clicker: React.FC = () => {
         <ClickerSkeleton />
       ) : (
         <>
-          <div className="flex flex-row justify-center items-center w-full mt-1 mb-3 gap-2">
-            <div className="w-full">
-              <ScoreCounter clickCount={clickCount} />
-              <LanguageSelector />
-            </div>
-            <div className="flex flex-col justify-center items-center gap-1">
-              <BoostButton />
-              <League />
-            </div>
-            <LevelStatus />
+
+          <div className="flex flex-col justify-center items-center w-full mb-2  gap-4">
+            <ScoreCounter clickCount={clickCount} />
+            <League />
+            {/* <DailyOffer />
+            <ComboGame /> */}
           </div>
 
-          <div className="flex flex-row justify-center items-center w-full mb-2  gap-4">
-            <DailyOffer />
-            <ComboGame />
-          </div>
-          <div
-            className="gradient-border-container mb-2 w-10/12"
-            style={{
-              aspectRatio: "1",
-            }}
-          >
-            <img
-              ref={imgRef}
-              src={user?.league.avatarUrl}
-              //@ts-ignore
-              onTouchStart={handleTouchStart}
-              //@ts-ignore
-              onTouchMove={handleTouchMove}
-              //@ts-ignore
-              onTouchEnd={handleTouchEnd}
-              //@ts-ignore
-              onTouchCancel={handleTouchEnd}
-              // onClick={handleClickEvent}
-              onContextMenu={handleContextMenu}
-              className={`text-lg border-none filter drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) rounded-full p-4
+          <img
+            ref={imgRef}
+            // src={user?.league.avatarUrl}
+            src="/img/kolobok.png"
+            //@ts-ignore
+            onTouchStart={handleTouchStart}
+            //@ts-ignore
+            onTouchMove={handleTouchMove}
+            //@ts-ignore
+            onTouchEnd={handleTouchEnd}
+            //@ts-ignore
+            onTouchCancel={handleTouchEnd}
+            // onClick={handleClickEvent}
+            onContextMenu={handleContextMenu}
+            className={`text-lg w-full border-none filter rounded-full
                 ${
                   imageClicked
                     ? "transform scale-90 transition-transform duration-75 ease-in-out"
                     : ""
                 }`}
-              alt="egg"
-            />
-          </div>
-          <Statistics />
+            alt="img"
+          />
+
+          {/* <Statistics /> */}
           <EnergyProgress
             energyCount={energyCount}
             maxEnergy={user?.maxEnergy}

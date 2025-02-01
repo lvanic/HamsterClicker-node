@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Task } from "../../models";
-import { EggSvg } from "../Layout/EggSvg";
 import { LargerEggSvg } from "../Businesses/LargerEggSvg";
 import { getLocalization } from "../../localization/getLocalization";
 
@@ -19,19 +18,23 @@ export const TaskModal = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setVisible(true); // Trigger the animation on mount
+    setVisible(true);
 
     return () => {
-      setVisible(false); // Clean up on unmount
+      setVisible(false);
     };
   }, []);
 
   const handleClose = () => {
-    setVisible(false); // Trigger the exit animation
-    setTimeout(onClose, 300); // Wait for the animation to finish before closing
+    setVisible(false);
+    setTimeout(onClose, 300);
   };
 
   if (!task) return null;
+
+  const handleClickGo = () => {    
+    onOpenLink()
+  }
 
   return (
     <>
@@ -46,11 +49,11 @@ export const TaskModal = ({
         <div className="text-xs mb-6 mt-4 text-center">{task.description}</div>
         <div className="flex justify-end space-x-2">
           <button
-            className="py-2 px-6 text-sm rounded-lg flex justify-center items-center"
+            className="py-2 px-6 text-sm rounded-lg flex justify-center items-center text-black"
             style={{
               background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
             }}
-            onClick={onOpenLink}
+            onClick={handleClickGo}
           >
             {task.type === "telegram"
               ? getLocalization("openLink")
@@ -58,12 +61,11 @@ export const TaskModal = ({
           </button>
         </div>
         <div className="flex flex-column justify-center items-center mt-4">
-          <LargerEggSvg />
           <div className="text-3xl ml-2">+{task.rewardAmount}</div>
         </div>
         {!task.completed && task.type === "telegram" && (
           <button
-            className="mt-4 py-2 px-8 text-sm rounded-lg flex justify-center items-center"
+            className="mt-4 py-2 px-8 text-sm rounded-lg flex justify-center items-center text-black"
             style={{
               background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
             }}

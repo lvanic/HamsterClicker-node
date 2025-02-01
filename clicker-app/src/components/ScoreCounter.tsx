@@ -12,7 +12,7 @@ export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
       }}
       className="w-full"
     >
-      <img src="./img/egg.png" className="h-9 mr-2" />
+      <img src="./img/bag.png" className="h-9 mr-2" />
       <div
         style={{
           fontSize: "28px",

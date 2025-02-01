@@ -19,13 +19,13 @@
   width: 100%;
   z-index: 100;
   border: solid white;
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 60px 60px 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background-color: #282828;
+  background-color: #8b3b0f;
   transform: translateY(100%);
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   opacity: 0;

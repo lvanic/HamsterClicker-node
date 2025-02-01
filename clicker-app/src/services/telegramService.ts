@@ -22,10 +22,10 @@ export const getTelegramUser = (): TelegramUser => {
   }
   return {
     id: 571484499,
-    first_name: "user.first_name",
-    last_name: "user.last_name",
+    first_name: "Name",
+    last_name: "Last Name",
     username: "user.username",
-    photo_url: "user.photo_url",
+    photo_url: "/img/default-avatar.png",
   };
 };
 

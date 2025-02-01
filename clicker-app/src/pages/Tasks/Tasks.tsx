@@ -6,9 +6,7 @@ import { TaskSkeleton } from "./TaskSkeleton";
 import { TaskModal } from "./TaskModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { EggSvg } from "../Layout/EggSvg";
 
-import { EggNimbus } from "../../components/EggNimbus";
 import { TaskList } from "./TaskList";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 import { DataContext } from "../../contexts/DataContext";
@@ -32,7 +30,7 @@ export const Tasks = () => {
         setTimeout(() => {
           dataContext?.setTasks((prevTasks: any) => {
             return prevTasks.map((task: any) =>
-              task._id == id ? { ...task, completed: finished } : task
+              task.id == id ? { ...task, completed: finished } : task
             );
           });
 
@@ -69,17 +67,18 @@ export const Tasks = () => {
   };
 
   const handleOpenLink = () => {
-    if (selectedTask && selectedTask._id) {
+    if (selectedTask && selectedTask.id) {
       const task = dataContext?.tasks.find(
-        (task: any) => task._id === selectedTask._id
+        (task: any) => task.id === selectedTask.id
       );
+      
       const isTaskCompleted = task?.completed;
 
       if (selectedTask.type !== "telegram" && !isTaskCompleted) {
         const tgUserId = getTelegramUser().id;
         webSocket?.emit(
           "checkTaskStatus",
-          JSON.stringify([tgUserId, selectedTask._id])
+          JSON.stringify([tgUserId, selectedTask.id])
         );
       }
 
@@ -91,7 +90,7 @@ export const Tasks = () => {
     const tgUserId = getTelegramUser().id;
     webSocket?.emit(
       "checkTaskStatus",
-      JSON.stringify([tgUserId, selectedTask._id])
+      JSON.stringify([tgUserId, selectedTask.id])
     );
   };
 
@@ -102,8 +101,6 @@ export const Tasks = () => {
           {getLocalization("earnMoreRewards")}
         </div>
         <div className="w-full flex justify-center items-center mt-6 mb-6">
-          <EggNimbus className="absolute w-40 h-52" />
-          <EggSvg className="w-24 h-32" />
         </div>
         <div className="text-center">
           {getLocalization("completeTaskAndGetReward")}

@@ -5,8 +5,6 @@ import { Business } from "../../models";
 import { MediumEggSvg } from "./MediumEggSvg";
 import { LargerEggSvg } from "./LargerEggSvg";
 import "./Businesses.css";
-import { SmallEggSvg } from "../../components/SmallEggSvg";
-import { EggSvg } from "../Layout/EggSvg";
 import { BuyBusiness } from "./BuyBusiness";
 import { formatNumber } from "../../utils/formatNumber";
 import { VerticalDivider } from "../../components/VerticalDivider";

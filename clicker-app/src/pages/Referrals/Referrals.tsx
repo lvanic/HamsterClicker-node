@@ -1,88 +1,76 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import { ReferralLink } from "../../components/ReferralLink";
-import { MediumEggSvg } from "../Businesses/MediumEggSvg";
-import { EggSvg } from "../Layout/EggSvg";
-import { LargerEggSvg } from "../Businesses/LargerEggSvg";
-import { useSettings } from "../../hooks/useSettings";
-import { Delimiter } from "./Delimiter";
-import { Reloader } from "./Reloader";
-import { useWebSocket } from "../../hooks/useWebsocket";
+
 import { getLocalization } from "../../localization/getLocalization";
+import { getReferralLink } from "../../services/telegramService";
 
 export const Referrals = () => {
   const { user, setUser } = useUser();
   const referrals = user?.referrals;
-  const { referralReward, premiumReferralReward } = useSettings();
-  const { webSocket } = useWebSocket();
-  const [isReferralUpdate, setReferralUpdate] = useState(false);
 
-  const updateReferals = () => {
-    setReferralUpdate(true);
-    webSocket?.emit("getUser", user?.tgId);
-    setTimeout(() => {
-      setReferralUpdate(false);
-    }, 3000);
-  };
+  const [link, setLink] = useState("");
 
+  useEffect(() => {
+    const fetchLink = async () => {
+      const referralLink = await getReferralLink();
+      setLink(referralLink);
+    };
+
+    fetchLink();
+  }, []);
   return (
-    <div className="p-12 rounded-lg max-w-md mx-auto">
-      <div className="text-center text-xl">
-        {getLocalization("inviteFriends")}
+    <div className="px-4 rounded-lg max-w-md mx-auto">
+      <div className="text-center text-3xl uppercase">
+        {referrals?.length} {getLocalization("refferals")}
       </div>
-      <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-8 mb-8">
-        <div className="absolute mb-20">
-          <LargerEggSvg />
-        </div>
-        <div className="mt-7 mb-7">
-          1 {getLocalization("friend")} = {referralReward}{" "}
-          {getLocalization("coins")}
-        </div>
-        <ReferralLink className="mt-20" share={true} />
-      </div>
-      <div className="flex flex-col justify-center items-center bg-[#383838] rounded-xl mt-14 mb-8">
-        <div className="absolute pb-24">
-          <LargerEggSvg />
-        </div>
-        <div className="mt-7 text-sm underline underline-offset-2">
-          {getLocalization("isHeHasPremium")}
-        </div>
-        <div className="mb-7">
-          1 {getLocalization("friend")} = {premiumReferralReward}{" "}
-          {getLocalization("coins")}
-        </div>
-        <ReferralLink className="mt-24" share={false} />
-      </div>
-      <ul
-        className="list-none p-4 rounded-xl bg-[#383838]"
-        style={{ maxHeight: window.innerHeight - 484, overflowY: "scroll" }}
-      >
-        <div onClick={updateReferals} className="absolute right-0 mr-16">
-          <Reloader className={isReferralUpdate ? "animate-spin" : ""} />
-        </div>
-        <div className="text-center mb-2">{getLocalization("listOfInvitedFriends")}</div>
 
+      <div className=" justify-center overflow-hidden rounded-xl mt-8 relative px-3 py-4 pr-5">
+        <img
+          src="/img/invite-link-mask.png"
+          className="absolute w-full h-full top-0 left-0 z-[-1]"
+        />
+        <div className="flex items-center justify-between">
+          <div className="text-xl uppercase">{getLocalization("myLink")}</div>
+          <ReferralLink className="" share={false} />
+        </div>
+        <div className="font-extralight">{link}</div>
+      </div>
+      <div className="w-full border-t border-[#FFBB96] my-6" />
+      <ul
+        className="list-none rounded-xl "
+        style={{ maxHeight: window.innerHeight - 370, overflowY: "scroll" }}
+      >
         {referrals?.length && referrals?.length > 0 ? (
           referrals?.map((referral, index) => (
-            <>
-              <li
-                key={referral.tgId}
-                className="pl-3 pt-1 pb-1 pr-0 my-1 rounded-md flex items-center shadow-sm"
-              >
-                <div className="flex text-md justify-center items-center border-2 border-white rounded-full w-10 h-10 mr-2">
-                  {referral.firstName[0]}
+            <li
+              key={referral.tgId}
+              className="pl-3 py-2 pr-0 my-1 rounded-md flex items-center shadow-sm w-full relative overflow-hidden"
+              style={{
+                background:
+                  "linear-gradient(57.26deg, #761B3F 0%, #78490D 100%)",
+              }}
+            >
+              <img
+                className="absolute w-full h-full left-0 top-0"
+                src="/img/friend-mask.png"
+              />
+              {/* <div className="flex text-md justify-center items-center border-2 border-white rounded-full w-10 h-10 mr-2">
+                {referral.firstName[0]}
+              </div> */}
+              <img
+                src="/img/friend-badge.png"
+                className="flex text-md justify-center items-center w-10 h-10 mr-2"
+              />
+              <div className="flex flex-row">
+                <div className="text-xs">
+                  {referral.firstName || "Anonimus"}
                 </div>
-                <div className="flex flex-row">
-                  <div className="text-xs">
-                    {referral.firstName || "Anonimus"}
-                  </div>
-                  <div className="text-xs ml-2">
-                    @{referral.tgUsername || "Anonimus"}
-                  </div>
+                <div className="text-xs ml-2">
+                  @{referral.tgUsername || "Anonimus"}
                 </div>
-              </li>
-              <Delimiter />
-            </>
+              </div>
+            </li>
           ))
         ) : (
           <div className="flex flex-col justify-center items-center">

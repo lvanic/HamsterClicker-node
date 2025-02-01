@@ -30,7 +30,7 @@ const Notification = ({
     <>
       <div
         ref={overlayRef}
-        className="overlay-safe"
+        className="overlay"
         onClick={overlayClickHandle}
       />
       <div
@@ -41,7 +41,7 @@ const Notification = ({
       >
         <div
           className={
-            "w-full h-full bg-[#282828] flex flex-col justify-center items-center rounded-b-xl pt-10 " +
+            "w-full h-full flex flex-col justify-center items-center rounded-b-xl pt-10 " +
             (notify.status == "task" ? "text-[#35CE28]" : "text-red")
           }
           style={{

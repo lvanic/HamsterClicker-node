@@ -61,8 +61,10 @@
   "upgradeFor": "Upgrade for",
   "noFriends": "You don't have invited friends",
   "share" : "Share",
-  "copyLink": "Copy link",
+  "copyLink": "Copy",
   "rewardPerHour": "Reward per hour",
   "maxLevel": "Max level",
-  "improve": "Improve"
+  "improve": "Improve",
+  "myLink": "My invite link:",
+  "statistics": "Statistics"
 }

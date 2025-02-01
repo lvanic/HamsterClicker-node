@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 @import url('https://fonts.cdnfonts.com/css/gilroy-bold');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Oswald:wght@200..700&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
 
 html,
 body {
@@ -10,16 +12,22 @@ body {
 
 body {
   margin: 0;
-  font-family: Gilroy-Medium;
+  font-family: "Oswald", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
   font-weight: 550;
   color: white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #1c1c1c;
+  background: #261315;
+  background-image: url('../public/img/background.png');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
   /* height: calc(100vh - 100px)!important; */
 }
 
 #root{
-  height: calc(100vh - 81px);
+  height: calc(100vh - 89px);
   user-select: none;
 }

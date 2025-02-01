@@ -47,17 +47,10 @@ export const BoostModal = ({
       <div className="overlay" onClick={handleClose} />
       <div
         id="modal"
-        className={`modal ${visible ? "visible" : "hidden"} h-72`}
+        className={`modal ${visible ? "visible" : "hidden"} `}
         ref={modalRef}
       >
-        <div
-          className="flex h-16 w-16 items-center mt-5 justify-center bg-[#FFAE4C] rounded-full p-2"
-          style={{
-            boxShadow: "0px 0px 48.28px 0px #FFAE4C",
-          }}
-        >
-          <Icon />
-        </div>
+        {Icon}
         <div className="text-xl mt-6">{title}</div>
         <div className="text-xs">{description}</div>
         {additionalInfo && (
@@ -74,12 +67,8 @@ export const BoostModal = ({
             background: "linear-gradient(180deg, #FFCB83 0%, #FFAE4C 100%)",
           }}
         >
-          {eggIcon && (
-            <div className="mr-2">
-              {/* <MediumEggSvg /> */}
-            </div>
-          )}
-          <div>{purchaseText}</div>
+          {eggIcon && <div className="mr-2">{/* <MediumEggSvg /> */}</div>}
+          <div className="text-black">{purchaseText}</div>
         </button>
       </div>
     </>
