@@ -3,7 +3,6 @@ import { Between, MoreThan, In } from "typeorm";
 import { appDataSource } from "../../core/database";
 import { getLang } from "../../getLang";
 import { Business } from "../../models/business";
-import { League } from "../../models/league";
 import { Task } from "../../models/task";
 import { User } from "../../models/user";
 import { getAppSettingsWithBusinesses } from "../../services/appSettingsService";
@@ -84,7 +83,7 @@ export const initSocketsLogic = (io: Socket) => ({
   getUser: async (userId: number) => {
     const user = await appDataSource.getRepository(User).findOne({
       where: { tgId: userId },
-      relations: ["referrals", "businesses", "completedTasks", "businessUpgrades", "league"],
+      relations: ["referrals", "businesses", "completedTasks", "businessUpgrades"],
     });
 
     if (!user) {
@@ -120,26 +119,15 @@ export const initSocketsLogic = (io: Socket) => ({
       },
     );
 
-    const leagues = await appDataSource.getRepository(League).find({});
-
-    console.log(leagues);
-    const userLeague =
-      leagues.find((league) => league.minScore <= user.score && league.maxScore >= user.score) ||
-      leagues[leagues.length - 1];
-
-    const userLevel = leagues.sort((a, b) => a.minScore - b.minScore).findIndex((l) => l.id === userLeague.id) + 1;
-
-    const userPlaceInLeague = await appDataSource.getRepository(User).count({
-      where: {
-        score: Between(user.score, userLeague.maxScore),
-      },
-    });
-
-    const totalIncomePerHour = user.businesses.reduce((sum, business) => {
-      const businessUpgrade = user.businessUpgrades.find((bu) => bu.business.id === business.id);
-      const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
-      return sum + business.rewardPerHour * 1.2 ** businessLevel;
-    }, 0);
+    const userPlaceInTop =
+      (
+        (await appDataSource
+          .getRepository(User)
+          .createQueryBuilder("users")
+          .select("COUNT(*) + 1", "rank")
+          .where(`users.score > ${user.score}`)
+          .getOne()) as unknown as { rank: number }
+      )?.rank || 1;
 
     console.log(user);
 
@@ -153,47 +141,23 @@ export const initSocketsLogic = (io: Socket) => ({
       userPlaceInLeague: userPlaceInLeague + 1,
       totalIncomePerHour,
       completedTasks: user.completedTasks,
-      league: userLeague,
-      userLevel,
-      maxLevel: leagues.length,
+      league: { id: 1 },
+      userLevel: user.level,
       energyLevel: user.energyLevel - (buffer[userId] || 0),
       maxEnergy: 1000 + 500 * (user.energyLevel - 1),
       energy: user.energy - (buffer[userId] || 0),
     });
   },
-  getLeagueInfo: async ({ leagueId, topUsersCount }: { leagueId: string; topUsersCount: number }) => {
+  getLeagueInfo: async () => {
     try {
-      const leagueRepository = await appDataSource.getRepository(League);
       const userRepository = await appDataSource.getRepository(User);
 
-      const leagues = await leagueRepository.find();
-      const league = await leagueRepository.findOneBy({
-        id: +leagueId,
-      });
-      if (!league) return;
-
-      const lastLeague = leagues[leagues.length - 1].id === league.id;
-      let usersInLeague = await userRepository.count({
-        where: { score: Between(league.minScore, league.maxScore) },
-      });
-
-      let topUsersInLeague = await userRepository.find({
-        where: { score: Between(league.minScore, league.maxScore) },
+      const topUsers = await userRepository.find({
         order: { score: "DESC" },
-        take: topUsersCount,
+        take: 100
       });
 
-      if (lastLeague) {
-        usersInLeague += await userRepository.count({ where: { score: MoreThan(league.minScore) } });
-        const dopUsers = await userRepository.find({
-          where: { score: MoreThan(league.maxScore) },
-          order: { score: "DESC" },
-          take: topUsersCount,
-        });
-        topUsersInLeague = [...dopUsers, ...topUsersInLeague];
-      }
-
-      io.emit("league", { league, usersInLeague, topUsersInLeague });
+      io.emit("league", { league: { id: 1 }, usersInLeague: {}, topUsersInLeague: topUsers });
     } catch {
       console.log("error get league");
     }
@@ -507,20 +471,19 @@ export const initSocketsLogic = (io: Socket) => ({
 
       if (!user) return;
 
-      const leagues = await appDataSource.getRepository(League).find();
-      const score = user.score + (buffer[tgUserId] || 0) * user.clickPower;
-      let userLeague =
-        leagues.find((league) => league.minScore <= score && league.maxScore >= score) || leagues[leagues.length - 1];
+      const score = user.score + (buffer[tgUserId] || 0) * (user.clickPower + user.level - 1);
 
-      const userLevel = leagues.sort((a, b) => a.minScore - b.minScore).findIndex((l) => l.id === userLeague.id) + 1;
+      const userPlaceInTop =
+      (
+        (await appDataSource
+          .getRepository(User)
+          .createQueryBuilder("users")
+          .select("COUNT(*) + 1", "rank")
+          .where(`users.score > ${score}`)
+          .getOne()) as unknown as { rank: number }
+      )?.rank || 1;
 
-      const userPlaceInLeague = await appDataSource.getRepository(User).count({
-        where: {
-          score: Between(userLeague.minScore, userLeague.maxScore),
-        },
-      });
-
-      io.emit("userLeague", { userLeague, userPlaceInLeague, userLevel });
+      io.emit("userLeague", { userLeague: {}, userPlaceInLeague: userPlaceInTop, userLevel: {} });
     } catch (e) {
       console.error(e);
     }

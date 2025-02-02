@@ -18,12 +18,6 @@ router.post("/tasks", adminController.addTask);
 router.get("/tasks/:id", adminController.getTaskById);
 router.put("/tasks/:id", adminController.updateTask);
 
-router.get("/leagues", adminController.getLeagues);
-router.post("/leagues", adminController.addLeague);
-router.delete("/leagues/:id", adminController.deleteLeague);
-router.get("/leagues/:id", adminController.getLeagueById);
-router.put("/leagues/:id", adminController.updateLeague);
-
 router.get("/businesses", adminController.getBusinesses);
 router.get("/businesses/:id", adminController.getBusinessById);
 router.post("/businesses", adminController.addBusiness);

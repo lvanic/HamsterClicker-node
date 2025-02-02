@@ -5,7 +5,6 @@ import { AppSettings } from "../../models/appSettings";
 import { User } from "../../models/user";
 import { sendForAllUsers } from "../../services/botService";
 import { Task } from "../../models/task";
-import { League } from "../../models/league";
 import { Business } from "../../models/business";
 import { findUserByTgId } from "../../services/userService";
 
@@ -130,67 +129,6 @@ export const updateTask = async (ctx: {
   await appDataSource.getRepository(Task).save(task);
 
   ctx.body = task;
-};
-
-export const getLeagues = async (ctx: Context) => {
-  const leagues = await appDataSource.getRepository(League).find();
-  ctx.body = leagues;
-};
-
-export const addLeague = async (ctx: {
-  request: { body: { minScore: number; maxScore: number; name: any; description: any; avatarUrl: any } };
-  status: number;
-  body: string;
-}) => {
-  if (ctx.request.body.minScore > ctx.request.body.maxScore) {
-    ctx.status = 400;
-    ctx.body = "Min balance must be less than max balance";
-    return;
-  }
-
-  const league = await appDataSource.getRepository(League).create({
-    name: ctx.request.body.name,
-    description: ctx.request.body.description,
-    avatarUrl: ctx.request.body.avatarUrl,
-    minScore: ctx.request.body.minScore,
-    maxScore: ctx.request.body.maxScore,
-  });
-
-  await appDataSource.getRepository(League).save(league);
-
-  ctx.body = JSON.stringify(league);
-};
-
-export const deleteLeague = async (ctx: { params: { id: any } }) => {
-  const league = await appDataSource.getRepository(League).findOneOrFail(ctx.params.id);
-  await appDataSource.getRepository(League).remove(league);
-};
-
-export const getLeagueById = async (ctx: { params: { id: any }; body: any }) => {
-  const league = await appDataSource.getRepository(League).findOneOrFail(ctx.params.id);
-  ctx.body = league;
-};
-
-export const updateLeague = async (ctx: {
-  params: { id: any };
-  request: { body: { name: any; description: any; avatarUrl: any; minScore: any; maxScore: any } };
-  body: any;
-}) => {
-  console.log(ctx.params.id);
-  const league = await appDataSource.getRepository(League).findOneOrFail({
-    where: {
-      id: ctx.params.id
-    }
-  });
-  league.name = ctx.request.body.name;
-  league.description = ctx.request.body.description;
-  league.avatarUrl = ctx.request.body.avatarUrl;
-  league.minScore = ctx.request.body.minScore;
-  league.maxScore = ctx.request.body.maxScore;
-
-  await appDataSource.getRepository(League).save(league);
-
-  ctx.body = league;
 };
 
 export const getBusinesses = async (ctx: { body: any }) => {

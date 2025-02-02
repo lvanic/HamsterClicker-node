@@ -12,7 +12,6 @@ import {
 import { Business } from "./business";
 import { Task } from "./task";
 import { BusinessUpgrade } from "./businessUpgrade";
-import { League } from "./league";
 
 @Entity()
 export class User {
@@ -87,9 +86,6 @@ export class User {
 
   @OneToMany(() => BusinessUpgrade, (upgrade) => upgrade.user)
   businessUpgrades: BusinessUpgrade[];
-
-  @ManyToOne(() => League, { nullable: true })
-  league: League;
 
   @Column({ default: 1 })
   level: number;
