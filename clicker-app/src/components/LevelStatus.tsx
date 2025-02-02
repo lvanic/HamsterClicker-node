@@ -9,7 +9,7 @@ export const LevelStatus = () => {
       <div className="flex flex-col justify-center text-[#F7B84B]">
         <div className="font-normal text-md uppercase">{getLevelTitle(user?.userLevel || 0)}</div>
         <div className="text-nowrap	text-xs font-light">
-          Lvl {user?.userLevel}/{user?.maxLevel}
+          Lvl {user?.userLevel}/100
         </div>
       </div>
     </div>
