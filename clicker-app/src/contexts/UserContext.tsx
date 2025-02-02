@@ -212,7 +212,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           balance: prev.balance + balanceIncreasePerSecond,
         };
       });
-    }, 1000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [user?.tgUsername]);

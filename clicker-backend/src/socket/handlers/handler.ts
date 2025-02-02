@@ -106,7 +106,7 @@ export const initSocketsLogic = (io: Socket) => ({
     const bufferClicks = buffer[userId] || 0;
     const availableEnergy = userMaxEnergy - user.energy;
 
-    const energyToRestore = Math.min(secondsOffline - bufferClicks, availableEnergy);
+    const energyToRestore = Math.min((secondsOffline - bufferClicks) / 2, availableEnergy);
 
 
     const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
@@ -135,8 +135,6 @@ export const initSocketsLogic = (io: Socket) => ({
           .where(`users.score > ${user.score}`)
           .getOne()) as unknown as { rank: number }
       )?.rank || 1;
-
-    console.log(user);
 
     io.emit("user", {
       id: user.tgId,
@@ -281,6 +279,8 @@ export const initSocketsLogic = (io: Socket) => ({
   activateBoost: async (data: string) => {
     const parsedData = JSON.parse(data);
     const [tgUserId, boostName, lang] = parsedData;
+
+    console.log(parsedData);
 
     try {
       const dayMs = 1000 * 60 * 60 * 24;
@@ -507,7 +507,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
         const currentTime = new Date().getTime();
         const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
-        const restoredEnergy = timeDiff;
+        const restoredEnergy = timeDiff / 2;
         const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
 
         clickCount = Math.min(user.energy + restoredEnergy - buffer[tgUserId], userMaxEnergy);
@@ -537,7 +537,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const currentTime = new Date().getTime();
       const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
-      const restoredEnergy = timeDiff;
+      const restoredEnergy = timeDiff / 2;
       const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
 
       clickCount = Math.min(user.energy + restoredEnergy, userMaxEnergy);
