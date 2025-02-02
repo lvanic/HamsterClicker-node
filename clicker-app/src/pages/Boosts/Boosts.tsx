@@ -63,8 +63,7 @@ export const Boosts = () => {
   const activateFullEnergyBoost = () => {
     if (
       webSocket &&
-      user?.fullEnergyActivates &&
-      user?.fullEnergyActivates < settings.fullEnergyBoostPerDay
+      (user?.fullEnergyActivates || 0) < settings.fullEnergyBoostPerDay
     ) {
       setEnergyRestoring(true);
       webSocket.emit(

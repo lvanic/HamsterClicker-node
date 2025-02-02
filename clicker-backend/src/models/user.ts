@@ -54,7 +54,7 @@ export class User {
   @Column({ nullable: true })
   lastFullEnergyTimestamp: number;
 
-  @Column({ nullable: true })
+  @Column({ default: 0 })
   fullEnergyActivates: number;
 
   @Column()
