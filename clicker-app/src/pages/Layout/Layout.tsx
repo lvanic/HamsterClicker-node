@@ -6,6 +6,11 @@ import { getPlatform, getTelegramUser } from "../../services/telegramService";
 import { getLocalization } from "../../localization/getLocalization";
 import { LevelStatus } from "../../components/LevelStatus";
 import { BoostButton } from "../../components/BoostButton";
+import { StatsSvg } from "./StatsSvg";
+import { FriendSvg } from "./FriendSvg";
+import { WalletSvg } from "./WallerSvg";
+import { HomeSvg } from "./HomeSvg";
+import { MineSvg } from "./MineSvg";
 
 export const Layout = () => {
   const { isPageLoading } = usePageLoading();
@@ -64,57 +69,89 @@ export const Layout = () => {
         >
           <Link
             to="/tasks"
-            className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            className={`w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
               activeTab === "/tasks"
                 ? "border border-[#FFAE4C] border-dashed"
                 : ""
             }`}
           >
-            <span className="text-xs font-light">
+            <MineSvg isActive={activeTab === "/tasks"} />
+            <span
+              className={
+                "text-xs font-light uppercase " +
+                (activeTab === "/tasks" ? "text-[#FFAE4C]" : "")
+              }
+            >
               {getLocalization("mine")}
             </span>
           </Link>
           <Link
             to="/league"
-            className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
-              activeTab === "/league" ? "border border-[#FFAE4C] border-dashed" : ""
+            className={`w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+              activeTab === "/league"
+                ? "border border-[#FFAE4C] border-dashed"
+                : ""
             }`}
           >
-            <span className="text-xs font-light">
+            <StatsSvg isActive={activeTab === "/league"} />
+            <span
+              className={
+                "text-xs font-light uppercase " +
+                (activeTab === "/league" ? "text-[#FFAE4C]" : "")
+              }
+            >
               {getLocalization("statistics")}
             </span>
           </Link>
           <Link
             to="/"
-            className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            className={`w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
               activeTab === "/" ? "border border-[#FFAE4C] border-dashed" : ""
             }`}
           >
-            <span className="text-xs font-light">
+            <HomeSvg isActive={activeTab === "/"} />
+            <span
+              className={
+                "text-xs font-light uppercase " +
+                (activeTab === "/" ? "text-[#FFAE4C]" : "")
+              }
+            >
               {getLocalization("home")}
             </span>
           </Link>
           <Link
             to="/referrals"
-            className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            className={`w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
               activeTab === "/referrals"
                 ? "border border-[#FFAE4C] border-dashed"
                 : ""
             }`}
           >
-            <span className="text-xs font-light">
+            <FriendSvg isActive={activeTab === "/referrals"} />
+            <span
+              className={
+                "text-xs font-light uppercase " +
+                (activeTab === "/referrals" ? "text-[#FFAE4C]" : "")
+              }
+            >
               {getLocalization("friends")}
             </span>
           </Link>
           <Link
             to="/airdrop"
-            className={`w-16 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            className={`w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
               activeTab === "/airdrop"
                 ? "border border-[#FFAE4C] border-dashed"
                 : ""
             }`}
           >
-            <span className="text-xs font-light">
+            <WalletSvg isActive={activeTab === "/airdrop"} />
+            <span
+              className={
+                "text-xs font-light uppercase " +
+                (activeTab === "/airdrop" ? "text-[#FFAE4C]" : "")
+              }
+            >
               {getLocalization("wallet")}
             </span>
           </Link>

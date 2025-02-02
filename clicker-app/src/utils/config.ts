@@ -7,6 +7,7 @@ interface Config {
   adminApiUrl: string;
   adminPassword: string;
   tgBotLink: string;
+  tonManifest: string;
 }
 
 const config: Config = (function () {
@@ -34,11 +35,18 @@ const config: Config = (function () {
     );
   }
 
+  if (!process.env.REACT_APP_TON_MANIFEST) {
+    throw new Error(
+      "REACT_APP_TON_MANIFEST is not defined in the environment variables"
+    );
+  }
+
   return {
     serverUrl: process.env.REACT_APP_SERVER_URL,
     adminApiUrl: process.env.REACT_APP_ADMIN_API_URL,
     adminPassword: process.env.REACT_APP_ADMIN_PASSWORD,
     tgBotLink: process.env.REACT_APP_BOT_LINK,
+    tonManifest: process.env.REACT_APP_TON_MANIFEST,
   } as Config;
 })();
 

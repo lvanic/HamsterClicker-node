@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useRef, useLayoutEffect, useMemo } from "react";
 import { User } from "../models";
 import { getTelegramUser, webAppVibrate } from "../services/telegramService";
 import { usePageLoading } from "./usePageLoading";
@@ -16,6 +16,11 @@ export const useClick = () => {
   const { webSocket } = useWebSocket();
   const { user, setUser, setClicked } = useUser();
   const { setPageLoading } = usePageLoading();
+
+  const summaryClickPower = useMemo(
+    () => (user?.clickPower || 0) + (user?.userLevel || 0),
+    [user]
+  );
 
   const [clickCount, setClickCount] = useState<number>(
     user?.balance == undefined ? 0 : user.balance
@@ -40,9 +45,9 @@ export const useClick = () => {
         return;
       }
 
-      const newBalance = clickCount + (user?.clickPower || 1);
+      const newBalance = clickCount + (summaryClickPower || 1);
       const newEnergy = energyCount - 1;
-      const newScore = (user?.score || 0) + (user?.clickPower || 1);
+      const newScore = (user?.score || 0) + (summaryClickPower || 1);
 
       updateCounts(newBalance, newEnergy, newScore);
 

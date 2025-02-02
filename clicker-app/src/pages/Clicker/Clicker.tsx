@@ -109,11 +109,12 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
 
-          <div className="flex flex-col justify-center items-center w-full mb-2  gap-4">
+          <div className="flex flex-col justify-center items-center w-full mb-2 gap-2">
             <ScoreCounter clickCount={clickCount} />
-            <League />
+            {/* <League /> */}
             {/* <DailyOffer />
             <ComboGame /> */}
+            <div>+{user?.totalIncomePerHour} per hour</div>
           </div>
 
           <img
@@ -150,7 +151,7 @@ export const Clicker: React.FC = () => {
               x={position.x}
               y={position.y}
               id={position.id}
-              rewardPerClick={user?.clickPower || 0}
+              rewardPerClick={(user?.clickPower || 0) + (user?.userLevel || 0)}
               onAnimationEnd={handleAnimationEnd}
             />
           ))}

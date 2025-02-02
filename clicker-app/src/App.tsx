@@ -54,7 +54,7 @@ function switchSwipeDown(enable: boolean) {
 }
 
 function App() {
-  const { serverUrl, adminPassword } = getConfig();
+  const { serverUrl, adminPassword, tonManifest } = getConfig();
   const telegramUser = getTelegramUser();
 
   useEffect(() => {
@@ -64,59 +64,64 @@ function App() {
     <BrowserRouter>
       <LoadingProvider>
         <WebSocketProvider url={serverUrl} user_id={telegramUser?.id}>
-          <UserProvider user_id={telegramUser.id}>
-            <DataProvider>
-              <NotifyProvider>
-                <Routes>
-                  <Route
-                    path="/"
-                    loader={() => <Loader />}
-                    element={<Layout />}
-                  >
-                    <Route index element={<Clicker />} />
-                    <Route path="referrals" element={<Referrals />} />
-                    <Route path="tasks" element={<Tasks />} />
-                    <Route path="boosts" element={<Boosts />} />
-                    <Route path="league" element={<LeagueTop />} />
-                    <Route path="businesses" element={<Businesses />} />
-                    <Route path="airdrop" element={<Airdrop />} />
+          <TonConnectUIProvider manifestUrl={tonManifest}>
+            <UserProvider user_id={telegramUser.id}>
+              <DataProvider>
+                <NotifyProvider>
+                  <Routes>
                     <Route
-                      path="maintenance-notice"
-                      element={<MaintenanceNotice />}
-                    />
-                  </Route>
-                  <Route
-                    path="/admin"
-                    element={<AdminRoute password={adminPassword} />}
-                  >
-                    <Route index element={<AdminSettings />} />
-                    <Route path="tasks" element={<AdminTasks />} />
-                    <Route path="tasks/add" element={<AddTask />} />
-                    <Route path="tasks/edit/:id" element={<AdminEditTask />} />
-                    <Route path="leagues" element={<AdminLeagues />} />
-                    <Route path="leagues/add" element={<AdminAddLeague />} />
+                      path="/"
+                      loader={() => <Loader />}
+                      element={<Layout />}
+                    >
+                      <Route index element={<Clicker />} />
+                      <Route path="referrals" element={<Referrals />} />
+                      <Route path="tasks" element={<Tasks />} />
+                      <Route path="boosts" element={<Boosts />} />
+                      <Route path="league" element={<LeagueTop />} />
+                      <Route path="businesses" element={<Businesses />} />
+                      <Route path="airdrop" element={<Airdrop />} />
+                      <Route
+                        path="maintenance-notice"
+                        element={<MaintenanceNotice />}
+                      />
+                    </Route>
                     <Route
-                      path="leagues/edit/:id"
-                      element={<AdminEditLeague />}
-                    />
-                    <Route path="businesses" element={<AdminBusinesses />} />
-                    <Route
-                      path="businesses/add"
-                      element={<AdminAddBusiness />}
-                    />
-                    <Route
-                      path="businesses/edit/:id"
-                      element={<AdminEditBusiness />}
-                    />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="settings" element={<AdminSettings />} />
-                    <Route path="broadcast" element={<AdminBroadcast />} />
-                  </Route>
-                  <Route path="*" element={<NoPage />} />
-                </Routes>
-              </NotifyProvider>
-            </DataProvider>
-          </UserProvider>
+                      path="/admin"
+                      element={<AdminRoute password={adminPassword} />}
+                    >
+                      <Route index element={<AdminSettings />} />
+                      <Route path="tasks" element={<AdminTasks />} />
+                      <Route path="tasks/add" element={<AddTask />} />
+                      <Route
+                        path="tasks/edit/:id"
+                        element={<AdminEditTask />}
+                      />
+                      <Route path="leagues" element={<AdminLeagues />} />
+                      <Route path="leagues/add" element={<AdminAddLeague />} />
+                      <Route
+                        path="leagues/edit/:id"
+                        element={<AdminEditLeague />}
+                      />
+                      <Route path="businesses" element={<AdminBusinesses />} />
+                      <Route
+                        path="businesses/add"
+                        element={<AdminAddBusiness />}
+                      />
+                      <Route
+                        path="businesses/edit/:id"
+                        element={<AdminEditBusiness />}
+                      />
+                      <Route path="users" element={<AdminUsers />} />
+                      <Route path="settings" element={<AdminSettings />} />
+                      <Route path="broadcast" element={<AdminBroadcast />} />
+                    </Route>
+                    <Route path="*" element={<NoPage />} />
+                  </Routes>
+                </NotifyProvider>
+              </DataProvider>
+            </UserProvider>
+          </TonConnectUIProvider>
         </WebSocketProvider>
       </LoadingProvider>
     </BrowserRouter>

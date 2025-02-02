@@ -38,8 +38,8 @@ export const Referrals = () => {
       </div>
       <div className="w-full border-t border-[#FFBB96] my-6" />
       <ul
-        className="list-none rounded-xl "
-        style={{ maxHeight: window.innerHeight - 370, overflowY: "scroll" }}
+        className="list-none rounded-xl"
+        style={{ maxHeight: window.innerHeight - 351, overflowY: "scroll" }}
       >
         {referrals?.length && referrals?.length > 0 ? (
           referrals?.map((referral, index) => (

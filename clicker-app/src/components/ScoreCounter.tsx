@@ -4,7 +4,6 @@ export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
   return (
     <div
       style={{
-        marginBottom: "10px",
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",

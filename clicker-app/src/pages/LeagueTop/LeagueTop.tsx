@@ -47,7 +47,7 @@ export const LeagueTop = () => {
   const userPlace = user?.userPlaceInLeague;
 
   return (
-    <div className="pt-0 px-4 rounded-lg overflow-scroll h-full">
+    <div className="pt-0 px-4 rounded-lg overflow-scroll h-full pb-8">
       <img src="/img/boost-your-rank.png" alt="Boost Your Rank" />
 
       <div className="flex flex-col justify-center items-center rounded-xl mt-2 mb-2 p-4">

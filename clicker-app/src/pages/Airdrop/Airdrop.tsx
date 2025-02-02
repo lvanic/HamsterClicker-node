@@ -1,19 +1,82 @@
+import React, { useEffect, useState } from "react";
 import EthereumButton from "../../components/TonButton/TonButton";
 import TonButton from "../../components/TonButton/TonButton";
 import { getLocalization } from "../../localization/getLocalization";
 import { BigEggSvg } from "./BigEggSvg";
 
+const AIRDROP_DATE = new Date("2025-02-21T00:00:00Z");
+
 export const Airdrop = () => {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const difference = AIRDROP_DATE.getTime() - now.getTime();
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        setTimeLeft({ days, hours, minutes, seconds });
+      } else {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="text-2xl mb-6 mt-8">
-        {getLocalization("airdropAnyDay")}
+      <div className="text-2xl mb-6 mt-8 uppercase">
+        {getLocalization("wallet")}
       </div>
-      {/* <BigEggSvg /> */}
-      <div className="text-center my-4">
-        {getLocalization("completeTaskAndDrop")}
+      <div className="relative w-full h-64">
+        <img
+          src="/img/bun-coin.png"
+          className="absolute -top-12 w-full opacity-100"
+        />
       </div>
-      <EthereumButton />
+      <div className="text-4xl text-[#FF4340B2] z-50">AIRDROP IN</div>
+      <div
+        className="flex items-center gap-1 z-50 mb-4 px-4 py-0.5 rounded-2xl"
+        style={{
+          backdropFilter: "blur(20px)",
+        }}
+      >
+        <div>
+          <div className="text-4xl">{timeLeft.days}</div>
+          <div className="font-extralight">days</div>
+        </div>
+        <div className="text-5xl">:</div>
+        <div>
+          <div className="text-4xl">{timeLeft.hours}</div>
+          <div className="font-extralight">hours</div>
+        </div>
+        <div className="text-5xl">:</div>
+        <div>
+          <div className="text-4xl">{timeLeft.minutes}</div>
+          <div className="font-extralight">minutes</div>
+        </div>
+        <div className="text-5xl">:</div>
+        <div>
+          <div className="text-4xl">{timeLeft.seconds}</div>
+          <div className="font-extralight">seconds</div>
+        </div>
+      </div>
+      <TonButton className="z-50" />
     </div>
   );
 };
