@@ -108,22 +108,18 @@ export const initSocketsLogic = (io: Socket) => ({
 
     const energyToRestore = Math.min(secondsOffline - bufferClicks, availableEnergy);
 
-    const totalReward = user.businesses.reduce((sum, business) => {
-      const businessUpgrade = user.businessUpgrades.find((bu) => bu.business.id === business.id);
-      const businessLevel = businessUpgrade ? businessUpgrade.level : 1;
-      const levelAdjustedReward = business.rewardPerHour * 1.2 ** businessLevel;
-      const normalizedReward =
-        user.lastOnlineTimeStamp > Date.now() - 1000 * 60 * 60 * 3
-          ? (levelAdjustedReward * secondsOffline) / 3600
-          : levelAdjustedReward * 3;
-      return sum + normalizedReward;
-    }, 0);
+
+    const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
+
+    const totalReward = hoursOffline > 0 ? (100 * user.level) / Math.pow(2, hoursOffline - 1) : 0;
+
+    console.log("Hours offline: ", hoursOffline);
 
     await appDataSource.getRepository(User).update(
       { tgId: userId },
       {
-        balance: user.balance + totalReward + bufferClicks * user.clickPower,
-        score: user.score + totalReward + bufferClicks * user.clickPower,
+        balance: user.balance + totalReward + bufferClicks * (user.clickPower + user.level - 1),
+        score: user.score + totalReward + bufferClicks * (user.clickPower + user.level - 1),
         addedFromBusinesses: totalReward,
         energy: user.energy + energyToRestore,
         lastOnlineTimeStamp: new Date().getTime(),
@@ -145,12 +141,12 @@ export const initSocketsLogic = (io: Socket) => ({
     io.emit("user", {
       id: user.tgId,
       ...user,
-      balance: user.balance + (buffer[userId] || 0) * user.clickPower,
-      score: user.score + (buffer[userId] || 0) * user.clickPower,
+      balance: user.balance + ((buffer[userId] || 0) * (user.clickPower + user.level - 1)) + totalReward,
+      score: user.score + ((buffer[userId] || 0) * (user.clickPower + user.level - 1)) + totalReward,
       referrals: user.referrals,
       clickPower: user.clickPower,
-      userPlaceInLeague: userPlaceInLeague + 1,
-      totalIncomePerHour,
+      userPlaceInLeague: userPlaceInTop,
+      totalIncomePerHour: 100 * user.level,
       completedTasks: user.completedTasks,
       league: { id: 1 },
       userLevel: user.level,
@@ -519,7 +515,7 @@ export const initSocketsLogic = (io: Socket) => ({
         clickCount = Math.min(user.energy + restoredEnergy - buffer[tgUserId], userMaxEnergy);
         clickCount = Math.max(clickCount, 0);
 
-        const balanceIncrement = buffer[tgUserId] * clickPower;
+        const balanceIncrement = buffer[tgUserId] * (clickPower + user.level - 1);
 
         try {
           await appDataSource.getRepository(User).update(

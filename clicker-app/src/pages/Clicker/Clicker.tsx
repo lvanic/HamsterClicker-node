@@ -151,7 +151,7 @@ export const Clicker: React.FC = () => {
               x={position.x}
               y={position.y}
               id={position.id}
-              rewardPerClick={(user?.clickPower || 0) + (user?.userLevel || 0)}
+              rewardPerClick={(user?.clickPower || 0) + (user?.userLevel || 0) - 1}
               onAnimationEnd={handleAnimationEnd}
             />
           ))}

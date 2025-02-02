@@ -18,7 +18,7 @@ export const useClick = () => {
   const { setPageLoading } = usePageLoading();
 
   const summaryClickPower = useMemo(
-    () => (user?.clickPower || 0) + (user?.userLevel || 0),
+    () => (user?.clickPower || 0) + (user?.userLevel || 0) - 1,
     [user]
   );
 
