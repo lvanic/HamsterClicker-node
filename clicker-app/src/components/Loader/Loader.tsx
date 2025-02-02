@@ -4,12 +4,23 @@ import { getLocalization } from "../../localization/getLocalization";
 
 const Loader: React.FC = () => {
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-      <img src="bun.png" className="absolute w-screen h-screen" />
+    <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center">
+      <div
+        className="text-[200px] z-20"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, rgba(255, 251, 201, 0.99) 0%, rgba(139, 57, 16, 0.73) 100%)",
+          color: "transparent",
+          backgroundClip: "text",
+        }}
+      >
+        BUN
+      </div>
+      <img src="bun.png" className="absolute mt-20 w-screen" />
       <div className="flex flex-col justify-center items-center z-10">
-        <div className="text-3xl">{getLocalization("chickenTap")}</div>
+        {/* <div className="text-3xl">{getLocalization("chickenTap")}</div> */}
         {/* <div className="text-xl">to the moon</div> */}
-        <div className="loader mt-4"></div>
+        <div className="absolute loader bottom-16"></div>
       </div>
     </div>
   );

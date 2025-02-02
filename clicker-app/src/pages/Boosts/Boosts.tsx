@@ -5,10 +5,11 @@ import { BoostModal } from "./BoostModal";
 import { useSettings } from "../../hooks/useSettings";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 import { getLocalization } from "../../localization/getLocalization";
+import { User } from "../../models";
 
 export const Boosts = () => {
   const { webSocket } = useWebSocket();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const {
     maxClickLevel,
     maxEnergyLevel,
@@ -70,6 +71,19 @@ export const Boosts = () => {
         "activateBoost",
         JSON.stringify([user?.tgId, "fullEnergyBoost", selectedLanguage])
       );
+
+      setUser &&
+        setUser((prev: User | null) => {
+          if (!prev) {
+            return prev;
+          }
+          // alert(prev?.fullEnergyActivates)
+          return {
+            ...prev,
+            fullEnergyActivates: (prev?.fullEnergyActivates || 0) + 1,
+            lastFullEnergyTimestamp: Date.now(),
+          };
+        });
     }
   };
 
@@ -137,7 +151,7 @@ export const Boosts = () => {
       }
     }
     return user?.fullEnergyActivates || 0;
-  }, [user]);
+  }, [user?.fullEnergyActivates]);
 
   const boosts = [
     {
@@ -160,7 +174,12 @@ export const Boosts = () => {
     },
   ];
 
-  const remainingBoosts = settings.fullEnergyBoostPerDay - fullEnergyActivates;
+  // alert(`${settings.fullEnergyBoostPerDay} - ${fullEnergyActivates}`);
+  
+  const remainingBoosts =
+    settings.fullEnergyBoostPerDay - fullEnergyActivates < 0
+      ? 0
+      : settings.fullEnergyBoostPerDay - fullEnergyActivates;
 
   return (
     <div className="px-3 max-w-4xl mx-auto">
