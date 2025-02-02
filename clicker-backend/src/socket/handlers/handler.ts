@@ -73,6 +73,17 @@ export const initSocketsLogic = (io: Socket) => ({
         } else {
           io.emit("taskStatus", { id: task.id, finished: false });
         }
+      } else {
+        user.completedTasks.push(task);
+
+        user.balance += task.rewardAmount;
+        user.score += task.rewardAmount;
+
+        await appDataSource.getRepository(User).save(user);
+
+        io.emit("reward", task.rewardAmount);
+
+        io.emit("taskStatus", { id: task.id, finished: true });
       }
     } catch (error) {
       console.error("Error checking task status after multiple attempts:", error);
