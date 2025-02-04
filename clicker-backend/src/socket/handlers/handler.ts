@@ -8,6 +8,12 @@ import { User } from "../../models/user";
 import { getAppSettingsWithBusinesses } from "../../services/appSettingsService";
 import { config } from "../../core/config";
 
+const calculateOfflineReward = (hours: number, level: number): number => {
+  if (hours === 0) return 0;
+
+  return ((100 * level) / Math.pow(2, hours - 1)) + calculateOfflineReward(hours - 1, level);
+};
+
 // TODO: get rid from the buffer
 export let buffer: Record<string, number> = {};
 
@@ -111,7 +117,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
     const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
-    const totalReward = hoursOffline > 0 ? (100 * user.level) / Math.pow(2, hoursOffline - 1) : 0;
+    const totalReward = calculateOfflineReward(hoursOffline, user.level);
 
     console.log("Hours offline: ", hoursOffline);
 
