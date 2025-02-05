@@ -39,41 +39,45 @@ export const Airdrop = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="text-2xl mb-6 mt-8 uppercase">
+    <div className="flex flex-col items-center justify-between h-full pb-16">
+      <div className="text-2xl mb-6 xl:mt-6 uppercase text-center">
         {getLocalization("wallet")}
       </div>
-      <div className="relative w-full h-64">
+      <div className="relative w-full h-56 sm:h-60">
         <img
           src="/img/bun-coin.png"
-          className="absolute -top-12 w-full opacity-100"
+          className="absolute -top-8 w-full opacity-100"
+          alt="Bun Coin"
         />
       </div>
-      <div className="text-4xl text-[#FF4340B2] z-50">AIRDROP IN</div>
+      
+      <div className="text-4xl text-[#FF4340B2] z-50 text-center">
+        AIRDROP IN
+      </div>
       <div
         className="flex items-center gap-1 z-50 mb-4 px-4 py-0.5 rounded-2xl"
         style={{
-          backdropFilter: "blur(20px)",
+          // backdropFilter: "blur(20px)",
         }}
       >
-        <div>
-          <div className="text-4xl">{timeLeft.days}</div>
-          <div className="font-extralight">days</div>
+        <div className="text-center">
+          <div className="text-4xl sm:text-5xl">{timeLeft.days}</div>
+          <div className="font-extralight text-sm sm:text-base">days</div>
         </div>
         <div className="text-5xl">:</div>
-        <div>
-          <div className="text-4xl">{timeLeft.hours}</div>
-          <div className="font-extralight">hours</div>
+        <div className="text-center">
+          <div className="text-4xl sm:text-5xl">{timeLeft.hours}</div>
+          <div className="font-extralight text-sm sm:text-base">hours</div>
         </div>
         <div className="text-5xl">:</div>
-        <div>
-          <div className="text-4xl">{timeLeft.minutes}</div>
-          <div className="font-extralight">minutes</div>
+        <div className="text-center">
+          <div className="text-4xl sm:text-5xl">{timeLeft.minutes}</div>
+          <div className="font-extralight text-sm sm:text-base">minutes</div>
         </div>
         <div className="text-5xl">:</div>
-        <div>
-          <div className="text-4xl">{timeLeft.seconds}</div>
-          <div className="font-extralight">seconds</div>
+        <div className="text-center">
+          <div className="text-4xl sm:text-5xl">{timeLeft.seconds}</div>
+          <div className="font-extralight text-sm sm:text-base">seconds</div>
         </div>
       </div>
       <TonButton className="z-50" />

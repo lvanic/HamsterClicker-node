@@ -101,7 +101,7 @@ export const Clicker: React.FC = () => {
 
   return (
     <div
-      className="text-center p-4 pt-0 relative flex flex-col items-center"
+      className="text-center p-4 pt-0 relative flex flex-col items-center justify-between pb-44 h-full"
       onScroll={(e) => e.preventDefault()}
     >
       {isSkeletonLoading ? (
@@ -131,7 +131,7 @@ export const Clicker: React.FC = () => {
             onTouchCancel={handleTouchEnd}
             // onClick={handleClickEvent}
             onContextMenu={handleContextMenu}
-            className={`text-lg w-full border-none filter rounded-full
+            className={`text-lg border-none filter rounded-full max-w-full max-h-full -my-[10px]
                 ${
                   imageClicked
                     ? "transform scale-90 transition-transform duration-75 ease-in-out"
