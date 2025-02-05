@@ -156,7 +156,7 @@ export const initSocketsLogic = (io: Socket) => ({
       userLevel: user.level,
       energyLevel: user.energyLevel - (buffer[userId] || 0),
       maxEnergy: 1000 + 500 * (user.energyLevel - 1),
-      energy: user.energy - (buffer[userId] || 0),
+      energy: user.energy + energyToRestore - (buffer[userId] || 0),
     });
   },
   getLeagueInfo: async () => {
