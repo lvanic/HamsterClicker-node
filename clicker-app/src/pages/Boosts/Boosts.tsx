@@ -125,6 +125,18 @@ export const Boosts = () => {
     ) {
       setEnergyUpgrading(true);
       webSocket.emit("upgradeEnergy", user?.tgId);
+
+      setUser &&
+        setUser((prev: User | null) => {
+          if (!prev) {
+            return prev;
+          }
+          // alert(prev?.fullEnergyActivates)
+          return {
+            ...prev,
+            maxEnergy: (user?.maxEnergy || 1000) + 500,
+          };
+        });
     } else {
       notifyContext?.setNotify({
         status: "error",
