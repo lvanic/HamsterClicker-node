@@ -165,7 +165,7 @@ export const initSocketsLogic = (io: Socket) => ({
       userLevel: user.level,
       energyLevel: user.energyLevel - (buffer[userId] || 0),
       maxEnergy: 1000 + 500 * (user.energyLevel - 1),
-      energy: user.energy + energyToRestore - (buffer[userId] || 0),
+      energy: Math.floor(user.energy + energyToRestore - (buffer[userId] || 0)),
     });
   },
   getLeagueInfo: async () => {
@@ -552,7 +552,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const currentTime = new Date().getTime();
       const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
-      const restoredEnergy = timeDiff / 2;
+      const restoredEnergy = Math.floor(timeDiff / 2);
       const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
 
       clickCount = Math.min(user.energy + restoredEnergy, userMaxEnergy);
