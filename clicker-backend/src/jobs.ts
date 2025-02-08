@@ -3,15 +3,36 @@ import { AppSettings } from "./models/appSettings";
 import { User } from "./models/user";
 import { getAppSettings } from "./services/appSettingsService";
 import { getNotDeletedBusinesses } from "./services/businessService";
+import { CronJob } from "cron";
 
 const COMBO_UPDATE_IN_SECOND = 60 * 60;
+
+export const restoreFullEnergyBoostJob = CronJob.from({
+  cronTime: "00 00 00 * * *",
+  onTick: async function () {
+    try {
+      const userRepository = appDataSource.getRepository(User);
+
+      await userRepository.update(
+        {},
+        {
+          fullEnergyActivates: 0,
+        },
+      );
+    } catch (error) {
+      console.error("Restoring energy boosts completed with an error", error);
+    }
+  },
+  start: false,
+  timeZone: "utc",
+});
 
 const updateCombos = async () => {
   try {
     const appSettings = await getAppSettings();
 
     const currentHours = new Date().getHours();
-    
+
     if (
       appSettings.comboBusinesses == undefined &&
       appSettings.lastComboUpdateTimestamp + 1000 * 60 * 60 * 24 > new Date().getTime() &&
@@ -56,7 +77,7 @@ const updateCombos = async () => {
         currentComboCompletions: [],
       })
       .execute();
-  } catch(e) {
+  } catch (e) {
     console.log("error update combo", e);
   }
 };

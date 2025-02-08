@@ -6,6 +6,7 @@ import { bot } from "./bot/bot";
 import { initializeDatabase } from "./core/database";
 import { app } from "./app/app";
 import { initializeAppSettingsIfNotExists } from "./services/appSettingsService";
+import { restoreFullEnergyBoostJob } from "./jobs";
 
 const main = async () => {
   await initializeDatabase();
@@ -27,6 +28,8 @@ const main = async () => {
   server.listen(port, () => {
     console.log(`Сервер запущен на http://localhost:${port}`);
   });
+
+  restoreFullEnergyBoostJob.start();
 };
 
 main().catch(console.error)
