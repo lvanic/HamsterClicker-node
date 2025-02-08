@@ -110,7 +110,7 @@ export const initSocketsLogic = (io: Socket) => ({
   getUser: async (userId: number) => {
     const user = await appDataSource.getRepository(User).findOne({
       where: { tgId: userId },
-      relations: ["referrals", "businesses", "completedTasks", "businessUpgrades"],
+      relations: ["referrals", "completedTasks"],
     });
 
     if (!user) {
@@ -167,6 +167,8 @@ export const initSocketsLogic = (io: Socket) => ({
       maxEnergy: 1000 + 500 * (user.energyLevel - 1),
       energy: Math.floor(user.energy + energyToRestore - (buffer[userId] || 0)),
     });
+
+    delete buffer[userId];
   },
   getLeagueInfo: async () => {
     try {
@@ -295,58 +297,44 @@ export const initSocketsLogic = (io: Socket) => ({
     const parsedData = JSON.parse(data);
     const [tgUserId, boostName, lang] = parsedData;
 
-    console.log(parsedData);
-
     try {
-      const dayMs = 1000 * 60 * 60 * 24;
       const appSettings = await getAppSettingsWithBusinesses();
-      const user = await appDataSource.getRepository(User).findOne({ where: { tgId: tgUserId } });
+      const user = await appDataSource.getRepository(User).findOneBy({ tgId: tgUserId });
       if (!user) throw new Error("User not found");
 
-      if (boostName === "fullEnergyBoost") {
-        if (!user.lastFullEnergyTimestamp || user.lastFullEnergyTimestamp + dayMs < Date.now()) {
-          user.fullEnergyActivates = 0;
-          user.lastFullEnergyTimestamp = Date.now();
-        }
-
-        if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
-          user.fullEnergyActivates++;
-          user.energy = 1000 + 500 * (user.energyLevel - 1);
-          const message = getLang(lang, "energyRestored");
-
-          io.emit("boostActivated", {
-            success: true,
-            message: message,
-          });
-          io.emit("energyRestored", { energy: user.energy });
-        } else {
-          const message = getLang(lang, "fullEnergyLimit");
-
-          io.emit("boostActivated", {
-            success: false,
-            message: message,
-          });
-        }
-      } else if (boostName === "dailyReward") {
-        if (!user.lastDailyRewardTimestamp || user.lastDailyRewardTimestamp + dayMs < Date.now()) {
-          user.lastDailyRewardTimestamp = Date.now();
-          user.balance += appSettings.dailyReward;
-          user.score += appSettings.dailyReward;
-
-          io.emit("reward", appSettings.dailyReward);
-          io.emit("boostActivated", {
-            success: true,
-            message: `${getLang(lang, "youReceived")} ${appSettings.dailyReward} ${getLang("en", "coins")}`,
-          });
-        } else {
-          io.emit("boostActivated", {
-            success: false,
-            message: getLang(lang, "dailyRewardAlready"),
-          });
-        }
+      if (boostName !== "fullEnergyBoost") {
+        return;
       }
 
-      await appDataSource.getRepository(User).save(user);
+      if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
+        const message = getLang(lang, "energyRestored");
+
+        await appDataSource.getRepository(User).update({
+          tgId: user.tgId,
+        }, {
+          lastOnlineTimeStamp: new Date().getTime(),
+          energy: 1000 + 500 * (user.energyLevel - 1),
+          fullEnergyActivates: ++user.fullEnergyActivates,
+          score: user.score + ((buffer[tgUserId] || 0) * (user.clickPower + user.level - 1)),
+          balance: user.balance + ((buffer[tgUserId] || 0) * (user.clickPower + user.level - 1)),
+        })
+
+        delete buffer[tgUserId];
+
+        io.emit("boostActivated", {
+          success: true,
+          message: message,
+        });
+        io.emit("energyRestored", { energy: user.energy });
+      } else {
+        const message = getLang(lang, "fullEnergyLimit");
+
+        io.emit("boostActivated", {
+          success: false,
+          message: message,
+        });
+      }
+
       return; // Успешное завершение, выходим из функции
     } catch {
       console.error("Max retry attempts reached. Transaction failed.");
@@ -518,17 +506,11 @@ export const initSocketsLogic = (io: Socket) => ({
     if (buffer[tgUserId] > 0) {
       if (user) {
         const clickPower = user.clickPower;
-        let clickCount = 0;
 
         const currentTime = new Date().getTime();
         const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
         const restoredEnergy = timeDiff / 2;
         const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
-
-        clickCount = Math.min(user.energy + restoredEnergy - buffer[tgUserId], userMaxEnergy);
-
-        clickCount = Math.min(user.energy + restoredEnergy - buffer[tgUserId], userMaxEnergy);
-        clickCount = Math.max(clickCount, 0);
 
         const balanceIncrement = buffer[tgUserId] * (clickPower + user.level - 1);
 
@@ -539,7 +521,7 @@ export const initSocketsLogic = (io: Socket) => ({
               balance: () => `balance + ${balanceIncrement}`,
               score: () => `score + ${balanceIncrement}`,
               lastOnlineTimeStamp: currentTime,
-              energy: clickCount,
+              energy: Math.min(user.energy - buffer[tgUserId] + restoredEnergy, userMaxEnergy),
             },
           );
           delete buffer[tgUserId];
@@ -560,8 +542,6 @@ export const initSocketsLogic = (io: Socket) => ({
       if (0 > clickCount) {
         clickCount = 0;
       }
-
-      console.log(restoredEnergy);
 
       try {
         await appDataSource
