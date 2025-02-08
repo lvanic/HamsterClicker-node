@@ -2,7 +2,6 @@ import http from "http";
 import "reflect-metadata";
 import { Server } from "socket.io";
 import { handleSocketConnection } from "./socket/socket";
-import { runCombos } from "./jobs";
 import { bot } from "./bot/bot";
 import { initializeDatabase } from "./core/database";
 import { app } from "./app/app";
@@ -23,8 +22,6 @@ const main = async () => {
   });
 
   socketServer.on("connection", handleSocketConnection);
-
-  runCombos();
 
   const port = 3001;
   server.listen(port, () => {
