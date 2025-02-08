@@ -174,16 +174,7 @@ export const Boosts = () => {
       action: improveClick,
       buttonLabel: getLocalization("improve"),
       level: user?.clickPower,
-    },
-    {
-      id: 2,
-      Icon: <img src="/img/energy-limit.png" className="w-8" />,
-      title: getLocalization("upgradeEnergy"),
-      description: getLocalization("upgradeEnergyDesc"),
-      action: upgradeEnergy,
-      buttonLabel: getLocalization("upgrade"),
-      level: user?.energyLevel,
-    },
+    }
   ];
 
   // alert(`${settings.fullEnergyBoostPerDay} - ${fullEnergyActivates}`);
