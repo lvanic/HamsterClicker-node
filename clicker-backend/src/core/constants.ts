@@ -15,4 +15,5 @@ export const DEFAULT_APP_SETTINGS: Omit<AppSettings, "id"> = {
   comboUpdateDayHour: 0,
   lastComboUpdateTimestamp: 0,
   comboBusinesses: [],
+  isRewardForReferalActive: false,
 };

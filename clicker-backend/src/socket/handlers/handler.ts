@@ -9,6 +9,7 @@ import { getAppSettingsWithBusinesses } from "../../services/appSettingsService"
 import { config } from "../../core/config";
 
 const calculateOfflineReward = (minutes: number, level: number): number => {
+  return 0
   if (minutes === 0) return 0;
 
   const hours = Math.ceil(minutes / 60);
@@ -17,12 +18,13 @@ const calculateOfflineReward = (minutes: number, level: number): number => {
   const baseReward = (100 * level) / Math.pow(2, hours - 1);
 
   if (minutesWithoutHours !== 0) {
-    return Math.floor(baseReward * (minutesWithoutHours / 60)) + calculateOfflineReward(minutes - minutesWithoutHours, level);
+    return (
+      Math.floor(baseReward * (minutesWithoutHours / 60)) + calculateOfflineReward(minutes - minutesWithoutHours, level)
+    );
   } else {
     return baseReward + calculateOfflineReward(minutes - 60, level);
   }
 };
-
 
 // TODO: get rid from the buffer
 export let buffer: Record<string, number> = {};
@@ -133,8 +135,9 @@ export const initSocketsLogic = (io: Socket) => ({
     await appDataSource.getRepository(User).update(
       { tgId: userId },
       {
-        balance: user.balance + totalReward + bufferClicks * (user.clickPower + user.level - 1),
-        score: user.score + totalReward + bufferClicks * (user.clickPower + user.level - 1),
+        balance: user.balance + totalReward + bufferClicks * user.level,
+        score: user.score + totalReward + bufferClicks * user.level,
+        scoreLastDay: user.scoreLastDay + totalReward + bufferClicks * user.level,
         addedFromBusinesses: totalReward,
         energy: user.energy + energyToRestore,
         lastOnlineTimeStamp: new Date().getTime(),
@@ -154,12 +157,12 @@ export const initSocketsLogic = (io: Socket) => ({
     io.emit("user", {
       id: user.tgId,
       ...user,
-      balance: user.balance + ((buffer[userId] || 0) * (user.clickPower + user.level - 1)) + totalReward,
-      score: user.score + ((buffer[userId] || 0) * (user.clickPower + user.level - 1)) + totalReward,
+      balance: user.balance + (buffer[userId] || 0) * user.level + totalReward,
+      score: user.score + (buffer[userId] || 0) * user.level + totalReward,
       referrals: user.referrals,
       clickPower: user.clickPower,
       userPlaceInLeague: userPlaceInTop,
-      totalIncomePerHour: 100 * user.level,
+      totalIncomePerHour: 0 * user.level,
       completedTasks: user.completedTasks,
       league: { id: 1 },
       userLevel: user.level,
@@ -176,7 +179,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const topUsers = await userRepository.find({
         order: { score: "DESC" },
-        take: 100
+        take: 100,
       });
 
       io.emit("league", { league: { id: 1 }, usersInLeague: {}, topUsersInLeague: topUsers });
@@ -309,15 +312,18 @@ export const initSocketsLogic = (io: Socket) => ({
       if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
         const message = getLang(lang, "energyRestored");
 
-        await appDataSource.getRepository(User).update({
-          tgId: user.tgId,
-        }, {
-          lastOnlineTimeStamp: new Date().getTime(),
-          energy: 1000 + 500 * (user.energyLevel - 1),
-          fullEnergyActivates: ++user.fullEnergyActivates,
-          score: user.score + ((buffer[tgUserId] || 0) * (user.clickPower + user.level - 1)),
-          balance: user.balance + ((buffer[tgUserId] || 0) * (user.clickPower + user.level - 1)),
-        })
+        await appDataSource.getRepository(User).update(
+          {
+            tgId: user.tgId,
+          },
+          {
+            lastOnlineTimeStamp: new Date().getTime(),
+            energy: 1000 + 500 * (user.energyLevel - 1),
+            fullEnergyActivates: ++user.fullEnergyActivates,
+            score: user.score + (buffer[tgUserId] || 0) * user.level,
+            balance: user.balance + (buffer[tgUserId] || 0) * user.level,
+          },
+        );
 
         delete buffer[tgUserId];
 
@@ -481,17 +487,17 @@ export const initSocketsLogic = (io: Socket) => ({
 
       if (!user) return;
 
-      const score = user.score + (buffer[tgUserId] || 0) * (user.clickPower + user.level - 1);
+      const score = user.score + (buffer[tgUserId] || 0) * user.level;
 
       const userPlaceInTop =
-      (
-        (await appDataSource
-          .getRepository(User)
-          .createQueryBuilder("users")
-          .select("COUNT(*) + 1", "rank")
-          .where(`users.score > ${score}`)
-          .getOne()) as unknown as { rank: number }
-      )?.rank || 1;
+        (
+          (await appDataSource
+            .getRepository(User)
+            .createQueryBuilder("users")
+            .select("COUNT(*) + 1", "rank")
+            .where(`users.score > ${score}`)
+            .getOne()) as unknown as { rank: number }
+        )?.rank || 1;
 
       io.emit("userLeague", { userLeague: {}, userPlaceInLeague: userPlaceInTop, userLevel: {} });
     } catch (e) {
@@ -505,14 +511,12 @@ export const initSocketsLogic = (io: Socket) => ({
 
     if (buffer[tgUserId] > 0) {
       if (user) {
-        const clickPower = user.clickPower;
-
         const currentTime = new Date().getTime();
         const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
         const restoredEnergy = timeDiff / 2;
         const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
 
-        const balanceIncrement = buffer[tgUserId] * (clickPower + user.level - 1);
+        const balanceIncrement = buffer[tgUserId] * user.level;
 
         try {
           await appDataSource.getRepository(User).update(
@@ -520,6 +524,7 @@ export const initSocketsLogic = (io: Socket) => ({
             {
               balance: () => `balance + ${balanceIncrement}`,
               score: () => `score + ${balanceIncrement}`,
+              scoreLastDay: () => `scoreLastDay + ${balanceIncrement}`,
               lastOnlineTimeStamp: currentTime,
               energy: Math.min(user.energy - buffer[tgUserId] + restoredEnergy, userMaxEnergy),
             },

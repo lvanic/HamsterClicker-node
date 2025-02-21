@@ -73,4 +73,5 @@ export interface Settings {
   comboUpdateDayHour: number;
   comboReward: number;
   premiumReferralReward: number;
+  isRewardForReferalActive: boolean;
 }

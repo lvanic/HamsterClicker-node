@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useWebSocket } from "../../hooks/useWebsocket";
 import { League, User } from "../../models";
-import { formatNumber } from "../../utils/formatNumber";
+import { formatNumber, formatNumberWithoutDot } from "../../utils/formatNumber";
 
 export const LeagueTop = () => {
   const { user } = useUser();
@@ -62,7 +62,7 @@ export const LeagueTop = () => {
             >
               <div className="flex flex-col justify-start">
                 <div>{user?.firstName || "Anonimus"}</div>
-                <div>{formatNumber(user?.score || 0)}</div>
+                <div>{formatNumberWithoutDot(user?.score || 0)}</div>
               </div>
               <div className="flex text-2xl font-bold justify-center items-center bg-[#FFAE4C] rounded-full w-10 h-10">
                 {userPlace - 1}

@@ -17,6 +17,7 @@ export const AdminSettings = () => {
   const [comboUpdateDayHour, setComboUpdateDayHour] = useState(0);
   const [comboBusinesses, setComboBusinesses] = useState([]);
   const [premiumReferralReward, setPremiumReward] = useState(0);
+  const [isRewardForReferalActive, setRewardForReferalActive] = useState(false);
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -45,6 +46,7 @@ export const AdminSettings = () => {
     setComboUpdateDayHour(settings.comboUpdateDayHour);
     setComboBusinesses(settings.comboBusinesses);
     setPremiumReward(settings.premiumReferralReward);
+    setRewardForReferalActive(settings.isRewardForReferalActive);
   };
 
   const handleSubmit = async () => {
@@ -70,6 +72,7 @@ export const AdminSettings = () => {
         comboReward,
         comboUpdateDayHour,
         premiumReferralReward,
+        isRewardForReferalActive,
       }),
     });
 
@@ -83,7 +86,12 @@ export const AdminSettings = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-2 text-black">
+    <div
+      className="flex flex-col space-y-2 text-black overflow-scroll"
+      style={{
+        maxHeight: "500px",
+      }}
+    >
       <div className="flex flex-col mb-4">
         <h2 className="text-white">Current combos:</h2>
 
@@ -106,6 +114,31 @@ export const AdminSettings = () => {
           value={maxClickLevel}
           onChange={(e) => setMaxClickLevel(Number(e.target.value))}
         />
+      </div>
+
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">
+          Referral task active?
+        </label>
+        {/* <input
+          type="text"
+          placeholder="Max click level"
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          value={isRewardForReferalActive}
+          onChange={(e) => setRewardForReferalActive()}
+        /> */}
+        <div className="flex items-center gap-2 bg-slate-50 py-1 px-4 w-full outline-none">
+          <div>Active?</div>
+          <input
+            type="checkbox"
+            checked={isRewardForReferalActive}
+            onClick={(e) =>
+              setRewardForReferalActive((prev: boolean) => {
+                return !prev;
+              })
+            }
+          />
+        </div>
       </div>
 
       <div className="flex flex-col">
@@ -146,7 +179,9 @@ export const AdminSettings = () => {
       </div>
 
       <div className="flex flex-col">
-        <label className="text-xs bg-slate-300 w-2/5">Full Energy Boost Per Day</label>
+        <label className="text-xs bg-slate-300 w-2/5">
+          Full Energy Boost Per Day
+        </label>
         <input
           type="number"
           placeholder="Full Energy Boost Per Day"

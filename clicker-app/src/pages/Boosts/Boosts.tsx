@@ -157,11 +157,6 @@ export const Boosts = () => {
   }, [user]);
 
   const fullEnergyActivates = useMemo(() => {
-    if (user) {
-      if (Date.now() - user?.lastFullEnergyTimestamp > 1000 * 60 * 60 * 24) {
-        return 0;
-      }
-    }
     return user?.fullEnergyActivates || 0;
   }, [user?.fullEnergyActivates]);
 
@@ -180,9 +175,7 @@ export const Boosts = () => {
   // alert(`${settings.fullEnergyBoostPerDay} - ${fullEnergyActivates}`);
   
   const remainingBoosts =
-    settings.fullEnergyBoostPerDay - fullEnergyActivates < 0
-      ? 0
-      : settings.fullEnergyBoostPerDay - fullEnergyActivates;
+    settings.fullEnergyBoostPerDay - fullEnergyActivates 
 
   return (
     <div className="px-3 max-w-4xl mx-auto">
@@ -227,7 +220,7 @@ export const Boosts = () => {
             </div>
           </div>
         </div>
-        <div>
+        {/* <div>
           <div className="uppercase text-lg">Boosts</div>
           {boosts.map((boost) => (
             <div
@@ -259,7 +252,7 @@ export const Boosts = () => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
       {isModalOpen && selectedBoost && (
         <BoostModal

@@ -5,6 +5,7 @@ import { usePageLoading } from "./usePageLoading";
 import { useSettings } from "./useSettings";
 import { useUser } from "./useUser";
 import { useWebSocket } from "./useWebsocket";
+import { calculateLevel } from "../utils/calculateLevel";
 
 interface ClickData {
   user_id: number;
@@ -18,7 +19,7 @@ export const useClick = () => {
   const { setPageLoading } = usePageLoading();
 
   const summaryClickPower = useMemo(
-    () => (user?.clickPower || 0) + (user?.userLevel || 0) - 1,
+    () => calculateLevel(user?.score || 0),
     [user]
   );
 

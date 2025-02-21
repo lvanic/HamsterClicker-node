@@ -22,6 +22,7 @@ export const useSettings = () => {
       comboReward: 1000,
       comboUpdateDayHour: 0,
       premiumReferralReward: 500,
+      isRewardForReferalActive: false,
     };
     return { ...fictSettings };
   }

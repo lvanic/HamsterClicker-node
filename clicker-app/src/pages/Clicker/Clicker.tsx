@@ -18,6 +18,7 @@ import { DailyOffer } from "../../components/DailyOffer";
 import { ComboGame } from "../../components/ComboGame";
 import { LanguageSelector } from "../../components/LanguageSelector";
 import { getTelegramUser } from "../../services/telegramService";
+import { calculateLevel } from "../../utils/calculateLevel";
 
 export const Clicker: React.FC = () => {
   const { handleClick, clickCount, energyCount } = useClick();
@@ -108,13 +109,12 @@ export const Clicker: React.FC = () => {
         <ClickerSkeleton />
       ) : (
         <>
-
           <div className="flex flex-col justify-center items-center w-full mb-2 gap-2">
             <ScoreCounter clickCount={clickCount} />
             {/* <League /> */}
             {/* <DailyOffer />
             <ComboGame /> */}
-            <div>+{user?.totalIncomePerHour} per hour</div>
+            {/* <div>+{user?.totalIncomePerHour} per hour</div> */}
           </div>
 
           <img
@@ -151,7 +151,7 @@ export const Clicker: React.FC = () => {
               x={position.x}
               y={position.y}
               id={position.id}
-              rewardPerClick={(user?.clickPower || 0) + (user?.userLevel || 0) - 1}
+              rewardPerClick={calculateLevel(user?.score || 0)}
               onAnimationEnd={handleAnimationEnd}
             />
           ))}

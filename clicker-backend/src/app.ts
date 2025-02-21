@@ -6,12 +6,12 @@ import { bot } from "./bot/bot";
 import { initializeDatabase } from "./core/database";
 import { app } from "./app/app";
 import { initializeAppSettingsIfNotExists } from "./services/appSettingsService";
-import { restoreFullEnergyBoostJob } from "./jobs";
+import { restoreFullEnergyBoostJob, rewardReferralsJob } from "./jobs";
 
 const main = async () => {
   await initializeDatabase();
   await initializeAppSettingsIfNotExists();
-  
+
   bot.launch();
 
   const server = http.createServer(app.callback());
@@ -30,13 +30,14 @@ const main = async () => {
   });
 
   restoreFullEnergyBoostJob.start();
+  rewardReferralsJob.start();
 };
 
-main().catch(console.error)
+main().catch(console.error);
 
 // Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
 // TODO: look up needed
 process.on("uncaughtException", console.log);

@@ -48,4 +48,7 @@ export class AppSettings {
   @ManyToMany(() => Business)
   @JoinTable()
   comboBusinesses: Business[]
+
+  @Column()
+  isRewardForReferalActive: boolean
 }

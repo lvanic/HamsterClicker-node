@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import { config } from "../core/config";
 import { createUser, findUserByTgId, updateUserByTgId } from "../services/userService";
-import { getAppSettingsWithBusinesses } from "../services/appSettingsService";
+import { getAppSettings, getAppSettingsWithBusinesses } from "../services/appSettingsService";
 import { appDataSource } from "../core/database";
 import { User } from "../models/user";
 
@@ -11,7 +11,7 @@ bot.start(async (ctx) => {
   try {
     const [, refId] = ctx.message.text.split("ref_");
     const tgUserId = ctx.message.chat.id;
-
+    const appSettings = await getAppSettings()
     // TODO: proper error handling
     await ctx.reply("Welcome");
 
@@ -33,17 +33,21 @@ bot.start(async (ctx) => {
         addedFromBusinesses: 0,
         addedEnergy: 0,
         lastOnlineTimeStamp: new Date().getTime(), // TODO: fix typo, should be lastOnlineTimestamp
+        scoreLastDay: 0,
       });
 
       if (refId) {
         const refUser = await findUserByTgId(+refId);
+        if (refUser && appSettings.isRewardForReferalActive) {
+          refUser.balance += appSettings.referralReward;
+          updateUserByTgId(+refId, refUser);
+        }
         user.parent = refUser!;
       }
 
       await createUser(user);
     }
-  } catch (e){
+  } catch (e) {
     console.log("Error welcome bot", e);
-    
   }
 });
