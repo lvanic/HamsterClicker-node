@@ -1,5 +1,5 @@
 # Build the frontend
-FROM node:22
+FROM node:22.13
 
 RUN npm install -g serve
 
