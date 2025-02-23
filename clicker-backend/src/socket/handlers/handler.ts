@@ -521,9 +521,9 @@ export const initSocketsLogic = (io: Socket) => ({
           await appDataSource.getRepository(User).update(
             { tgId: tgUserId },
             {
-              balance: () => `balance + ${balanceIncrement}`,
-              score: () => `score + ${balanceIncrement}`,
-              scoreLastDay: () => `scoreLastDay + ${balanceIncrement}`,
+              balance: user.balance + balanceIncrement,
+              score: user.score + balanceIncrement,
+              scoreLastDay: user.scoreLastDay + balanceIncrement,
               lastOnlineTimeStamp: currentTime,
               energy: Math.min(user.energy - buffer[tgUserId] + restoredEnergy, userMaxEnergy),
             },
