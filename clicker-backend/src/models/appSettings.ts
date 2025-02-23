@@ -49,6 +49,6 @@ export class AppSettings {
   @JoinTable()
   comboBusinesses: Business[]
 
-  @Column()
+  @Column({ default: false })
   isRewardForReferalActive: boolean
 }

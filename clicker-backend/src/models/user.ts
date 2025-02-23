@@ -94,7 +94,7 @@ export class User {
     return calculateLevel(this.score);
   }
 
-  @Column()
+  @Column({ default: 0 })
   scoreLastDay: number;
 }
 
