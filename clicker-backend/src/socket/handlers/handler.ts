@@ -9,7 +9,6 @@ import { getAppSettingsWithBusinesses } from "../../services/appSettingsService"
 import { config } from "../../core/config";
 
 const calculateOfflineReward = (minutes: number, level: number): number => {
-  return 0
   if (minutes === 0) return 0;
 
   const hours = Math.ceil(minutes / 60);
@@ -162,7 +161,7 @@ export const initSocketsLogic = (io: Socket) => ({
       referrals: user.referrals,
       clickPower: user.clickPower,
       userPlaceInLeague: userPlaceInTop,
-      totalIncomePerHour: 0 * user.level,
+      totalIncomePerHour: 100 * user.level,
       completedTasks: user.completedTasks,
       league: { id: 1 },
       userLevel: user.level,

@@ -114,7 +114,7 @@ export const Clicker: React.FC = () => {
             {/* <League /> */}
             {/* <DailyOffer />
             <ComboGame /> */}
-            {/* <div>+{user?.totalIncomePerHour} per hour</div> */}
+            <div>+{user?.totalIncomePerHour} per hour</div>
           </div>
 
           <img
