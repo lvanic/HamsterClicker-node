@@ -1,4 +1,4 @@
-import { formatNumber } from "../utils/formatNumber";
+import { formatNumberWithoutDot } from "../utils/formatNumber";
 
 export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
   return (
@@ -20,7 +20,7 @@ export const ScoreCounter = ({ clickCount }: { clickCount: number }) => {
           paddingTop: "0px",
         }}
       >
-        {formatNumber(Math.floor(clickCount))}
+        {formatNumberWithoutDot(Math.floor(clickCount))}
       </div>
     </div>
   );

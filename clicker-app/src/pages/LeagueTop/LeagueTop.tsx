@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useWebSocket } from "../../hooks/useWebsocket";
 import { League, User } from "../../models";
-import { formatNumber, formatNumberWithoutDot } from "../../utils/formatNumber";
+import { formatNumberWithoutDot } from "../../utils/formatNumber";
 
 export const LeagueTop = () => {
   const { user } = useUser();
@@ -91,7 +91,7 @@ export const LeagueTop = () => {
                       {index + 1}
                     </div>
                     <div>{userL.firstName || "Anonimus"}</div>
-                    <div>{formatNumber(userL.score)}</div>
+                    <div>{formatNumberWithoutDot(userL.score)}</div>
                   </div>
                 </li>
               );
