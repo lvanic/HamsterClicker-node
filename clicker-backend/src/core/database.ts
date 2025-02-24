@@ -7,7 +7,9 @@ export const appDataSource = new DataSource({
   type: "sqlite",
   database: path.join(__dirname, "/../../", config.DB_PATH),
   synchronize: true, // TODO: change it
-  entities: [path.join(__dirname, '/../models/*.ts')],
+  entities: [path.join(__dirname, "/../models/*.ts")],
+  logging: true,
+  logger: "file",
 });
 
 export const initializeDatabase = async () => {
