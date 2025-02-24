@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import { config } from "../core/config";
 import { createUser, findUserByTgId, updateUserByTgId } from "../services/userService";
-import { getAppSettings, getAppSettingsWithBusinesses } from "../services/appSettingsService";
+import { getAppSettings } from "../services/appSettingsService";
 import { appDataSource } from "../core/database";
 import { User } from "../models/user";
 
@@ -11,7 +11,7 @@ bot.start(async (ctx) => {
   try {
     const [, refId] = ctx.message.text.split("ref_");
     const tgUserId = ctx.message.chat.id;
-    const appSettings = await getAppSettings()
+    const appSettings = await getAppSettings();
     // TODO: proper error handling
     await ctx.reply("Welcome");
 

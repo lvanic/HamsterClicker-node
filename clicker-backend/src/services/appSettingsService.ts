@@ -5,21 +5,10 @@ import { DEFAULT_APP_SETTINGS } from "../core/constants";
 
 const appSettingsRepository = appDataSource.getRepository(AppSettings);
 
-export const getAppSettings = async(): Promise<AppSettings> => {
+export const getAppSettings = async (): Promise<AppSettings> => {
   const appSettings = await appSettingsRepository.findOneByOrFail({});
-  
+
   return appSettings;
-};
-
-export const getAppSettingsWithBusinesses = async (): Promise<AppSettings> => {
-  const appSettings = await appSettingsRepository.find({
-    take: 1,
-    relations: {
-      comboBusinesses: true,
-    },
-  });
-
-  return appSettings[0];
 };
 
 // TODO: add validation

@@ -1,6 +1,6 @@
 import Koa from "koa";
 import Router from "@koa/router";
-import { getAppSettingsWithBusinesses } from "../services/appSettingsService";
+import { getAppSettings } from "../services/appSettingsService";
 import { findUserByTgId, updateUserByTgId } from "../services/userService";
 import bodyParser from "koa-bodyparser";
 import cors from "@koa/cors";
@@ -13,7 +13,7 @@ const router = new Router();
 router.use(adminRoutes.routes());
 
 router.get("/app-settings", async (ctx) => {
-  const settings = await getAppSettingsWithBusinesses();
+  const settings = await getAppSettings();
   ctx.body = { ...settings };
   return;
 });

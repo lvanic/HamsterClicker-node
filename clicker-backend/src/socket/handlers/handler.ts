@@ -3,7 +3,7 @@ import { appDataSource } from "../../core/database";
 import { getLang } from "../../getLang";
 import { Task } from "../../models/task";
 import { User } from "../../models/user";
-import { getAppSettingsWithBusinesses } from "../../services/appSettingsService";
+import { getAppSettings } from "../../services/appSettingsService";
 import { config } from "../../core/config";
 
 // a reward is calculated for each whole hour passed. 
@@ -184,9 +184,7 @@ export const initSocketsLogic = (io: Socket) => ({
     const [tgUserId, boostName, lang] = parsedData;
 
     try {
-      const appSettings = await getAppSettingsWithBusinesses();
-      const user = await appDataSource.getRepository(User).findOneBy({ tgId: tgUserId });
-      if (!user) throw new Error("User not found");
+      const appSettings = await getAppSettings();
 
       if (boostName !== "fullEnergyBoost") {
         return;
