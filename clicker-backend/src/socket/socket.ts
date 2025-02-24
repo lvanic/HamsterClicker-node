@@ -15,14 +15,8 @@ export const registerEvents = (io: Socket) => {
   io.on("checkTaskStatus", socketsLogic.checkTaskStatus);
   io.on("getUser", socketsLogic.getUser);
   io.on("getLeagueInfo", socketsLogic.getLeagueInfo);
-  io.on("getBusinessesToBuy", socketsLogic.getBusinessesToBuy);
-  io.on("buyBusiness", socketsLogic.buyBusiness);
   io.on("getTasks", socketsLogic.getTasks);
   io.on("activateBoost", socketsLogic.activateBoost);
-  io.on("upgradeClick", socketsLogic.upgradeClick);
-  io.on("upgradeBusiness", socketsLogic.upgradeBusiness);
-  io.on("upgradeEnergy", socketsLogic.upgradeEnergy);
   io.on("userLeague", socketsLogic.userLeague);
-
   io.on("disconnect", socketsLogic.disconnect);
 };
