@@ -1,4 +1,6 @@
 import { Socket } from "socket.io";
+import { config } from "../../core/config";
+import { USER_MAX_ENERGY } from "../../core/constants";
 import { appDataSource } from "../../core/database";
 import logger from "../../core/logger";
 import { getLang } from "../../getLang";
@@ -8,11 +10,14 @@ import { getAppSettings } from "../../services/appSettingsService";
 import { findTaskById } from "../../services/taskService";
 import {
   calculateUsersOfflineReward,
+  findUserByTgIdWithRelations,
+  getUserByTgId,
   getUserPlaceInTop,
+  updateUserByTgId,
 } from "../../services/userService";
 
-// TODO: get rid from the buffer
-export let buffer: Record<string, number> = {};
+// TODO: replace with redis
+const buffer: Record<string, number> = {};
 
 export const initSocketsLogic = (io: Socket) => ({
   clickEvent: async (data: string) => {
@@ -101,14 +106,13 @@ export const initSocketsLogic = (io: Socket) => ({
         return;
       }
 
-    const secondsOffline = (new Date().getTime() - user.lastOnlineTimeStamp) / 1000;
-    const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
-    const bufferClicks = buffer[userId] || 0;
-    const availableEnergy = userMaxEnergy - user.energy;
+      const secondsOffline = (new Date().getTime() - user.lastOnlineTimeStamp) / 1000;
+      const bufferClicks = buffer[userId] || 0;
+      const availableEnergy = USER_MAX_ENERGY - user.energy;
 
-    const energyToRestore = Math.min((secondsOffline - bufferClicks) / 2, availableEnergy);
+      const energyToRestore = Math.min((secondsOffline - bufferClicks) / 2, availableEnergy);
 
-    const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
+      const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
       const offlineReward = calculateUsersOfflineReward(hoursOffline, user.level);
       logger.debug("User was rewarded for time offline", {
@@ -126,13 +130,31 @@ export const initSocketsLogic = (io: Socket) => ({
       });
 
       const userPlaceInTop = getUserPlaceInTop(user.score);
+
+      io.emit("user", {
+        id: user.tgId,
+        ...user,
         balance: user.balance + bufferClicks * user.level + offlineReward,
         score: user.score + bufferClicks * user.level + offlineReward,
+        referrals: user.referrals,
+        clickPower: user.clickPower,
+        userPlaceInLeague: userPlaceInTop,
+        totalIncomePerHour: 100 * user.level,
+        completedTasks: user.completedTasks,
+        league: { id: 1 }, // TODO: completely remove leagues
+        userLevel: user.level,
+        energyLevel: 0, // TODO: completely remove energyLevel
+        maxEnergy: USER_MAX_ENERGY,
+        energy: Math.floor(user.energy + energyToRestore - bufferClicks),
+        offlineReward,
+      });
 
+      delete buffer[userId];
     } catch (error) {
       logger.error("Error while getting user info", error);
     }
   },
+
   getLeagueInfo: async () => {
     try {
       const userRepository = await appDataSource.getRepository(User);
@@ -204,7 +226,7 @@ export const initSocketsLogic = (io: Socket) => ({
     }
   },
 
-  userLeague: async (userId: number) => {
+  userLeague: async (userId: number): Promise<void> => {
     try {
       const user = await findUserByTgIdWithRelations(userId, ["referrals", "completedTasks"]);
 
