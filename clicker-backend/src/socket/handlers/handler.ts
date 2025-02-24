@@ -223,16 +223,25 @@ export const initSocketsLogic = (io: Socket) => ({
     }
   },
 
+  disconnect: async (): Promise<void> => {
+    try {
+      // TODO: get rid of this type casting
+      const tgUserId = Number((io as unknown as { userId: string }).userId);
       const user = await getUserByTgId(tgUserId);
 
-    if (buffer[tgUserId] > 0) {
-      if (user) {
-        const currentTime = new Date().getTime();
-        const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
-        const restoredEnergy = timeDiff / 2;
-        const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
+      const currentTime = new Date().getTime();
+      const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
+      const restoredEnergy = Math.floor(timeDiff / 2);
 
+      if (buffer[tgUserId] > 0) {
         const balanceIncrement = buffer[tgUserId] * user.level;
+        const userEnergy = Math.min(user.energy - buffer[tgUserId] + restoredEnergy, USER_MAX_ENERGY);
+
+        logger.debug("User disconnected", {
+          tgId: tgUserId,
+          userBuffer: buffer[tgUserId],
+          userEnergy,
+        });
 
         await updateUserByTgId(tgUserId, {
           balance: user.balance + balanceIncrement,
@@ -241,6 +250,18 @@ export const initSocketsLogic = (io: Socket) => ({
           lastOnlineTimeStamp: currentTime,
           energy: userEnergy,
         });
+        delete buffer[tgUserId];
+        return;
+      }
+
+      const userEnergy = Math.min(user.energy + restoredEnergy, USER_MAX_ENERGY);
+
+      logger.debug("User disconnected", {
+        tgId: tgUserId,
+        userBuffer: buffer[tgUserId],
+        userEnergy,
+      });
+
       await updateUserByTgId(tgUserId, { lastOnlineTimeStamp: currentTime, energy: userEnergy });
     } catch (error) {
       logger.error("Error during disconnection", error);
