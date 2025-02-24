@@ -14,7 +14,7 @@ const configSchema = z.object({
 const validationResult = configSchema.safeParse(process.env);
 
 if (!validationResult.success) {
-  throw new Error(`Environment validation failed: ${validationResult.error.format()}`);
+  throw new Error(`Environment validation failed: ${validationResult.error.toString()}`);
 }
 
 export const config = validationResult.data;
