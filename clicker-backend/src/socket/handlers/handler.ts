@@ -4,14 +4,9 @@ import { getLang } from "../../getLang";
 import { Task } from "../../models/task";
 import { User } from "../../models/user";
 import { getAppSettings } from "../../services/appSettingsService";
-import { config } from "../../core/config";
-
-// a reward is calculated for each whole hour passed. 
-const calculateOfflineReward = (hours: number, level: number): number => {
-  if (hours === 0) return 0;
-
-  return ((100 * level) / Math.pow(2, hours - 1)) + calculateOfflineReward(hours - 1, level);
-};
+import {
+  calculateUsersOfflineReward,
+} from "../../services/userService";
 
 // TODO: get rid from the buffer
 export let buffer: Record<string, number> = {};
@@ -115,17 +110,8 @@ export const initSocketsLogic = (io: Socket) => ({
 
     const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
-    const totalReward = calculateOfflineReward(hoursOffline, user.level);
-
-    console.log("Minutes offline: ", hoursOffline);
-
-    await appDataSource.getRepository(User).update(
-      { tgId: userId },
-      {
-        balance: user.balance + totalReward + bufferClicks * user.level,
-        score: user.score + totalReward + bufferClicks * user.level,
-        scoreLastDay: user.scoreLastDay + totalReward + bufferClicks * user.level,
-        addedFromBusinesses: totalReward,
+      const offlineReward = calculateUsersOfflineReward(hoursOffline, user.level);
+        scoreLastDay: user.scoreLastDay + offlineReward + bufferClicks * user.level,
         energy: user.energy + energyToRestore,
         lastOnlineTimeStamp: new Date().getTime(),
       },
@@ -141,22 +127,8 @@ export const initSocketsLogic = (io: Socket) => ({
           .getOne()) as unknown as { rank: number }
       )?.rank || 1;
 
-    io.emit("user", {
-      id: user.tgId,
-      ...user,
-      balance: user.balance + (buffer[userId] || 0) * user.level + totalReward,
-      score: user.score + (buffer[userId] || 0) * user.level + totalReward,
-      referrals: user.referrals,
-      clickPower: user.clickPower,
-      userPlaceInLeague: userPlaceInTop,
-      totalIncomePerHour: 100 * user.level,
-      completedTasks: user.completedTasks,
-      league: { id: 1 },
-      userLevel: user.level,
-      energyLevel: user.energyLevel - (buffer[userId] || 0),
-      maxEnergy: 1000 + 500 * (user.energyLevel - 1),
-      energy: Math.floor(user.energy + energyToRestore - (buffer[userId] || 0)),
-    });
+        balance: user.balance + bufferClicks * user.level + offlineReward,
+        score: user.score + bufferClicks * user.level + offlineReward,
 
     delete buffer[userId];
   },

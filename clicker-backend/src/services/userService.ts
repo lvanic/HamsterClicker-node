@@ -8,7 +8,17 @@ export const findAllUsers = async (): Promise<User[]> => {
   const users = await userRepository.find();
 
   return users;
-}
+};
+
+// a reward is calculated for each whole hour passed.
+export const calculateUsersOfflineReward = (hoursOffline: number, level: number): number => {
+  if (hoursOffline === 0) return 0;
+
+  // recursively call the reward calculation function, with each hour the reward is divided by 2
+  return (
+    (OFFLINE_REWARD_BASE * level) / Math.pow(2, hoursOffline - 1) + calculateUsersOfflineReward(hoursOffline - 1, level)
+  );
+};
 
 export const findUserByTgId = (tgId: number): Promise<User | null> => {
   return userRepository.findOneBy({tgId});
