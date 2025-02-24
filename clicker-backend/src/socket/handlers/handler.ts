@@ -6,6 +6,7 @@ import { User } from "../../models/user";
 import { getAppSettings } from "../../services/appSettingsService";
 import {
   calculateUsersOfflineReward,
+  getUserPlaceInTop,
 } from "../../services/userService";
 
 // TODO: get rid from the buffer
@@ -117,16 +118,7 @@ export const initSocketsLogic = (io: Socket) => ({
       },
     );
 
-    const userPlaceInTop =
-      (
-        (await appDataSource
-          .getRepository(User)
-          .createQueryBuilder("users")
-          .select("COUNT(*) + 1", "rank")
-          .where(`users.score > ${user.score}`)
-          .getOne()) as unknown as { rank: number }
-      )?.rank || 1;
-
+      const userPlaceInTop = getUserPlaceInTop(user.score);
         balance: user.balance + bufferClicks * user.level + offlineReward,
         score: user.score + bufferClicks * user.level + offlineReward,
 
@@ -213,15 +205,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const score = user.score + (buffer[tgUserId] || 0) * user.level;
 
-      const userPlaceInTop =
-        (
-          (await appDataSource
-            .getRepository(User)
-            .createQueryBuilder("users")
-            .select("COUNT(*) + 1", "rank")
-            .where(`users.score > ${score}`)
-            .getOne()) as unknown as { rank: number }
-        )?.rank || 1;
+      const userPlaceInTop = getUserPlaceInTop(score);
 
       io.emit("userLeague", { userLeague: {}, userPlaceInLeague: userPlaceInTop, userLevel: {} });
     } catch (e) {

@@ -23,11 +23,24 @@ export const findUserByTgId = (tgId: number): Promise<User | null> => {
   return userRepository.findOneBy({tgId});
 };
 
-// TODO: rewrite?
-export const updateUserByTgId = async (tgId: number, userData: DeepPartial<User>): Promise<User> => {
-  await userRepository.update(tgId, userData);
-  return userRepository.findOneByOrFail({ tgId });
-}
+
+export const getUserPlaceInTop = async (userScore: number): Promise<number> => {
+  try {
+    const query = await appDataSource
+      .getRepository(User)
+      .createQueryBuilder("users")
+      .select("COUNT(*) + 1", "rank")
+      .where(`users.score > ${userScore}`);
+
+    const userPlaceInTop = (query.getRawOne() as unknown as { rank?: number }).rank || 1;
+
+    return userPlaceInTop;
+  } catch (error) {
+    logger.error("Error while getting user place in top", error);
+    throw error;
+  }
+};
+
 
 export const deleteUserByTgId = async (tgId: number): Promise<void> => {
   await userRepository.delete({ tgId });
