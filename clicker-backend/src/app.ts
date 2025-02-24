@@ -26,9 +26,7 @@ const main = async () => {
 
   socketServer.on("connection", handleSocketConnection);
 
-  const port = 3001;
-  server.listen(port, () => {
-    console.log(`Сервер запущен на http://localhost:${port}`);
+  server.listen(config.PORT, () => {
   });
 
   restoreFullEnergyBoostJob.start();
