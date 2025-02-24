@@ -169,9 +169,20 @@ export const initSocketsLogic = (io: Socket) => ({
         logger.warn("Received a request for an unprocessed boost", parsedData);
         return;
       }
+
+      if (user.fullEnergyActivates >= appSettings.fullEnergyBoostPerDay) {
+        logger.warn("Received a request for activation when there are no boosters left", parsedData);
+
+        const message = getLang(lang, "fullEnergyLimit");
+
+        io.emit("boostActivated", {
+          success: false,
+          message: message,
+        });
         return;
       }
 
+      const message = getLang(lang, "energyRestored");
       await updateUserByTgId(tgUserId, {
         lastOnlineTimeStamp: new Date().getTime(),
         energy: USER_MAX_ENERGY,
@@ -180,8 +191,13 @@ export const initSocketsLogic = (io: Socket) => ({
         balance: user.balance + (buffer[tgUserId] || 0) * user.level,
       });
 
-        delete buffer[tgUserId];
+      delete buffer[tgUserId];
 
+      io.emit("boostActivated", {
+        success: true,
+        message: message,
+      });
+      io.emit("energyRestored", { energy: user.energy });
     } catch (error) {
       logger.error("Error while attempt to activate energy boost", error);
       io.emit("boostActivated", { success: false, message: getLang(lang, "transactionFailed") });
