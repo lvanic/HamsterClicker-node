@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { appDataSource } from "../../core/database";
+import logger from "../../core/logger";
 import { getLang } from "../../getLang";
 import { Task } from "../../models/task";
 import { User } from "../../models/user";
@@ -16,16 +17,18 @@ export let buffer: Record<string, number> = {};
 export const initSocketsLogic = (io: Socket) => ({
   clickEvent: async (data: string) => {
     try {
+      logger.debug("Processing click", data);
+
       const parsedData = JSON.parse(data);
-      const tgUserId = parsedData["user_id"];
+      const tgUserId = parsedData["user_id"]; // REVISIT: why is there a user_id in the request body
 
       if (!buffer[tgUserId]) {
         buffer[tgUserId] = 0;
       }
 
       buffer[tgUserId]++;
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      logger.error("Error while click processing", error);
     }
   },
   checkTaskStatus: async (data: string) => {
@@ -35,6 +38,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const task = await findTaskById(taskId);
       if (!task) {
+        logger.warn("Attempt to retrieve not-existing task", taskId);
         return;
       }
 
@@ -43,10 +47,12 @@ export const initSocketsLogic = (io: Socket) => ({
         relations: ["completedTasks"],
       });
       if (!user) {
+        logger.warn("Attempt to retrieve not-existing user", tgUserId);
         return;
       }
 
       if (user.completedTasks.some((ut) => ut.id === task.id)) {
+        logger.warn("Attempt to complete a task twice", tgUserId);
         return;
       }
 
@@ -86,20 +92,17 @@ export const initSocketsLogic = (io: Socket) => ({
         io.emit("taskStatus", { id: task.id, finished: true });
       }
     } catch (error) {
-      console.error("Error checking task status after multiple attempts:", error);
+      logger.error("Error while checking task status", error);
     }
   },
 
-  // TODO: add error handler
   getUser: async (userId: number) => {
-    const user = await appDataSource.getRepository(User).findOne({
-      where: { tgId: userId },
-      relations: ["referrals", "completedTasks"],
-    });
+    try {
 
-    if (!user) {
-      return;
-    }
+      if (!user) {
+        logger.warn("Attempt to retrieve a non-existent user", userId);
+        return;
+      }
 
     const secondsOffline = (new Date().getTime() - user.lastOnlineTimeStamp) / 1000;
     const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
@@ -111,6 +114,10 @@ export const initSocketsLogic = (io: Socket) => ({
     const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
       const offlineReward = calculateUsersOfflineReward(hoursOffline, user.level);
+      logger.debug("User was rewarded for time offline", {
+        userId,
+        offlineReward,
+      });
         scoreLastDay: user.scoreLastDay + offlineReward + bufferClicks * user.level,
         energy: user.energy + energyToRestore,
         lastOnlineTimeStamp: new Date().getTime(),
@@ -121,7 +128,9 @@ export const initSocketsLogic = (io: Socket) => ({
         balance: user.balance + bufferClicks * user.level + offlineReward,
         score: user.score + bufferClicks * user.level + offlineReward,
 
-    delete buffer[userId];
+    } catch (error) {
+      logger.error("Error while getting user info", error);
+    }
   },
   getLeagueInfo: async () => {
     try {
@@ -133,15 +142,20 @@ export const initSocketsLogic = (io: Socket) => ({
       });
 
       io.emit("league", { league: { id: 1 }, usersInLeague: {}, topUsersInLeague: topUsers });
-    } catch {
-      console.log("error get league");
+    } catch (error) {
+      logger.error("Error while getting league info", error);
     }
   },
 
   getTasks: async () => {
-    const tasks = await appDataSource.getRepository(Task).find({ where: { active: true } });
-    io.emit("tasks", tasks);
+    try {
+      const tasks = await appDataSource.getRepository(Task).find({ where: { active: true } });
+      io.emit("tasks", tasks);
+    } catch (error) {
+      logger.error("Error while getting tasks", error);
+    }
   },
+
   activateBoost: async (data: string) => {
     const parsedData = JSON.parse(data);
     const [tgUserId, boostName, lang] = parsedData;
@@ -150,6 +164,9 @@ export const initSocketsLogic = (io: Socket) => ({
       const appSettings = await getAppSettings();
 
       if (boostName !== "fullEnergyBoost") {
+        logger.warn("Received a request for an unprocessed boost", parsedData);
+        return;
+      }
         return;
       }
 
@@ -171,44 +188,26 @@ export const initSocketsLogic = (io: Socket) => ({
 
         delete buffer[tgUserId];
 
-        io.emit("boostActivated", {
-          success: true,
-          message: message,
-        });
-        io.emit("energyRestored", { energy: user.energy });
-      } else {
-        const message = getLang(lang, "fullEnergyLimit");
-
-        io.emit("boostActivated", {
-          success: false,
-          message: message,
-        });
-      }
-
-      return; // Успешное завершение, выходим из функции
-    } catch {
-      console.error("Max retry attempts reached. Transaction failed.");
+    } catch (error) {
+      logger.error("Error while attempt to activate energy boost", error);
       io.emit("boostActivated", { success: false, message: getLang(lang, "transactionFailed") });
     }
   },
 
   userLeague: async (userId: number) => {
     try {
-      const tgUserId = Number(userId);
-      const user = await appDataSource.getRepository(User).findOne({
-        where: { tgId: tgUserId },
-        relations: ["referrals", "businesses", "completedTasks"],
-      });
-
-      if (!user) return;
+      if (!user) {
+        logger.warn("Attempt to retrieve a non-existent user", userId);
+        return;
+      }
 
       const score = user.score + (buffer[tgUserId] || 0) * user.level;
 
       const userPlaceInTop = getUserPlaceInTop(score);
 
       io.emit("userLeague", { userLeague: {}, userPlaceInLeague: userPlaceInTop, userLevel: {} });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      logger.error("Error while getting a user league", error);
     }
   },
 
@@ -247,21 +246,8 @@ export const initSocketsLogic = (io: Socket) => ({
       const currentTime = new Date().getTime();
       const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
       const restoredEnergy = Math.floor(timeDiff / 2);
-      const userMaxEnergy = 1000 + 500 * (user.energyLevel - 1);
-
-      clickCount = Math.min(user.energy + restoredEnergy, userMaxEnergy);
-
-      if (0 > clickCount) {
-        clickCount = 0;
-      }
-
-      try {
-        await appDataSource
-          .getRepository(User)
-          .update({ tgId: tgUserId }, { lastOnlineTimeStamp: currentTime, energy: clickCount });
-      } catch (error) {
-        console.error("Ошибка обновления времени последнего подключения:", error);
-      }
+    } catch (error) {
+      logger.error("Error during disconnection", error);
     }
   },
 });
