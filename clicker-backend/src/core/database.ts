@@ -1,5 +1,6 @@
-import { DataSource } from "typeorm";
 import path from "path";
+import { DataSource } from "typeorm";
+
 import { config } from "./config";
 
 export const appDataSource = new DataSource({

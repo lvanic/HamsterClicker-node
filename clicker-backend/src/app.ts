@@ -1,12 +1,14 @@
 import http from "http";
 import "reflect-metadata";
 import { Server } from "socket.io";
-import { handleSocketConnection } from "./socket/socket";
+
+import { app } from "./adminServer/app";
 import { bot } from "./bot/bot";
+import { config } from "./core/config";
 import { initializeDatabase } from "./core/database";
-import { app } from "./app/app";
-import { initializeAppSettingsIfNotExists } from "./services/appSettingsService";
 import { restoreFullEnergyBoostJob, rewardReferralsJob } from "./jobs";
+import { initializeAppSettingsIfNotExists } from "./services/appSettingsService";
+import { handleSocketConnection } from "./socket/socket";
 
 const main = async () => {
   await initializeDatabase();
