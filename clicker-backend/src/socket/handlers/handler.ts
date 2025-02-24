@@ -8,21 +8,11 @@ import { User } from "../../models/user";
 import { getAppSettingsWithBusinesses } from "../../services/appSettingsService";
 import { config } from "../../core/config";
 
-const calculateOfflineReward = (minutes: number, level: number): number => {
-  if (minutes === 0) return 0;
+// a reward is calculated for each whole hour passed. 
+const calculateOfflineReward = (hours: number, level: number): number => {
+  if (hours === 0) return 0;
 
-  const hours = Math.ceil(minutes / 60);
-  const minutesWithoutHours = minutes % 60;
-
-  const baseReward = (100 * level) / Math.pow(2, hours - 1);
-
-  if (minutesWithoutHours !== 0) {
-    return (
-      Math.floor(baseReward * (minutesWithoutHours / 60)) + calculateOfflineReward(minutes - minutesWithoutHours, level)
-    );
-  } else {
-    return baseReward + calculateOfflineReward(minutes - 60, level);
-  }
+  return ((100 * level) / Math.pow(2, hours - 1)) + calculateOfflineReward(hours - 1, level);
 };
 
 // TODO: get rid from the buffer
@@ -125,11 +115,11 @@ export const initSocketsLogic = (io: Socket) => ({
 
     const energyToRestore = Math.min((secondsOffline - bufferClicks) / 2, availableEnergy);
 
-    const minutesOffline = Math.min(Math.floor(secondsOffline / 60), 180);
+    const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
-    const totalReward = calculateOfflineReward(minutesOffline, user.level);
+    const totalReward = calculateOfflineReward(hoursOffline, user.level);
 
-    console.log("Minutes offline: ", minutesOffline);
+    console.log("Minutes offline: ", hoursOffline);
 
     await appDataSource.getRepository(User).update(
       { tgId: userId },
