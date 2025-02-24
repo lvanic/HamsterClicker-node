@@ -4,6 +4,7 @@ import { getLang } from "../../getLang";
 import { Task } from "../../models/task";
 import { User } from "../../models/user";
 import { getAppSettings } from "../../services/appSettingsService";
+import { findTaskById } from "../../services/taskService";
 import {
   calculateUsersOfflineReward,
   getUserPlaceInTop,
@@ -32,9 +33,7 @@ export const initSocketsLogic = (io: Socket) => ({
       const parsedData = JSON.parse(data);
       const [tgUserId, taskId] = parsedData;
 
-      const task = await appDataSource.getRepository(Task).findOneBy({
-        id: taskId,
-      });
+      const task = await findTaskById(taskId);
       if (!task) {
         return;
       }
