@@ -1,4 +1,7 @@
 import { DeepPartial } from "typeorm";
+import { appDataSource } from "../core/database";
+import { User, UserClosure } from "../models/user";
+import logger from "../core/logger";
 import { OFFLINE_REWARD_BASE } from "../core/constants";
 
 const userRepository = appDataSource.getRepository(User);
@@ -20,9 +23,26 @@ export const calculateUsersOfflineReward = (hoursOffline: number, level: number)
 };
 
 export const findUserByTgId = (tgId: number): Promise<User | null> => {
-  return userRepository.findOneBy({tgId});
+  return userRepository.findOneBy({ tgId });
 };
 
+export const findUserByTgIdWithRelations = (tgId: number, relations: string[]): Promise<User | null> => {
+  try {
+    return userRepository.findOne({ where: { tgId }, relations });
+  } catch (error) {
+    logger.error("Error while finding user in db", error);
+    throw error;
+  }
+};
+
+export const getUserByTgId = (tgId: number): Promise<User> => {
+  try {
+    return userRepository.findOneByOrFail({ tgId });
+  } catch (error) {
+    logger.error("Error while getting user from db", error);
+    throw error;
+  }
+};
 
 export const getUserPlaceInTop = async (userScore: number): Promise<number> => {
   try {
@@ -41,6 +61,15 @@ export const getUserPlaceInTop = async (userScore: number): Promise<number> => {
   }
 };
 
+export const updateUserByTgId = async (tgId: number, userData: DeepPartial<User>): Promise<void> => {
+  try {
+    await userRepository.update(tgId, userData);
+  } catch (error) {
+    logger.error("Error while updating user in db", error);
+
+    throw error;
+  }
+};
 
 export const deleteUserByTgId = async (tgId: number): Promise<void> => {
   await userRepository.delete({ tgId });
@@ -90,8 +119,8 @@ export const createUser = async (entityData: DeepPartial<User>) => {
   //       ancestor.level = 2;
 
   //       await userRepository.save(ancestor);
-  //     } 
-      
+  //     }
+
   //     if (ancestor.level >= 2 && Math.max((Math.floor(childrenFirstLevelCount / 10) + 2), maxDepthLevel + 1) > ancestor.level) {
   //       console.log("level upgrade max: ", Math.max((Math.floor(childrenFirstLevelCount / 10) + 2), maxDepthLevel + 1));
 
