@@ -1,6 +1,7 @@
+import { CronJob } from "cron";
+
 import { appDataSource } from "./core/database";
 import { User } from "./models/user";
-import { CronJob } from "cron";
 
 const REWARD_PERCENTAGE = 0.1;
 
