@@ -31,6 +31,7 @@ export const initSocketsLogic = (io: Socket) => ({
       logger.error("Error while click processing", error);
     }
   },
+
   checkTaskStatus: async (data: string) => {
     try {
       const parsedData = JSON.parse(data);
@@ -42,10 +43,7 @@ export const initSocketsLogic = (io: Socket) => ({
         return;
       }
 
-      const user = await appDataSource.getRepository(User).findOne({
-        where: { tgId: tgUserId },
-        relations: ["completedTasks"],
-      });
+      const user = await findUserByTgIdWithRelations(tgUserId, ["completedTasks"]);
       if (!user) {
         logger.warn("Attempt to retrieve not-existing user", tgUserId);
         return;
@@ -69,26 +67,24 @@ export const initSocketsLogic = (io: Socket) => ({
         };
 
         if (data.ok && data.result && data.result.status !== "left" && data.result.status !== "kicked") {
-          user.completedTasks.push(task);
-          user.balance += task.rewardAmount;
-          user.score += task.rewardAmount;
-
-          await appDataSource.getRepository(User).save(user);
+          await updateUserByTgId(tgUserId, {
+            balance: user.balance + task.rewardAmount,
+            score: user.score + task.rewardAmount,
+            completedTasks: [...user.completedTasks, task],
+          });
           io.emit("reward", task.rewardAmount);
           io.emit("taskStatus", { id: task.id, finished: true });
         } else {
           io.emit("taskStatus", { id: task.id, finished: false });
         }
       } else {
-        user.completedTasks.push(task);
-
-        user.balance += task.rewardAmount;
-        user.score += task.rewardAmount;
-
-        await appDataSource.getRepository(User).save(user);
+        await updateUserByTgId(tgUserId, {
+          balance: user.balance + task.rewardAmount,
+          score: user.score + task.rewardAmount,
+          completedTasks: [...user.completedTasks, task],
+        });
 
         io.emit("reward", task.rewardAmount);
-
         io.emit("taskStatus", { id: task.id, finished: true });
       }
     } catch (error) {
@@ -98,6 +94,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
   getUser: async (userId: number) => {
     try {
+      const user = await findUserByTgIdWithRelations(userId, ["referrals", "completedTasks"]);
 
       if (!user) {
         logger.warn("Attempt to retrieve a non-existent user", userId);
@@ -118,11 +115,15 @@ export const initSocketsLogic = (io: Socket) => ({
         userId,
         offlineReward,
       });
+
+      await updateUserByTgId(userId, {
+        balance: user.balance + offlineReward + bufferClicks * user.level,
+        score: user.score + offlineReward + bufferClicks * user.level,
         scoreLastDay: user.scoreLastDay + offlineReward + bufferClicks * user.level,
+        addedFromBusinesses: offlineReward,
         energy: user.energy + energyToRestore,
         lastOnlineTimeStamp: new Date().getTime(),
-      },
-    );
+      });
 
       const userPlaceInTop = getUserPlaceInTop(user.score);
         balance: user.balance + bufferClicks * user.level + offlineReward,
@@ -162,6 +163,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
     try {
       const appSettings = await getAppSettings();
+      const user = await getUserByTgId(tgUserId);
 
       if (boostName !== "fullEnergyBoost") {
         logger.warn("Received a request for an unprocessed boost", parsedData);
@@ -170,21 +172,13 @@ export const initSocketsLogic = (io: Socket) => ({
         return;
       }
 
-      if (user.fullEnergyActivates < appSettings.fullEnergyBoostPerDay) {
-        const message = getLang(lang, "energyRestored");
-
-        await appDataSource.getRepository(User).update(
-          {
-            tgId: user.tgId,
-          },
-          {
-            lastOnlineTimeStamp: new Date().getTime(),
-            energy: 1000 + 500 * (user.energyLevel - 1),
-            fullEnergyActivates: ++user.fullEnergyActivates,
-            score: user.score + (buffer[tgUserId] || 0) * user.level,
-            balance: user.balance + (buffer[tgUserId] || 0) * user.level,
-          },
-        );
+      await updateUserByTgId(tgUserId, {
+        lastOnlineTimeStamp: new Date().getTime(),
+        energy: USER_MAX_ENERGY,
+        fullEnergyActivates: ++user.fullEnergyActivates,
+        score: user.score + (buffer[tgUserId] || 0) * user.level,
+        balance: user.balance + (buffer[tgUserId] || 0) * user.level,
+      });
 
         delete buffer[tgUserId];
 
@@ -196,12 +190,14 @@ export const initSocketsLogic = (io: Socket) => ({
 
   userLeague: async (userId: number) => {
     try {
+      const user = await findUserByTgIdWithRelations(userId, ["referrals", "completedTasks"]);
+
       if (!user) {
         logger.warn("Attempt to retrieve a non-existent user", userId);
         return;
       }
 
-      const score = user.score + (buffer[tgUserId] || 0) * user.level;
+      const score = user.score + (buffer[userId] || 0) * user.level;
 
       const userPlaceInTop = getUserPlaceInTop(score);
 
@@ -211,9 +207,7 @@ export const initSocketsLogic = (io: Socket) => ({
     }
   },
 
-  disconnect: async () => {
-    const tgUserId = Number((io as unknown as { userId: string }).userId);
-    const user = await appDataSource.getRepository(User).findOneOrFail({ where: { tgId: tgUserId } });
+      const user = await getUserByTgId(tgUserId);
 
     if (buffer[tgUserId] > 0) {
       if (user) {
@@ -224,28 +218,14 @@ export const initSocketsLogic = (io: Socket) => ({
 
         const balanceIncrement = buffer[tgUserId] * user.level;
 
-        try {
-          await appDataSource.getRepository(User).update(
-            { tgId: tgUserId },
-            {
-              balance: user.balance + balanceIncrement,
-              score: user.score + balanceIncrement,
-              scoreLastDay: user.scoreLastDay + balanceIncrement,
-              lastOnlineTimeStamp: currentTime,
-              energy: Math.min(user.energy - buffer[tgUserId] + restoredEnergy, userMaxEnergy),
-            },
-          );
-          delete buffer[tgUserId];
-        } catch (error) {
-          console.error("Ошибка обновления пользователя при отключении:", error);
-        }
-      }
-    } else {
-      let clickCount = 0;
-
-      const currentTime = new Date().getTime();
-      const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
-      const restoredEnergy = Math.floor(timeDiff / 2);
+        await updateUserByTgId(tgUserId, {
+          balance: user.balance + balanceIncrement,
+          score: user.score + balanceIncrement,
+          scoreLastDay: user.scoreLastDay + balanceIncrement,
+          lastOnlineTimeStamp: currentTime,
+          energy: userEnergy,
+        });
+      await updateUserByTgId(tgUserId, { lastOnlineTimeStamp: currentTime, energy: userEnergy });
     } catch (error) {
       logger.error("Error during disconnection", error);
     }
