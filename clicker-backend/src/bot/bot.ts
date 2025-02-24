@@ -4,6 +4,7 @@ import { createUser, findUserByTgId, updateUserByTgId } from "../services/userSe
 import { getAppSettings } from "../services/appSettingsService";
 import { appDataSource } from "../core/database";
 import { User } from "../models/user";
+import logger from "../core/logger";
 
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 
@@ -48,6 +49,6 @@ bot.start(async (ctx) => {
       await createUser(user);
     }
   } catch (e) {
-    console.log("Error welcome bot", e);
+    logger.error("Error welcome bot", e);
   }
 });

@@ -2,6 +2,7 @@ import path from "path";
 import { DataSource } from "typeorm";
 
 import { config } from "./config";
+import logger from "./logger";
 
 export const appDataSource = new DataSource({
   type: "sqlite",
@@ -14,9 +15,12 @@ export const appDataSource = new DataSource({
 
 export const initializeDatabase = async () => {
   try {
+    logger.info("Initializing database");
+
     await appDataSource.initialize();
   } catch (error) {
-    // TODO: logging
+    logger.error("Error during database initialization");
+
     throw error;
   }
 };

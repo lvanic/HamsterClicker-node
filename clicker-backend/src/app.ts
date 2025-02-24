@@ -6,6 +6,7 @@ import { app } from "./adminServer/app";
 import { bot } from "./bot/bot";
 import { config } from "./core/config";
 import { initializeDatabase } from "./core/database";
+import logger from "./core/logger";
 import { restoreFullEnergyBoostJob, rewardReferralsJob } from "./jobs";
 import { initializeAppSettingsIfNotExists } from "./services/appSettingsService";
 import { handleSocketConnection } from "./socket/socket";
@@ -27,18 +28,19 @@ const main = async () => {
   socketServer.on("connection", handleSocketConnection);
 
   server.listen(config.PORT, () => {
+    logger.info(`Server is running on http://localhost:${config.PORT}`);
   });
 
   restoreFullEnergyBoostJob.start();
   rewardReferralsJob.start();
 };
 
-main().catch(console.error);
+main().catch((error) => logger.error("Unexpected error", error));
 
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
 // TODO: look up needed
-process.on("uncaughtException", console.log);
-process.on("unhandledRejection", console.log);
+process.on("uncaughtException", (error) => logger.error("Uncaught exception", error));
+process.on("unhandledRejection", (error) => logger.error("Uncaught rejection", error));

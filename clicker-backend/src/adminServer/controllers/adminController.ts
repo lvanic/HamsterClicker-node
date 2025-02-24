@@ -7,6 +7,7 @@ import { sendForAllUsers } from "../../services/botService";
 import { Task } from "../../models/task";
 import { Business } from "../../models/business";
 import { findUserByTgId } from "../../services/userService";
+import logger from "../../core/logger";
 
 export const getAppSettings = async (ctx: Context) => {
   const settings = await AppSettingsService.getAppSettings();
@@ -245,7 +246,7 @@ export const broadcast = async (ctx: Context) => {
     ctx.status = 200;
     ctx.body = "Broadcast message sent";
   } catch (error) {
-    console.error("Error during broadcasting:", error);
+    logger.error("Error during broadcasting:", error);
     ctx.status = 500;
     ctx.body = "Internal Server Error";
   }

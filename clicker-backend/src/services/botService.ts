@@ -1,4 +1,5 @@
 import { bot } from "../bot/bot";
+import logger from "../core/logger";
 import { findAllUsers } from "./userService";
 
 export const sendForAllUsers = async (message: string) => {
@@ -8,11 +9,11 @@ export const sendForAllUsers = async (message: string) => {
       try {
         await bot.telegram.sendMessage(user.tgId, message);
       } catch (error) {
-        console.error(`Failed to send message to user ${user.tgId}:`, error);
+        logger.error(`Failed to send message to user ${user.tgId}:`, error);
       }
     }
-    console.log("Broadcast message sent to all users.");
+    logger.info("Broadcast message sent to all users.");
   } catch (error) {
-    console.error("Error sending broadcast to users:", error);
+    logger.error("Error sending broadcast to users:", error);
   }
 };

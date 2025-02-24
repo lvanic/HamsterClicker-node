@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import logger from "./core/logger";
 
 const loadTranslations = (lang: string) => {
   const filePath = path.join(__dirname, `${lang}.json`);
@@ -8,7 +9,7 @@ const loadTranslations = (lang: string) => {
     const data = fs.readFileSync(filePath, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    console.error(`Error loading translations for ${lang}:`, error);
+    logger.error(`Error loading translations for ${lang}:`, error);
     return {};
   }
 };
