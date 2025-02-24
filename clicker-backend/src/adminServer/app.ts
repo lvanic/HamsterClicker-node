@@ -37,13 +37,9 @@ app.use(cors());
 app.use(async (ctx, next) => {
   if (ctx.path.startsWith("/admin")) {
     const token = ctx.headers["admin-token"];
-    console.log(token, config.ADMIN_TOKEN);
-
     if (token === (config.ADMIN_TOKEN || "admin")) {
       await next();
     } else {
-      console.log("Unauthorized");
-
       ctx.status = 401;
       ctx.body = "Unauthorized";
       return;
