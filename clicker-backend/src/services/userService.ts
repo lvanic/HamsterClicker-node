@@ -1,6 +1,5 @@
 import { DeepPartial } from "typeorm";
-import { appDataSource } from "../core/database"
-import { User, UserClosure } from "../models/user"
+import { OFFLINE_REWARD_BASE } from "../core/constants";
 
 const userRepository = appDataSource.getRepository(User);
 
