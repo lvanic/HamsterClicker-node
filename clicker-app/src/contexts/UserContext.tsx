@@ -201,15 +201,11 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           return prev;
         }
 
-        const balanceIncreasePerSecond = prev.totalIncomePerHour / 3600;
-
         const newEnergy = Math.min(prev.energy + 1, prev.maxEnergy);
 
         return {
           ...prev,
           energy: newEnergy,
-          score: prev.score + balanceIncreasePerSecond,
-          balance: prev.balance + balanceIncreasePerSecond,
         };
       });
     }, 2000);
