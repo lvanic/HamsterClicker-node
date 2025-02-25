@@ -20,6 +20,11 @@ bot.start(async (ctx) => {
     const isUserExist = !!(await findUserByTgId(tgUserId));
 
     if (!isUserExist) {
+      logger.info("New user", {
+        tgUserId,
+        refId,
+      });
+
       const user = appDataSource.getRepository(User).create({
         tgId: tgUserId,
         tgUsername: ctx.message.from.username,

@@ -22,8 +22,6 @@ const buffer: Record<string, number> = {};
 export const initSocketsLogic = (io: Socket) => ({
   clickEvent: async (data: string) => {
     try {
-      logger.debug("Processing click", data);
-
       const parsedData = JSON.parse(data);
       const tgUserId = parsedData["user_id"]; // REVISIT: why is there a user_id in the request body
 
@@ -32,6 +30,11 @@ export const initSocketsLogic = (io: Socket) => ({
       }
 
       buffer[tgUserId]++;
+
+      logger.debug("Click processed", {
+        tgUserId,
+        currentBuffer: buffer[tgUserId],
+      });
     } catch (error) {
       logger.error("Error while click processing", error);
     }
@@ -41,6 +44,11 @@ export const initSocketsLogic = (io: Socket) => ({
     try {
       const parsedData = JSON.parse(data);
       const [tgUserId, taskId] = parsedData;
+
+      logger.debug("Checking task status", {
+        tgUserId,
+        taskId,
+      });
 
       const task = await findTaskById(taskId);
       if (!task) {
@@ -99,6 +107,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
   getUser: async (userId: number) => {
     try {
+      logger.debug("Getting user", { userId });
       const user = await findUserByTgIdWithRelations(userId, ["referrals", "completedTasks"]);
 
       if (!user) {
@@ -115,9 +124,15 @@ export const initSocketsLogic = (io: Socket) => ({
       const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
       const offlineReward = calculateUsersOfflineReward(hoursOffline, user.level);
-      logger.debug("User was rewarded for time offline", {
+      logger.debug("Updating user data", {
         userId,
         offlineReward,
+        energyDB: user.energy,
+        restoredEnergy: energyToRestore,
+        scoreLastDay: user.scoreLastDay,
+        score: user.score,
+        bufferClicks,
+        secondsOffline,
       });
 
       await updateUserByTgId(userId, {
@@ -157,6 +172,8 @@ export const initSocketsLogic = (io: Socket) => ({
 
   getLeagueInfo: async () => {
     try {
+      logger.debug("Getting top users");
+
       const userRepository = await appDataSource.getRepository(User);
 
       const topUsers = await userRepository.find({
@@ -172,6 +189,8 @@ export const initSocketsLogic = (io: Socket) => ({
 
   getTasks: async () => {
     try {
+      logger.debug("Getting tasks");
+
       const tasks = await appDataSource.getRepository(Task).find({ where: { active: true } });
       io.emit("tasks", tasks);
     } catch (error) {
@@ -184,6 +203,11 @@ export const initSocketsLogic = (io: Socket) => ({
     const [tgUserId, boostName, lang] = parsedData;
 
     try {
+      logger.debug("Activating boost", {
+        tgUserId,
+        boostName,
+      });
+
       const appSettings = await getAppSettings();
       const user = await getUserByTgId(tgUserId);
 
@@ -213,6 +237,12 @@ export const initSocketsLogic = (io: Socket) => ({
         balance: user.balance + (buffer[tgUserId] || 0) * user.level,
       });
 
+      logger.debug("Resetting the user buffer after activating the boost", {
+        tgUserId,
+        currentBuffer: buffer[tgUserId],
+        score: user.score,
+      });
+
       delete buffer[tgUserId];
 
       io.emit("boostActivated", {
@@ -228,6 +258,10 @@ export const initSocketsLogic = (io: Socket) => ({
 
   userLeague: async (userId: number): Promise<void> => {
     try {
+      logger.debug("Getting user place in league", {
+        userId,
+      });
+
       const user = await findUserByTgIdWithRelations(userId, ["referrals", "completedTasks"]);
 
       if (!user) {
@@ -249,6 +283,9 @@ export const initSocketsLogic = (io: Socket) => ({
     try {
       // TODO: get rid of this type casting
       const tgUserId = Number((io as unknown as { userId: string }).userId);
+
+      logger.debug("Disconnecting user", { tgUserId });
+
       const user = await getUserByTgId(tgUserId);
 
       const currentTime = new Date().getTime();
@@ -259,10 +296,13 @@ export const initSocketsLogic = (io: Socket) => ({
         const balanceIncrement = buffer[tgUserId] * user.level;
         const userEnergy = Math.min(user.energy - buffer[tgUserId] + restoredEnergy, USER_MAX_ENERGY);
 
-        logger.debug("User disconnected", {
+        logger.debug("User disconnected (non-empty buffer)", {
           tgId: tgUserId,
           userBuffer: buffer[tgUserId],
-          userEnergy,
+          userEnergy: user.energy,
+          restoredEnergy: restoredEnergy,
+          score: user.score,
+          scoreLastDay: user.scoreLastDay,
         });
 
         await updateUserByTgId(tgUserId, {
@@ -281,7 +321,9 @@ export const initSocketsLogic = (io: Socket) => ({
       logger.debug("User disconnected", {
         tgId: tgUserId,
         userBuffer: buffer[tgUserId],
-        userEnergy,
+        userEnergy: user.energy,
+        restoredEnergy,
+        score: user.score,
       });
 
       await updateUserByTgId(tgUserId, { lastOnlineTimeStamp: currentTime, energy: userEnergy });
