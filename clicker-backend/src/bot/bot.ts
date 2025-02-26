@@ -15,11 +15,15 @@ bot.start(async (ctx) => {
     const appSettings = await getAppSettings();
     // TODO: proper error handling
     await ctx.reply(
-      `Welcome ${ctx.message.from.first_name || ctx.message.from.username}\n 
-      Welcome to BUN!\n
-      Tap the screen and get BUN tokens.
-      Invite your friends and get even more BUN tokens.
-      We have a cool Airdrop promotion coming up in the future!`,
+      `
+Hello, ${ctx.message.from.first_name || ctx.message.from.username}
+
+Welcome to BUN!
+
+Tap the screen and get BUN tokens.
+Invite your friends and get even more BUN tokens.
+We have a cool Airdrop promotion coming up in the future!
+`,
       {
         reply_markup: {
           inline_keyboard: [
