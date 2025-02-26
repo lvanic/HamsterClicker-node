@@ -49,7 +49,7 @@ export const rewardReferralsJob = CronJob.from({
           totalReferralEarnings += referral.scoreLastDay;
         }
 
-        const reward = totalReferralEarnings * REWARD_PERCENTAGE;
+        const reward = Math.floor(totalReferralEarnings * REWARD_PERCENTAGE);
 
         // TODO: resource intensive log, should be removed
         logger.debug("The user a reward from referrals", {
@@ -63,6 +63,7 @@ export const rewardReferralsJob = CronJob.from({
           totalReferralEarnings,
         });
         user.balance += reward;
+        user.score += reward;
 
         for (const referral of user.referrals) {
           referral.scoreLastDay = 0;
