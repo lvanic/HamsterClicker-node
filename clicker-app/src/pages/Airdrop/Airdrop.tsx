@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import EthereumButton from "../../components/TonButton/TonButton";
 import TonButton from "../../components/TonButton/TonButton";
 import { getLocalization } from "../../localization/getLocalization";
 import { BigEggSvg } from "./BigEggSvg";
 
-const AIRDROP_DATE = new Date("2025-02-21T00:00:00Z");
+const AIRDROP_DATE = new Date("2025-07-01T00:00:00Z");
 
 export const Airdrop = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -14,7 +14,7 @@ export const Airdrop = () => {
     seconds: 0,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
       const difference = AIRDROP_DATE.getTime() - now.getTime();

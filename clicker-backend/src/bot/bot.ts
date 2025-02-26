@@ -14,7 +14,22 @@ bot.start(async (ctx) => {
     const tgUserId = ctx.message.chat.id;
     const appSettings = await getAppSettings();
     // TODO: proper error handling
-    await ctx.reply("Welcome");
+    await ctx.reply(
+      `Welcome ${ctx.message.from.first_name || ctx.message.from.username}\n 
+      Welcome to BUN!\n
+      Tap the screen and get BUN tokens.
+      Invite your friends and get even more BUN tokens.
+      We have a cool Airdrop promotion coming up in the future!`,
+      {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "Channel", url: config.CHAN_URL }],
+            [{ text: "Play", web_app: { url: config.WEB_APP_URL } }],
+            [{ text: "Rules", callback_data: "rules" }],
+          ],
+        },
+      },
+    );
 
     // TODO: create separate function in service
     const isUserExist = !!(await findUserByTgId(tgUserId));
@@ -55,5 +70,35 @@ bot.start(async (ctx) => {
     }
   } catch (e) {
     logger.error("Error welcome bot", e);
+  }
+});
+
+bot.action("rules", async (ctx) => {
+  try {
+    await ctx.reply(`**Terms and Conditions**
+
+1. **Introduction**
+Welcome to Hamster Verse! By using this app, you agree to these terms.
+
+2. **Acceptance and Changes**
+By accessing this app, you accept these terms. We may update them occasionally. Continued use means you agree to the updated terms.
+
+3. **User Responsibilities**
+You agree to use our services in compliance with all applicable laws and regulations.
+
+4. **Prohibited Actions**
+Avoid using automated systems or engaging in fraudulent activities that disrupt the service.
+
+5. **Limitation of Liability**
+We are not responsible for any damages or losses resulting from the use of our services.
+
+6. **Termination**
+You can stop using the service at any time. We also reserve the right to terminate your access at any time for any reason.
+
+7. **Miscellaneous**
+These terms are governed by the laws of Hong Kong and include the entire agreement between you and us.
+  `);
+  } catch (e) {
+    logger.error("Error rules action", e);
   }
 });

@@ -34,6 +34,7 @@ export const Referrals = () => {
           <div className="text-xl uppercase">{getLocalization("myLink")}</div>
           <ReferralLink className="" share={false} />
         </div>
+        
         <div className="font-extralight">{link}</div>
       </div>
       <div className="w-full border-t border-[#FFBB96] my-6" />

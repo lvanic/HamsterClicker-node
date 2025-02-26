@@ -9,6 +9,8 @@ const configSchema = z.object({
   DB_PATH: z.string().default("db.sqlite"),
   PORT: z.number().default(3001),
   NODE_ENV: z.string().default("development"),
+  WEB_APP_URL: z.string(),
+  CHAN_URL: z.string(),
 });
 
 const validationResult = configSchema.safeParse(process.env);

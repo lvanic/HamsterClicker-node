@@ -6,12 +6,13 @@ const Loader: React.FC = () => {
   return (
     <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center">
       <div
-        className="text-[200px] z-20"
+        className="text-[160px] z-20 p-0"
         style={{
           backgroundImage:
-            "linear-gradient(180deg, rgba(255, 251, 201, 0.99) 0%, rgba(139, 57, 16, 0.73) 100%)",
+            "linear-gradient(180deg, rgb(255, 251, 201) 0%, rgb(139, 57, 16) 100%)",
           color: "transparent",
           backgroundClip: "text",
+          lineHeight: 1,
         }}
       >
         BUN
