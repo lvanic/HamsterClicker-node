@@ -23,13 +23,12 @@ export const useClick = () => {
 
   const handleClick = (clickData: ClickData) => {
     if (webSocket && (user?.energy || 0) > 0) {
-      webSocket.emit("clickEvent", JSON.stringify(clickData));
       if (!setUser) {
         return;
       }
 
       setUser((prev) => {
-        if (!prev || prev.energy <= 0) {
+        if (!prev) {
           return null;
         }
 
@@ -39,6 +38,7 @@ export const useClick = () => {
 
         if (prev.energy > 0) {
           webAppVibrate();
+          webSocket.emit("clickEvent", JSON.stringify(clickData));
           return {
             ...prev,
             score: updatedScore,
