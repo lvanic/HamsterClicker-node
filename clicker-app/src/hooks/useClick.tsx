@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import { User } from "../models";
 import { getTelegramUser, webAppVibrate } from "../services/telegramService";
 import { usePageLoading } from "./usePageLoading";
@@ -9,13 +9,11 @@ import { calculateLevel } from "../utils/calculateLevel";
 
 interface ClickData {
   user_id: number;
-  position: { x: number; y: number };
-  time_stamp: number;
 }
 
 export const useClick = () => {
   const { webSocket } = useWebSocket();
-  const { user, setUser, setClicked } = useUser();
+  const { user, setUser } = useUser();
   const { setPageLoading } = usePageLoading();
 
   const summaryClickPower = useMemo(
@@ -23,57 +21,29 @@ export const useClick = () => {
     [user]
   );
 
-  const [clickCount, setClickCount] = useState<number>(
-    user?.balance == undefined ? 0 : user.balance
-  );
-  const [energyCount, setEnergyCount] = useState<number>(
-    user?.energy == undefined ? 1000 : user.energy
-  );
-
-  const updateCounts = (clicks: number, energy: number, score: number) => {
-    setClickCount(clicks);
-    setEnergyCount(energy);
-  };
-  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const handleClick = (clickData: ClickData) => {
-    if (webSocket && energyCount > 0) {
+    if (webSocket && (user?.energy || 0) > 0) {
       webSocket.emit("clickEvent", JSON.stringify(clickData));
-      if (setClicked) {
-        setClicked(true);
-      }
       if (!setUser) {
         return;
       }
 
-      const newBalance = clickCount + (summaryClickPower || 1);
-      const newEnergy = energyCount - 1;
-      const newScore = (user?.score || 0) + (summaryClickPower || 1);
-
-      updateCounts(newBalance, newEnergy, newScore);
-
-      if (clickTimeoutRef.current) {
-        clearTimeout(clickTimeoutRef.current);
-      }
-
-      clickTimeoutRef.current = setTimeout(() => {
-        if (setClicked) {
-          setClicked(false);
-        }
-      }, 5000);
-
       setUser((prev) => {
-        if (!prev) {
+        if (!prev || prev.energy <= 0) {
           return null;
         }
+
+        const updatedScore = (prev.score || 0) + (summaryClickPower || 1);
+        const updatedBalance = prev.balance + (summaryClickPower || 1);
+        const updatedEnergy = prev.energy - 1;
 
         if (prev.energy > 0) {
           webAppVibrate();
           return {
             ...prev,
-            score: newScore,
-            balance: newBalance,
-            energy: newEnergy,
+            score: updatedScore,
+            balance: updatedBalance,
+            energy: updatedEnergy,
           };
         } else {
           return prev;
@@ -86,7 +56,6 @@ export const useClick = () => {
 
   const handleGetUser = (userData: User) => {
     setPageLoading(false);
-    updateCounts(userData.balance, userData.energy, userData.score);
   };
 
   useLayoutEffect(() => {
@@ -95,5 +64,5 @@ export const useClick = () => {
     }
   }, [user]);
 
-  return { handleClick, clickCount, energyCount };
+  return { handleClick };
 };

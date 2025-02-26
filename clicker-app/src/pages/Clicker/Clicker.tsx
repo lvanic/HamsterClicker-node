@@ -10,7 +10,7 @@ import "./Clicker.css"; // Создайте и импортируйте CSS фа
 import { calculateLevel } from "../../utils/calculateLevel";
 
 export const Clicker: React.FC = () => {
-  const { handleClick, clickCount, energyCount } = useClick();
+  const { handleClick } = useClick();
   const imgRef = useRef<HTMLImageElement>(null);
 
   const [numberSignPositions, setNumberSignPositions] = useState<
@@ -38,10 +38,9 @@ export const Clicker: React.FC = () => {
           x: touch.clientX,
           y: touch.clientY,
           id: numberSignId + index + 1,
-          timestamp: Date.now(),
         }));
 
-      if (energyCount > 0) {
+      if ((user?.energy || 0) > 0) {
         setNumberSignId((prevId) => prevId + touchPositions.length);
 
         setImageClicked(true);
@@ -53,12 +52,10 @@ export const Clicker: React.FC = () => {
         ]);
       }
 
-      touchPositions.forEach((position) => {
+      touchPositions.forEach(() => {
         if (user) {
           handleClick({
             user_id: user.tgId,
-            position: { x: position.x, y: position.y },
-            time_stamp: Date.now(),
           });
         }
       });
@@ -67,7 +64,7 @@ export const Clicker: React.FC = () => {
     }
   };
 
-  const handleTouchMove = (event: TouchEvent) => {};
+  const handleTouchMove = () => {};
 
   const handleTouchEnd = (event: TouchEvent) => {
     event.preventDefault();
@@ -99,7 +96,7 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
           <div className="flex flex-col justify-center items-center w-full mb-2 gap-2">
-            <ScoreCounter clickCount={clickCount} />
+            <ScoreCounter clickCount={(user?.score || 0)} />
             {/* <League /> */}
             {/* <DailyOffer />
             <ComboGame /> */}
@@ -131,7 +128,7 @@ export const Clicker: React.FC = () => {
 
           {/* <Statistics /> */}
           <EnergyProgress
-            energyCount={energyCount}
+            energyCount={(user?.energy || 0)}
             maxEnergy={user?.maxEnergy}
           />
           {numberSignPositions.map((position) => (
