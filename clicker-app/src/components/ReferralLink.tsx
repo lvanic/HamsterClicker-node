@@ -55,7 +55,7 @@ export const ReferralLink = ({
           className="flex gap-1.5 items-center text-white px-3 py-1 rounded-md transition duration-300 bg-[#BA580F]"
         >
           <img src="/img/copy.png" className="w-3.5" />
-          <div>{getLocalization("copyLink")}</div>
+          <div>{isCopied ? getLocalization("copied") : getLocalization("copyLink")}</div>
         </button>
       )}
     </div>
