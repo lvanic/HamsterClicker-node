@@ -1,23 +1,12 @@
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, { useState, useRef } from "react";
 import { useClick } from "../../hooks/useClick";
 import NumberSign from "../../components/NumberSign";
 import { EnergyProgress } from "../../components/EnergyProgress";
 import { ScoreCounter } from "../../components/ScoreCounter";
-import TonButton from "../../components/TonButton/TonButton";
 import { useUser } from "../../hooks/useUser";
-import { usePageLoading } from "../../hooks/usePageLoading";
 import { useSkeletonLoading } from "../../hooks/useSkeletonLoading";
 import { ClickerSkeleton } from "./ClickerSkeleton";
-import { League } from "../../components/League";
-import { BoostButton } from "../../components/BoostButton";
 import "./Clicker.css"; // Создайте и импортируйте CSS файл
-import { Statistics } from "../../components/Statistics";
-import { useSettings } from "../../hooks/useSettings";
-import { LevelStatus } from "../../components/LevelStatus";
-import { DailyOffer } from "../../components/DailyOffer";
-import { ComboGame } from "../../components/ComboGame";
-import { LanguageSelector } from "../../components/LanguageSelector";
-import { getTelegramUser } from "../../services/telegramService";
 import { calculateLevel } from "../../utils/calculateLevel";
 
 export const Clicker: React.FC = () => {
