@@ -16,7 +16,6 @@ import { useLocation } from "react-router-dom";
 interface UserContextProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  setClicked: (data: boolean) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -47,19 +46,11 @@ interface LiteSyncData {
 const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   const [user, setUser] = useState<User | null>(null);
   const { webSocket, isSocketLive } = useWebSocket();
-  const clickRef = useRef<boolean>(false);
   const [isUserLoading, setUserLoading] = useState(true);
   const [loadingPercentage, setLoadingPercentage] = useState(0);
   const [isLeagueRequested, setLeagueRequested] = useState(false);
 
   const location = useLocation();
-
-  const setClicked = useCallback((data: boolean) => {
-    if (clickRef.current != data) {
-      clickRef.current = data;
-    } else {
-    }
-  }, []);
 
   const handleGetUser = (userData: any) => {
     setUserLoading(false);
@@ -270,7 +261,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   }, [isUserLoading]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, setClicked }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {isUserLoading ? <Loader /> : children}
     </UserContext.Provider>
   );

@@ -5,6 +5,5 @@ export const useUser = () => {
   const context = useContext(UserContext);
   const user = context?.user;
   const setUser = context?.setUser;
-  const setClicked = context?.setClicked;
-  return { user, setUser, setClicked };
+  return { user, setUser };
 };
