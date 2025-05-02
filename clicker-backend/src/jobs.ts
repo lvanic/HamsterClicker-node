@@ -8,7 +8,7 @@ import { User } from "./models/user";
 const REWARD_PERCENTAGE = 0.1;
 
 export const restoreFullEnergyBoostJob = CronJob.from({
-  cronTime: "00 00 00 * * *",
+  cronTime: "00 00 01 * * *",
   onTick: async function () {
     try {
       logger.info("RestoreFullEnergyBoost job started");

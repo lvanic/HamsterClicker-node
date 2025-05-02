@@ -86,12 +86,17 @@ export const LeagueTop = () => {
                     className="absolute w-full h-full left-0 top-0"
                     src="/img/friend-mask.png"
                   />
-                  <div className="flex flex items-center gap-2">
-                    <div className="flex text-2xl font-bold justify-center items-center bg-[#FFAE4C] rounded-full w-10 h-10">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <div className="flex text-2xl font-bold justify-center items-center bg-[#FFAE4C] rounded-full min-w-10 w-10 h-10">
                       {index + 1}
                     </div>
-                    <div>{userL.firstName || "Anonimus"}</div>
-                    <div>{formatNumberWithoutDot(userL.score)}</div>
+                    <div className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[calc(100%-6rem)]">
+                      {userL.firstName || "Anonimus"}
+                    </div>
+
+                    <div className="min-w-[4rem]">
+                      {formatNumberWithoutDot(userL.score)}
+                    </div>
                   </div>
                 </li>
               );

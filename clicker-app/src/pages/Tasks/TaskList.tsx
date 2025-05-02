@@ -13,7 +13,6 @@ export const TaskList = ({
   return (
     <>
       {tasks
-        .filter((t: any) => t.type != filter)
         .map((task: any) => (
           <li
             key={task.id}

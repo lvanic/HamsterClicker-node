@@ -21,9 +21,9 @@ export const getTelegramUser = (): TelegramUser => {
     }
   }
   return {
-    id: 571484499,
-    first_name: "Name",
-    last_name: "Last Name",
+    id: -1,
+    first_name: "Telegram doesn't respond",
+    last_name: "",
     username: "user.username",
     photo_url: "/img/default-avatar.png",
   };
@@ -39,8 +39,7 @@ export const getReferralLink = () => {
   if (user && botLink) {
     return `${botLink}/?start=ref_${user.id}`;
   }
-  return `${botLink}/?start=ref_${-1}`;
-  throw new Error("user of botLink is not defined");
+  return `You are not logged in`;
 };
 
 export const getShareLink = () => {

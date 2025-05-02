@@ -66,7 +66,7 @@ export const ReferralLink = ({
       </div>
       {
         <div
-          className={`fixed px-20 transition-all duration-300 ease-in-out ${
+          className={`fixed w-full transition-all duration-300 ease-in-out left-0 flex items-center justify-center   ${
             isCopied ? "top-[0px] opacity-100" : "-top-[20px]  opacity-0"
           } overflow-hidden`}
         >

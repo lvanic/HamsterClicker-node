@@ -141,18 +141,18 @@ export const Tasks = () => {
                 </div>
               </li>
             )}
-            <div> {getLocalization("dailyReward")}</div>
+            <div> {getLocalization("listOfTasks")}</div>
             <TaskList
               tasks={dataContext?.tasks}
               handleTaskClick={handleTaskClick}
               filter="telegram"
             />
-            <div> {getLocalization("listOfTasks")}</div>
+            {/* <div> {getLocalization("listOfTasks")}</div>
             <TaskList
               tasks={dataContext?.tasks}
               handleTaskClick={handleTaskClick}
               filter="link"
-            />
+            /> */}
           </ul>
         )}
       </div>
