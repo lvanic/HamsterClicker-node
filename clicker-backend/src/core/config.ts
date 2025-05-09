@@ -11,6 +11,8 @@ const configSchema = z.object({
   NODE_ENV: z.string().default("development"),
   WEB_APP_URL: z.string(),
   CHAN_URL: z.string(),
+  TON_WALLET_ADDRESS: z.string(),
+  TONCENTER_API_KEY: z.string(),
 });
 
 const validationResult = configSchema.safeParse(process.env);

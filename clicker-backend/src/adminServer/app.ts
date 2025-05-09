@@ -6,6 +6,8 @@ import bodyParser from "koa-bodyparser";
 import cors from "@koa/cors";
 import { config } from "../core/config";
 import adminRoutes from "./routes/adminRoutes";
+import TonWeb from "tonweb";
+import { createPayment } from "../services/paymentService";
 
 export const app = new Koa();
 const router = new Router();
@@ -47,6 +49,28 @@ app.use(async (ctx, next) => {
   } else {
     await next();
   }
+});
+
+
+router.post("/payments/create", async (ctx) => {
+  const { serviceType, userId } = ctx.request.body as {
+    serviceType: string;
+    userId: number;
+  };
+
+  if (!["boost_x2", "handicap"].includes(serviceType)) {
+    ctx.throw(400, "Invalid service type");
+  }
+
+  const price = serviceType === "boost_x2" ? "0.3" : "1.5";
+  const amount = TonWeb.utils.toNano(price).toString();
+
+  const uuid = await createPayment(Number(amount), serviceType as any, userId);
+
+  ctx.body = {
+    uuid,
+    amount,
+  };
 });
 
 app.use(router.routes()).use(router.allowedMethods());

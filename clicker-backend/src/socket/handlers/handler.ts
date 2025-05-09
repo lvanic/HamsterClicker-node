@@ -18,6 +18,7 @@ import {
 
 // TODO: replace with redis
 const buffer: Record<string, number> = {};
+const activeBoosts: Map<string, { type: "X2" | "HANDICAP"; expiresAt: number }> = new Map();
 
 export const initSocketsLogic = (io: Socket) => ({
   clickEvent: async (data: string) => {
@@ -29,7 +30,22 @@ export const initSocketsLogic = (io: Socket) => ({
         buffer[tgUserId] = 0;
       }
 
-      buffer[tgUserId]++;
+      const expiresAt = activeBoosts.get(tgUserId)?.expiresAt;
+      const boostType = activeBoosts.get(tgUserId)?.type;
+      let boostMult = boostType == "X2" ? 2 : boostType == "HANDICAP" ? 5 : 1;
+
+      if (expiresAt && expiresAt < Date.now()) {
+        if (boostType === "X2") {
+          await updateUserByTgId(tgUserId, { isX2Active: false });
+        } else if (boostType === "HANDICAP") {
+          await updateUserByTgId(tgUserId, { isHandicapActive: false });
+        }
+        boostMult = 1;
+        activeBoosts.delete(tgUserId);
+        logger.debug("Boost expired", { tgUserId });
+      }
+
+      buffer[tgUserId] = buffer[tgUserId] + 1 * boostMult;
 
       logger.debug("Click processed", {
         tgUserId,
@@ -162,6 +178,8 @@ export const initSocketsLogic = (io: Socket) => ({
         maxEnergy: USER_MAX_ENERGY,
         energy: Math.floor(user.energy + energyToRestore - bufferClicks),
         offlineReward,
+        isBoostX2Active: user.isX2Active,
+        isHandicapActive: user.isHandicapActive,
       });
 
       delete buffer[userId];
@@ -279,6 +297,68 @@ export const initSocketsLogic = (io: Socket) => ({
     }
   },
 
+  activatePaidBoost: async (data: string) => {
+    const parsedData = JSON.parse(data);
+    const [tgUserId, boostName] = parsedData;
+
+    // add check payment
+
+    try {
+      logger.debug("Activating paid boost", {
+        tgUserId,
+        boostName,
+      });
+
+      const user = await getUserByTgId(tgUserId);
+
+      if (boostName === "X2") {
+        if (user.isX2Active) {
+          logger.warn("Received a request for activation when the boost is already active", parsedData);
+          io.emit("activatedPaidBoost", "X2");
+          return;
+        }
+
+        await updateUserByTgId(tgUserId, {
+          isX2Active: true,
+          x2ExpiresAt: Date.now() + 60 * 1000,
+        });
+        activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + 60 * 1000 });
+        io.emit("activatedPaidBoost", "X2");
+      } else if (boostName === "HANDICAP") {
+        if (user.isHandicapActive) {
+          logger.warn("Received a request for activation when the boost is already active", parsedData);
+          io.emit("activatedPaidBoost", "HANDICAP");
+          return;
+        }
+
+        await updateUserByTgId(tgUserId, {
+          isHandicapActive: true,
+          handicapExpiresAt: Date.now() + 60 * 1000,
+        });
+        activeBoosts.set(tgUserId, { type: "HANDICAP", expiresAt: Date.now() + 60 * 1000 });
+        io.emit("activatedPaidBoost", "HANDICAP");
+      } else {
+        logger.warn("Received a request for an unprocessed boost", parsedData);
+        return;
+      }
+
+      setTimeout(() => {
+        const boost = activeBoosts.get(tgUserId);
+        if (boost) {
+          if (boost.type === "X2") {
+            updateUserByTgId(tgUserId, { isX2Active: false });
+          } else if (boost.type === "HANDICAP") {
+            updateUserByTgId(tgUserId, { isHandicapActive: false });
+          }
+          activeBoosts.delete(tgUserId);
+          io.emit("deactivatedPaidBoost", boost.type);
+        }
+      }, 60 * 1000);
+    } catch (error) {
+      logger.error("Error while attempt to activate paid boost", error);
+    }
+  },
+
   disconnect: async (): Promise<void> => {
     try {
       // TODO: get rid of this type casting
@@ -287,6 +367,17 @@ export const initSocketsLogic = (io: Socket) => ({
       logger.debug("Disconnecting user", { tgUserId });
 
       const user = await getUserByTgId(tgUserId);
+
+      if(user.x2ExpiresAt && user.x2ExpiresAt < Date.now()) {
+        await updateUserByTgId(tgUserId, { isX2Active: false });
+        activeBoosts.delete(tgUserId.toString());
+        logger.debug("Boost expired", { tgUserId });
+      }
+      if(user.handicapExpiresAt && user.handicapExpiresAt < Date.now()) {
+        await updateUserByTgId(tgUserId, { isHandicapActive: false });
+        activeBoosts.delete(tgUserId.toString());
+        logger.debug("Boost expired", { tgUserId });
+      }
 
       const currentTime = new Date().getTime();
       const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;

@@ -1,0 +1,381 @@
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:26:01.046Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:26:01.247Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:47:19.300Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:47:19.464Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:49:57.982Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:49:58.135Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:51:00.278Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:51:00.433Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:51:09.563Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:51:09.707Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:54:42.294Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:54:42.458Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:54:50.148Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:54:50.308Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:54:56.897Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:54:57.057Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:55:23.960Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:55:24.541Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:55:42.189Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:55:42.827Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:56:06.933Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:56:07.459Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:56:19.738Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:56:20.289Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T18:56:58.258Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T18:56:58.754Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T19:00:25.106Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:30:10)","syscall":"listen","timestamp":"2025-05-02T19:00:25.708Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T19:36:30.081Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-02T19:36:30.266Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":-1,"timestamp":"2025-05-02T19:39:00.285Z"}
+{"criteria":{"tgId":-1},"level":"error","message":"Error during disconnection Could not find any entity of type \"User\" matching: {\n    \"tgId\": -1\n}","stack":"EntityNotFoundError: Could not find any entity of type \"User\" matching: {\n    \"tgId\": -1\n}\n    at C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\entity-manager\\EntityManager.ts:1294:25\n    at async Socket.disconnect (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\socket\\handlers\\handler.ts:295:20)","timestamp":"2025-05-02T19:39:00.322Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":-1,"timestamp":"2025-05-02T19:39:30.047Z"}
+{"criteria":{"tgId":-1},"level":"error","message":"Error during disconnection Could not find any entity of type \"User\" matching: {\n    \"tgId\": -1\n}","stack":"EntityNotFoundError: Could not find any entity of type \"User\" matching: {\n    \"tgId\": -1\n}\n    at C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\entity-manager\\EntityManager.ts:1294:25\n    at async Socket.disconnect (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\socket\\handlers\\handler.ts:295:20)","timestamp":"2025-05-02T19:39:30.055Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":-1,"timestamp":"2025-05-02T19:41:06.937Z"}
+{"criteria":{"tgId":-1},"level":"error","message":"Error during disconnection Could not find any entity of type \"User\" matching: {\n    \"tgId\": -1\n}","stack":"EntityNotFoundError: Could not find any entity of type \"User\" matching: {\n    \"tgId\": -1\n}\n    at C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\entity-manager\\EntityManager.ts:1294:25\n    at async Socket.disconnect (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\socket\\handlers\\handler.ts:295:20)","timestamp":"2025-05-02T19:41:06.949Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-02T19:41:08.943Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":175,"restoredEnergy":0,"score":4551,"scoreLastDay":0,"secondsOffline":6051601.612,"timestamp":"2025-05-02T19:41:08.962Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-02T19:41:09.069Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-02T19:43:07.883Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":59,"score":4726,"tgId":571484499,"timestamp":"2025-05-02T19:43:07.888Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-02T19:46:28.717Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4726,"scoreLastDay":175,"secondsOffline":200.836,"timestamp":"2025-05-02T19:46:28.724Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-02T19:46:28.846Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-02T19:47:21.469Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":26,"score":4726,"tgId":571484499,"timestamp":"2025-05-02T19:47:21.474Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-02T19:47:23.497Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4726,"scoreLastDay":175,"secondsOffline":2.03,"timestamp":"2025-05-02T19:47:23.504Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-02T19:47:23.598Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-02T19:51:23.203Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":119,"score":4726,"tgId":571484499,"timestamp":"2025-05-02T19:51:23.210Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-02T19:51:28.426Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4726,"scoreLastDay":175,"secondsOffline":5.223,"timestamp":"2025-05-02T19:51:28.433Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-02T19:51:28.503Z"}
+{"level":"debug","message":"Getting top users","timestamp":"2025-05-02T19:52:07.269Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-02T19:57:04.053Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":167,"score":4726,"tgId":571484499,"timestamp":"2025-05-02T19:57:04.085Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-02T19:57:07.278Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4726,"scoreLastDay":175,"secondsOffline":3.201,"timestamp":"2025-05-02T19:57:07.286Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-02T19:57:07.495Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T20:00:58.877Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:30:10)","syscall":"listen","timestamp":"2025-05-02T20:00:59.035Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-02T20:05:04.812Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:30:10)","syscall":"listen","timestamp":"2025-05-02T20:05:04.974Z"}
+{"level":"info","message":"RewardReferrals job started","timestamp":"2025-05-03T03:22:30.649Z"}
+{"level":"info","message":"RestoreFullEnergyBoost job started","timestamp":"2025-05-03T03:22:31.045Z"}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":147532254,"timestamp":"2025-05-03T03:22:31.248Z","totalReferralEarnings":0}
+{"level":"info","message":"RestoreFullEnergyBoost job completed successfully","timestamp":"2025-05-03T03:22:31.336Z"}
+{"level":"debug","message":"The user a reward from referrals","referrals":[{"scoreLastDay":0,"tgId":147532254},{"scoreLastDay":0,"tgId":5004455687}],"tgId":571484499,"timestamp":"2025-05-03T03:22:31.689Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":1003128076,"timestamp":"2025-05-03T03:22:32.048Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":1354261424,"timestamp":"2025-05-03T03:22:32.181Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":1676861016,"timestamp":"2025-05-03T03:22:32.414Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[{"scoreLastDay":0,"tgId":7138768352}],"tgId":1905172383,"timestamp":"2025-05-03T03:22:32.490Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":2042268482,"timestamp":"2025-05-03T03:22:32.682Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":5004455687,"timestamp":"2025-05-03T03:22:32.733Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":5035093579,"timestamp":"2025-05-03T03:22:32.902Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":6126206560,"timestamp":"2025-05-03T03:22:33.159Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":6158162746,"timestamp":"2025-05-03T03:22:33.258Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":6465871213,"timestamp":"2025-05-03T03:22:33.380Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":7138768352,"timestamp":"2025-05-03T03:22:33.446Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":7144145400,"timestamp":"2025-05-03T03:22:33.453Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":7256966792,"timestamp":"2025-05-03T03:22:33.516Z","totalReferralEarnings":0}
+{"level":"info","message":"RewardReferrals job completed successfully.","timestamp":"2025-05-03T03:22:33.532Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T07:42:25.258Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-03T07:42:25.561Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T07:42:27.717Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":175,"restoredEnergy":0,"score":4726,"scoreLastDay":175,"secondsOffline":42320.458,"timestamp":"2025-05-03T07:42:27.746Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T07:42:27.794Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T07:44:37.151Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:32:10)","syscall":"listen","timestamp":"2025-05-03T07:44:37.337Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T07:52:53.196Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-03T07:52:53.450Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T07:53:09.348Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":641.624,"timestamp":"2025-05-03T07:53:09.371Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T07:53:09.470Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T08:03:10.942Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":834,"score":4901,"tgId":571484499,"timestamp":"2025-05-03T08:20:58.433Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:21:01.990Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":3.745,"timestamp":"2025-05-03T08:21:02.179Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:21:02.246Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T08:23:38.445Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-03T08:23:38.621Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:23:39.934Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":157.752,"timestamp":"2025-05-03T08:23:39.945Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:23:39.986Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T08:24:37.970Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-03T08:24:38.174Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:24:39.932Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":59.996,"timestamp":"2025-05-03T08:24:39.943Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:24:39.986Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T08:35:55.918Z"}
+{"level":"error","message":"Error during database initialization","timestamp":"2025-05-03T08:35:56.035Z"}
+{"code":"SQLITE_CONSTRAINT","driverError":{"code":"SQLITE_CONSTRAINT","errno":19},"errno":19,"level":"error","message":"Unexpected error SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_payment.userTgId","query":"INSERT INTO \"temporary_payment\"(\"uuid\", \"amount\", \"completed\", \"used\", \"serviceType\") SELECT \"uuid\", \"amount\", \"completed\", \"used\", \"serviceType\" FROM \"payment\"","stack":"QueryFailedError: SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_payment.userTgId\n    at Statement.handler (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\typeorm\\src\\driver\\sqlite\\SqliteQueryRunner.ts:135:29)","timestamp":"2025-05-03T08:35:56.043Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T08:38:41.053Z"}
+{"level":"error","message":"Error during database initialization","timestamp":"2025-05-03T08:38:41.148Z"}
+{"code":"SQLITE_CONSTRAINT","driverError":{"code":"SQLITE_CONSTRAINT","errno":19},"errno":19,"level":"error","message":"Unexpected error SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_payment.userTgId","query":"INSERT INTO \"temporary_payment\"(\"uuid\", \"amount\", \"completed\", \"used\", \"serviceType\") SELECT \"uuid\", \"amount\", \"completed\", \"used\", \"serviceType\" FROM \"payment\"","stack":"QueryFailedError: SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_payment.userTgId\n    at Statement.handler (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\typeorm\\src\\driver\\sqlite\\SqliteQueryRunner.ts:135:29)","timestamp":"2025-05-03T08:38:41.155Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T08:39:29.150Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-03T08:39:29.389Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:39:32.932Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":893.002,"timestamp":"2025-05-03T08:39:32.946Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:39:33.070Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-03T08:39:54.880Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-03T08:39:55.077Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:39:56.112Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":23.176,"timestamp":"2025-05-03T08:39:56.124Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:39:56.154Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T08:41:38.179Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":51,"score":4901,"tgId":571484499,"timestamp":"2025-05-03T08:41:38.194Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:41:39.170Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":0.983,"timestamp":"2025-05-03T08:41:39.177Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:41:39.282Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T08:51:43.620Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":302,"score":4901,"tgId":571484499,"timestamp":"2025-05-03T08:51:43.625Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:51:45.640Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":2.023,"timestamp":"2025-05-03T08:51:45.647Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:51:45.770Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T08:51:57.047Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":5,"score":4901,"tgId":571484499,"timestamp":"2025-05-03T08:51:57.053Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:51:59.006Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":1.961,"timestamp":"2025-05-03T08:51:59.014Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:51:59.109Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T08:53:23.870Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":42,"score":4901,"tgId":571484499,"timestamp":"2025-05-03T08:53:23.878Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:53:26.090Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":2.22,"timestamp":"2025-05-03T08:53:26.099Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:53:26.276Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T08:58:20.990Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":147,"score":4901,"tgId":571484499,"timestamp":"2025-05-03T08:58:20.994Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T08:58:23.085Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":2.1,"timestamp":"2025-05-03T08:58:23.094Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T08:58:23.209Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T09:00:38.578Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":67,"score":4901,"tgId":571484499,"timestamp":"2025-05-03T09:00:38.586Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-03T09:00:40.720Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":2.143,"timestamp":"2025-05-03T09:00:40.729Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-03T09:00:40.850Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-03T09:13:05.304Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":48895,"score":4901,"tgId":571484499,"timestamp":"2025-05-04T12:10:31.897Z","userEnergy":1000}
+{"level":"info","message":"RewardReferrals job started","timestamp":"2025-05-04T12:10:32.512Z"}
+{"level":"info","message":"RestoreFullEnergyBoost job started","timestamp":"2025-05-04T12:10:32.757Z"}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":147532254,"timestamp":"2025-05-04T12:10:32.780Z","totalReferralEarnings":0}
+{"level":"info","message":"RestoreFullEnergyBoost job completed successfully","timestamp":"2025-05-04T12:10:32.895Z"}
+{"level":"debug","message":"The user a reward from referrals","referrals":[{"scoreLastDay":0,"tgId":147532254},{"scoreLastDay":0,"tgId":5004455687}],"tgId":571484499,"timestamp":"2025-05-04T12:10:33.356Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":1003128076,"timestamp":"2025-05-04T12:10:33.829Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":1354261424,"timestamp":"2025-05-04T12:10:33.960Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":1676861016,"timestamp":"2025-05-04T12:10:34.026Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[{"scoreLastDay":0,"tgId":7138768352}],"tgId":1905172383,"timestamp":"2025-05-04T12:10:34.180Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":2042268482,"timestamp":"2025-05-04T12:10:34.320Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":5004455687,"timestamp":"2025-05-04T12:10:34.391Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":5035093579,"timestamp":"2025-05-04T12:10:34.474Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":6126206560,"timestamp":"2025-05-04T12:10:34.536Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":6158162746,"timestamp":"2025-05-04T12:10:34.580Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":6465871213,"timestamp":"2025-05-04T12:10:34.588Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":7138768352,"timestamp":"2025-05-04T12:10:34.595Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":7144145400,"timestamp":"2025-05-04T12:10:34.635Z","totalReferralEarnings":0}
+{"level":"debug","message":"The user a reward from referrals","referrals":[],"tgId":7256966792,"timestamp":"2025-05-04T12:10:34.660Z","totalReferralEarnings":0}
+{"level":"info","message":"RewardReferrals job completed successfully.","timestamp":"2025-05-04T12:10:34.707Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T06:41:36.953Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-09T06:41:37.322Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T06:42:48.039Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-09T06:42:48.328Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:44:36.358Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":175,"restoredEnergy":0,"score":4901,"scoreLastDay":350,"secondsOffline":412444.488,"timestamp":"2025-05-09T06:44:36.385Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:44:36.503Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T06:45:00.609Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":12,"score":5076,"tgId":571484499,"timestamp":"2025-05-09T06:45:00.615Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:45:04.858Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":4.254,"timestamp":"2025-05-09T06:45:04.869Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:45:04.953Z"}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:49:59.400Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:50:01.350Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":296.489,"timestamp":"2025-05-09T06:50:01.360Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:50:02.463Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:50:04.353Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":3,"timestamp":"2025-05-09T06:50:04.360Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:50:22.383Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:50:24.355Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":20.002,"timestamp":"2025-05-09T06:50:24.363Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:50:28.389Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:50:30.356Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":6,"timestamp":"2025-05-09T06:50:30.363Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:51:50.391Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:51:52.359Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":82.002,"timestamp":"2025-05-09T06:51:52.365Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:52:13.397Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:52:15.361Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":23.005,"timestamp":"2025-05-09T06:52:15.370Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T06:52:47.380Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T06:52:49.359Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":33.995,"timestamp":"2025-05-09T06:52:49.367Z","userId":571484499}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T07:15:48.700Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:32:10)","syscall":"listen","timestamp":"2025-05-09T07:15:48.992Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T07:17:15.431Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-09T07:17:15.656Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T07:17:17.829Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5076,"scoreLastDay":525,"secondsOffline":1468.516,"timestamp":"2025-05-09T07:17:17.883Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T07:17:17.991Z"}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T07:18:03.963Z"}
+{"currentBuffer":1,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T07:28:02.172Z"}
+{"currentBuffer":2,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T07:39:33.821Z"}
+{"currentBuffer":3,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T07:40:17.089Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T07:40:39.041Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":700,"score":5076,"scoreLastDay":525,"tgId":571484499,"timestamp":"2025-05-09T07:40:39.082Z","userBuffer":3,"userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T07:40:42.352Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5079,"scoreLastDay":528,"secondsOffline":3.282,"timestamp":"2025-05-09T07:40:42.364Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T07:40:42.505Z"}
+{"currentBuffer":1,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T07:42:20.935Z"}
+{"currentBuffer":2,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T07:42:22.116Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T07:52:44.625Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:32:10)","syscall":"listen","timestamp":"2025-05-09T07:52:44.879Z"}
+{"boostName":"X2","level":"debug","message":"Activating paid boost","tgUserId":571484499,"timestamp":"2025-05-09T07:54:19.940Z"}
+{"level":"error","message":"Error while updating user in db Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.","stack":"EntityPropertyNotFoundError: Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.\n    at C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:500:31\n    at Array.forEach (<anonymous>)\n    at UpdateQueryBuilder.createUpdateExpression (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:493:68)\n    at UpdateQueryBuilder.getQuery (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:53:21)\n    at UpdateQueryBuilder.getQueryAndParameters (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\QueryBuilder.ts:495:28)\n    at UpdateQueryBuilder.execute (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:142:50)\n    at async updateUserByTgId (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\services\\userService.ts:66:5)\n    at async Socket.activatePaidBoost (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\socket\\handlers\\handler.ts:316:9)","timestamp":"2025-05-09T07:54:19.997Z"}
+{"level":"error","message":"Error while attempt to activate paid boost Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.","stack":"EntityPropertyNotFoundError: Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.\n    at C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:500:31\n    at Array.forEach (<anonymous>)\n    at UpdateQueryBuilder.createUpdateExpression (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:493:68)\n    at UpdateQueryBuilder.getQuery (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:53:21)\n    at UpdateQueryBuilder.getQueryAndParameters (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\QueryBuilder.ts:495:28)\n    at UpdateQueryBuilder.execute (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:142:50)\n    at async updateUserByTgId (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\services\\userService.ts:66:5)\n    at async Socket.activatePaidBoost (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\socket\\handlers\\handler.ts:316:9)","timestamp":"2025-05-09T07:54:19.998Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T07:54:26.879Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":412,"score":5079,"scoreLastDay":528,"tgId":571484499,"timestamp":"2025-05-09T07:54:26.956Z","userBuffer":2,"userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T07:54:29.849Z","userId":571484499}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T07:54:29.860Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5081,"scoreLastDay":530,"secondsOffline":2.94,"timestamp":"2025-05-09T07:54:29.896Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5081,"scoreLastDay":530,"secondsOffline":2.971,"timestamp":"2025-05-09T07:54:29.927Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T07:54:30.161Z"}
+{"boostName":"X2","level":"debug","message":"Activating paid boost","tgUserId":571484499,"timestamp":"2025-05-09T07:54:54.472Z"}
+{"level":"error","message":"Error while updating user in db Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.","stack":"EntityPropertyNotFoundError: Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.\n    at C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:500:31\n    at Array.forEach (<anonymous>)\n    at UpdateQueryBuilder.createUpdateExpression (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:493:68)\n    at UpdateQueryBuilder.getQuery (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:53:21)\n    at UpdateQueryBuilder.getQueryAndParameters (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\QueryBuilder.ts:495:28)\n    at UpdateQueryBuilder.execute (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:142:50)\n    at async updateUserByTgId (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\services\\userService.ts:66:5)\n    at async Socket.activatePaidBoost (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\socket\\handlers\\handler.ts:316:9)","timestamp":"2025-05-09T07:54:54.494Z"}
+{"level":"error","message":"Error while attempt to activate paid boost Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.","stack":"EntityPropertyNotFoundError: Property \"isX2Active\" was not found in \"User\". Make sure your query is correct.\n    at C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:500:31\n    at Array.forEach (<anonymous>)\n    at UpdateQueryBuilder.createUpdateExpression (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:493:68)\n    at UpdateQueryBuilder.getQuery (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:53:21)\n    at UpdateQueryBuilder.getQueryAndParameters (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\QueryBuilder.ts:495:28)\n    at UpdateQueryBuilder.execute (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\src\\query-builder\\UpdateQueryBuilder.ts:142:50)\n    at async updateUserByTgId (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\services\\userService.ts:66:5)\n    at async Socket.activatePaidBoost (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\socket\\handlers\\handler.ts:316:9)","timestamp":"2025-05-09T07:54:54.508Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T07:56:03.976Z"}
+{"level":"error","message":"Error during database initialization","timestamp":"2025-05-09T07:56:04.130Z"}
+{"code":"SQLITE_CONSTRAINT","driverError":{"code":"SQLITE_CONSTRAINT","errno":19},"errno":19,"level":"error","message":"Unexpected error SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_user.isHandicapActive","query":"INSERT INTO \"temporary_user\"(\"tgId\", \"tgUsername\", \"firstName\", \"lastName\", \"addedFromBusinesses\", \"addedEnergy\", \"balance\", \"score\", \"energy\", \"connectedWallet\", \"lastDailyRewardTimestamp\", \"lastFullEnergyTimestamp\", \"fullEnergyActivates\", \"clickPower\", \"energyLevel\", \"lastOnlineTimeStamp\", \"parentTgId\", \"_level\", \"scoreLastDay\", \"isHandicapActiveUuid\") SELECT \"tgId\", \"tgUsername\", \"firstName\", \"lastName\", \"addedFromBusinesses\", \"addedEnergy\", \"balance\", \"score\", \"energy\", \"connectedWallet\", \"lastDailyRewardTimestamp\", \"lastFullEnergyTimestamp\", \"fullEnergyActivates\", \"clickPower\", \"energyLevel\", \"lastOnlineTimeStamp\", \"parentTgId\", \"_level\", \"scoreLastDay\", \"isHandicapActiveUuid\" FROM \"user\"","stack":"QueryFailedError: SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_user.isHandicapActive\n    at Statement.handler (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\typeorm\\src\\driver\\sqlite\\SqliteQueryRunner.ts:135:29)","timestamp":"2025-05-09T07:56:04.140Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T07:56:44.913Z"}
+{"level":"error","message":"Error during database initialization","timestamp":"2025-05-09T07:56:45.083Z"}
+{"code":"SQLITE_CONSTRAINT","driverError":{"code":"SQLITE_CONSTRAINT","errno":19},"errno":19,"level":"error","message":"Unexpected error SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_user.isHandicapActive","query":"INSERT INTO \"temporary_user\"(\"tgId\", \"tgUsername\", \"firstName\", \"lastName\", \"addedFromBusinesses\", \"addedEnergy\", \"balance\", \"score\", \"energy\", \"connectedWallet\", \"lastDailyRewardTimestamp\", \"lastFullEnergyTimestamp\", \"fullEnergyActivates\", \"clickPower\", \"energyLevel\", \"lastOnlineTimeStamp\", \"parentTgId\", \"_level\", \"scoreLastDay\", \"isHandicapActiveUuid\") SELECT \"tgId\", \"tgUsername\", \"firstName\", \"lastName\", \"addedFromBusinesses\", \"addedEnergy\", \"balance\", \"score\", \"energy\", \"connectedWallet\", \"lastDailyRewardTimestamp\", \"lastFullEnergyTimestamp\", \"fullEnergyActivates\", \"clickPower\", \"energyLevel\", \"lastOnlineTimeStamp\", \"parentTgId\", \"_level\", \"scoreLastDay\", \"isHandicapActiveUuid\" FROM \"user\"","stack":"QueryFailedError: SQLITE_CONSTRAINT: NOT NULL constraint failed: temporary_user.isHandicapActive\n    at Statement.handler (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\node_modules\\typeorm\\src\\driver\\sqlite\\SqliteQueryRunner.ts:135:29)","timestamp":"2025-05-09T07:56:45.092Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T08:00:09.932Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-09T08:00:10.194Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:00:12.361Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5081,"scoreLastDay":530,"secondsOffline":342.445,"timestamp":"2025-05-09T08:00:12.382Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:00:12.472Z"}
+{"boostName":"fullEnergyBoost","level":"debug","message":"Activating boost","tgUserId":571484499,"timestamp":"2025-05-09T08:02:47.641Z"}
+{"level":"debug","message":"Resetting the user buffer after activating the boost","score":5081,"tgUserId":571484499,"timestamp":"2025-05-09T08:02:47.708Z"}
+{"boostName":"X2","level":"debug","message":"Activating paid boost","tgUserId":571484499,"timestamp":"2025-05-09T08:02:55.913Z"}
+{"currentBuffer":2,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:56.816Z"}
+{"currentBuffer":4,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:57.006Z"}
+{"currentBuffer":6,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:57.183Z"}
+{"currentBuffer":8,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:57.344Z"}
+{"currentBuffer":10,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:57.502Z"}
+{"currentBuffer":12,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:57.652Z"}
+{"currentBuffer":14,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:57.825Z"}
+{"currentBuffer":16,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:57.987Z"}
+{"currentBuffer":18,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:58.145Z"}
+{"currentBuffer":20,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:58.307Z"}
+{"currentBuffer":22,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:58.451Z"}
+{"currentBuffer":24,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:59.112Z"}
+{"currentBuffer":26,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:59.245Z"}
+{"currentBuffer":28,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:59.364Z"}
+{"currentBuffer":30,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:59.496Z"}
+{"currentBuffer":32,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:59.617Z"}
+{"currentBuffer":34,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:59.745Z"}
+{"currentBuffer":36,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:02:59.865Z"}
+{"currentBuffer":38,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.069Z"}
+{"currentBuffer":40,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.181Z"}
+{"currentBuffer":42,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.301Z"}
+{"currentBuffer":44,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.529Z"}
+{"currentBuffer":46,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.561Z"}
+{"currentBuffer":48,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.676Z"}
+{"currentBuffer":50,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.801Z"}
+{"currentBuffer":52,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:00.934Z"}
+{"currentBuffer":54,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:01.059Z"}
+{"level":"debug","message":"Boost expired","tgUserId":571484499,"timestamp":"2025-05-09T08:03:01.178Z"}
+{"currentBuffer":55,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:01.178Z"}
+{"currentBuffer":56,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:01.312Z"}
+{"currentBuffer":57,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:01.443Z"}
+{"currentBuffer":58,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:01.576Z"}
+{"currentBuffer":59,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:01.694Z"}
+{"currentBuffer":60,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:05.282Z"}
+{"currentBuffer":61,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:05.449Z"}
+{"currentBuffer":62,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:05.613Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:03:07.156Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":9,"score":5081,"scoreLastDay":530,"tgId":571484499,"timestamp":"2025-05-09T08:03:07.166Z","userBuffer":62,"userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:03:09.703Z","userId":571484499}
+{"bufferClicks":0,"energyDB":947,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":1.274,"score":5143,"scoreLastDay":592,"secondsOffline":2.548,"timestamp":"2025-05-09T08:03:09.714Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:03:09.856Z"}
+{"currentBuffer":1,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:03:19.243Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T08:04:38.756Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:32:10)","syscall":"listen","timestamp":"2025-05-09T08:04:39.002Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:07:39.551Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":134,"score":5143,"scoreLastDay":592,"tgId":571484499,"timestamp":"2025-05-09T08:07:39.556Z","userBuffer":1,"userEnergy":948}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:10:09.369Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5144,"scoreLastDay":593,"secondsOffline":149.827,"timestamp":"2025-05-09T08:10:09.383Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:10:09.445Z"}
+{"boostName":"X2","level":"debug","message":"Activating paid boost","tgUserId":571484499,"timestamp":"2025-05-09T08:10:33.193Z"}
+{"0":571484499,"1":"X2","level":"warn","message":"Received a request for activation when the boost is already active","timestamp":"2025-05-09T08:10:33.203Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:10:38.061Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":14,"score":5144,"tgId":571484499,"timestamp":"2025-05-09T08:10:38.072Z","userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:10:41.360Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5144,"scoreLastDay":593,"secondsOffline":3.297,"timestamp":"2025-05-09T08:10:41.369Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:10:41.553Z"}
+{"boostName":"X2","level":"debug","message":"Activating paid boost","tgUserId":571484499,"timestamp":"2025-05-09T08:10:46.845Z"}
+{"0":571484499,"1":"X2","level":"warn","message":"Received a request for activation when the boost is already active","timestamp":"2025-05-09T08:10:46.850Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T08:11:58.613Z"}
+{"level":"info","message":"Server is running on http://localhost:3001","timestamp":"2025-05-09T08:11:58.883Z"}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:12:01.352Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5144,"scoreLastDay":593,"secondsOffline":80.013,"timestamp":"2025-05-09T08:12:01.384Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:12:01.468Z"}
+{"boostName":"X2","level":"debug","message":"Activating paid boost","tgUserId":571484499,"timestamp":"2025-05-09T08:12:35.057Z"}
+{"0":571484499,"1":"X2","level":"warn","message":"Received a request for activation when the boost is already active","timestamp":"2025-05-09T08:12:35.063Z"}
+{"currentBuffer":1,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:36.196Z"}
+{"currentBuffer":2,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:36.480Z"}
+{"currentBuffer":3,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:36.589Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:12:38.014Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":18,"score":5144,"scoreLastDay":593,"tgId":571484499,"timestamp":"2025-05-09T08:12:38.019Z","userBuffer":3,"userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:12:41.044Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5147,"scoreLastDay":596,"secondsOffline":3.035,"timestamp":"2025-05-09T08:12:41.053Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:12:41.156Z"}
+{"currentBuffer":1,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:42.174Z"}
+{"currentBuffer":2,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:42.440Z"}
+{"currentBuffer":3,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:42.604Z"}
+{"currentBuffer":4,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:42.741Z"}
+{"currentBuffer":5,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:42.899Z"}
+{"currentBuffer":6,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:43.042Z"}
+{"currentBuffer":7,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:43.206Z"}
+{"currentBuffer":8,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:43.363Z"}
+{"currentBuffer":9,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:43.513Z"}
+{"currentBuffer":10,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:43.685Z"}
+{"currentBuffer":11,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:12:43.854Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:12:45.974Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":2,"score":5147,"scoreLastDay":596,"tgId":571484499,"timestamp":"2025-05-09T08:12:45.979Z","userBuffer":11,"userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:12:47.950Z","userId":571484499}
+{"bufferClicks":0,"energyDB":991,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0.9895,"score":5158,"scoreLastDay":607,"secondsOffline":1.979,"timestamp":"2025-05-09T08:12:47.958Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:12:48.051Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:19:13.969Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":193,"score":5158,"tgId":571484499,"timestamp":"2025-05-09T08:19:13.972Z","userEnergy":991}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:19:16.371Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5158,"scoreLastDay":607,"secondsOffline":2.406,"timestamp":"2025-05-09T08:19:16.378Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:19:16.500Z"}
+{"currentBuffer":1,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:19:17.755Z"}
+{"currentBuffer":2,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:19:17.942Z"}
+{"currentBuffer":3,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:19:18.113Z"}
+{"currentBuffer":4,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:19:18.308Z"}
+{"currentBuffer":5,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:19:18.458Z"}
+{"currentBuffer":6,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:19:18.616Z"}
+{"currentBuffer":7,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:19:18.779Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:19:20.029Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":1,"score":5158,"scoreLastDay":607,"tgId":571484499,"timestamp":"2025-05-09T08:19:20.038Z","userBuffer":7,"userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:19:22.199Z","userId":571484499}
+{"bufferClicks":0,"energyDB":994,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":1.0845,"score":5165,"scoreLastDay":614,"secondsOffline":2.169,"timestamp":"2025-05-09T08:19:22.207Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:19:22.314Z"}
+{"level":"info","message":"Initializing database","timestamp":"2025-05-09T08:20:37.533Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"Uncaught exception listen EADDRINUSE: address already in use :::3001","port":3001,"stack":"Error: listen EADDRINUSE: address already in use :::3001\n    at Server.setupListenHandle [as _listen2] (node:net:1907:16)\n    at listenInCluster (node:net:1964:12)\n    at Server.listen (node:net:2066:7)\n    at main (C:\\Users\\polza\\repos\\crypto\\HamsterClicker-node\\clicker-backend\\src\\app.ts:32:10)","syscall":"listen","timestamp":"2025-05-09T08:20:37.926Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:20:46.858Z"}
+{"level":"debug","message":"User disconnected","restoredEnergy":42,"score":5165,"tgId":571484499,"timestamp":"2025-05-09T08:20:46.861Z","userEnergy":995}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:20:48.870Z","userId":571484499}
+{"bufferClicks":0,"energyDB":1000,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":0,"score":5165,"scoreLastDay":614,"secondsOffline":2.016,"timestamp":"2025-05-09T08:20:48.877Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:20:48.976Z"}
+{"currentBuffer":1,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:20:50.193Z"}
+{"currentBuffer":2,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:20:50.363Z"}
+{"currentBuffer":3,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:20:50.546Z"}
+{"currentBuffer":4,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:20:50.813Z"}
+{"currentBuffer":5,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:20:50.946Z"}
+{"currentBuffer":6,"level":"debug","message":"Click processed","tgUserId":571484499,"timestamp":"2025-05-09T08:20:51.070Z"}
+{"level":"debug","message":"Disconnecting user","tgUserId":571484499,"timestamp":"2025-05-09T08:20:52.334Z"}
+{"level":"debug","message":"User disconnected (non-empty buffer)","restoredEnergy":1,"score":5165,"scoreLastDay":614,"tgId":571484499,"timestamp":"2025-05-09T08:20:52.339Z","userBuffer":6,"userEnergy":1000}
+{"level":"debug","message":"Getting user","timestamp":"2025-05-09T08:20:54.449Z","userId":571484499}
+{"bufferClicks":0,"energyDB":995,"level":"debug","message":"Updating user data","offlineReward":0,"restoredEnergy":1.066,"score":5171,"scoreLastDay":620,"secondsOffline":2.132,"timestamp":"2025-05-09T08:20:54.471Z","userId":571484499}
+{"level":"debug","message":"Getting tasks","timestamp":"2025-05-09T08:20:54.621Z"}

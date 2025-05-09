@@ -134,6 +134,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       };
     });
   };
+
   const handleRestoreEnergy = (info: any) => {
     setUser((prev) => {
       if (!prev) {
@@ -216,14 +217,46 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       };
     });
   };
+
+  const handleOnActivatePaidBoost = (boost: any) => {
+    setUser((prev) => {
+      if (!prev) {
+        return null;
+      }
+      return {
+        ...prev,
+        isBoostX2Active: boost == "X2" ? true : boost.isBoostX2Active,
+        isHandicapActive: boost == "HANDICAP" ? true : boost.isHandicapActive,
+      };
+    });
+  };
+
+  const handleOnDeactivatePaidBoost = (boost: any) => {
+    setUser((prev) => {
+      if (!prev) {
+        return null;
+      }
+      return {
+        ...prev,
+        isBoostX2Active: boost == "X2" ? false : boost.isBoostX2Active,
+        isHandicapActive: boost == "HANDICAP" ? false : boost.isHandicapActive,
+      };
+    });
+  };
+
+
   useEffect(() => {
     if (webSocket?.connected) {
       webSocket.on("reward", handleRewardGet);
       webSocket.on("energyRestored", handleRestoreEnergy);
+      webSocket.on("activatedPaidBoost", handleOnActivatePaidBoost);
+      webSocket.on("deactivatedPaidBoost", handleOnDeactivatePaidBoost);
     }
     return () => {
       webSocket?.off("reward", handleRewardGet);
       webSocket?.off("energyRestored", handleRestoreEnergy);
+      webSocket?.off("activatedPaidBoost", handleOnActivatePaidBoost);
+      webSocket?.off("deactivatedPaidBoost", handleOnDeactivatePaidBoost);
     };
   }, [webSocket?.connected, isSocketLive]);
 

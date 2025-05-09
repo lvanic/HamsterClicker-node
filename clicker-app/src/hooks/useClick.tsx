@@ -15,11 +15,11 @@ export const useClick = () => {
   const { webSocket } = useWebSocket();
   const { user, setUser } = useUser();
   const { setPageLoading } = usePageLoading();
-
-  const summaryClickPower = useMemo(
-    () => calculateLevel(user?.score || 0),
-    [user]
-  );
+  
+  const summaryClickPower = useMemo(() => {
+    const multiplier = user?.isBoostX2Active ? 2 : user?.isHandicapActive ? 5 : 1;
+    return calculateLevel(user?.score || 0) * multiplier;
+  }, [user]);
 
   const handleClick = (clickData: ClickData) => {
     if (webSocket && (user?.energy || 0) > 0) {

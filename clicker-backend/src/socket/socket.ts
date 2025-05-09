@@ -19,4 +19,5 @@ export const registerEvents = (io: Socket) => {
   io.on("activateBoost", socketsLogic.activateBoost);
   io.on("userLeague", socketsLogic.userLeague);
   io.on("disconnect", socketsLogic.disconnect);
+  io.on("activatePaidBoost", socketsLogic.activatePaidBoost);
 };

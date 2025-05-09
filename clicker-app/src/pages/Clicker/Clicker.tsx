@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { useClick } from "../../hooks/useClick";
 import NumberSign from "../../components/NumberSign";
 import { EnergyProgress } from "../../components/EnergyProgress";
@@ -85,7 +85,10 @@ export const Clicker: React.FC = () => {
   ) => {
     event.preventDefault();
   };
-
+  const multiplier = useMemo(
+    () => user?.isBoostX2Active ? 2 : user?.isHandicapActive ? 5 : 1,
+    [user]
+  );
   return (
     <div
       className="text-center p-4 pt-0 relative flex flex-col items-center justify-between pb-44 h-full"
@@ -96,7 +99,7 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
           <div className="flex flex-col justify-center items-center w-full mb-2 gap-2">
-            <ScoreCounter clickCount={(user?.score || 0)} />
+            <ScoreCounter clickCount={user?.score || 0} />
             {/* <League /> */}
             {/* <DailyOffer />
             <ComboGame /> */}
@@ -128,16 +131,29 @@ export const Clicker: React.FC = () => {
 
           {/* <Statistics /> */}
           <EnergyProgress
-            energyCount={(user?.energy || 0)}
+            energyCount={user?.energy || 0}
             maxEnergy={user?.maxEnergy}
           />
+
+          {user?.isBoostX2Active && (
+            <div className="bg-[#7437B9BD] px-3 py-2 mt-2 rounded-xl">
+              Boost x2 active
+            </div>
+          )}
+
+          {user?.isHandicapActive && (
+            <div className="bg-[#7437B9BD] px-3 py-2 mt-2 rounded-xl">
+              Boost handicap(x5) active
+            </div>
+          )}
+
           {numberSignPositions.map((position) => (
             <NumberSign
               key={position.id}
               x={position.x}
               y={position.y}
               id={position.id}
-              rewardPerClick={calculateLevel(user?.score || 0)}
+              rewardPerClick={calculateLevel(user?.score || 0) * multiplier}
               onAnimationEnd={handleAnimationEnd}
             />
           ))}

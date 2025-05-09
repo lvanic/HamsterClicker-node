@@ -10,6 +10,8 @@ import logger from "./core/logger";
 import { restoreFullEnergyBoostJob, rewardReferralsJob } from "./jobs";
 import { initializeAppSettingsIfNotExists } from "./services/appSettingsService";
 import { handleSocketConnection } from "./socket/socket";
+import { AccountSubscription } from "./ton/AccountSubscription";
+import { startTonMonitor, stopTonMonitor } from "./ton/monitor";
 
 const main = async () => {
   await initializeDatabase();
@@ -33,13 +35,21 @@ const main = async () => {
 
   restoreFullEnergyBoostJob.start();
   rewardReferralsJob.start();
+
+  startTonMonitor();
 };
 
 main().catch((error) => logger.error("Unexpected error", error));
 
 // Enable graceful stop
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
+process.once("SIGINT", () => {
+  stopTonMonitor();
+  bot.stop("SIGINT");
+});
+process.once("SIGTERM", () => {
+  stopTonMonitor();
+  bot.stop("SIGTERM");
+});
 
 // TODO: look up needed
 process.on("uncaughtException", (error) => logger.error("Uncaught exception", error));

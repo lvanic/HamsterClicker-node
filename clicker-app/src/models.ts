@@ -23,6 +23,9 @@ export interface User {
   cachedIncome: number;
   lastOnlineTimestamp: number;
   connectedWallet: string;
+  
+  isBoostX2Active: boolean;
+  isHandicapActive: boolean;
 }
 
 export interface Task {

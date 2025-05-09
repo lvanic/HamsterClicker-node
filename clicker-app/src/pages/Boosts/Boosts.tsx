@@ -6,6 +6,8 @@ import { useSettings } from "../../hooks/useSettings";
 import { NotifyContext, NotifyMessage } from "../../contexts/NotifyContext";
 import { getLocalization } from "../../localization/getLocalization";
 import { User } from "../../models";
+import { TonPayment } from "../../components/TonPayment";
+import { useNavigate } from "react-router-dom";
 
 export const Boosts = () => {
   const { webSocket } = useWebSocket();
@@ -22,6 +24,8 @@ export const Boosts = () => {
   const [isEnergyUpgrading, setEnergyUpgrading] = useState(false);
   const [isClickUpgrading, setClickUpgrading] = useState(false);
   const [isEnergyRestoring, setEnergyRestoring] = useState(false);
+  const navigate = useNavigate();
+
   const selectedLanguage = localStorage.getItem("language") || "en";
 
   const settings = useSettings();
@@ -84,6 +88,7 @@ export const Boosts = () => {
             lastFullEnergyTimestamp: Date.now(),
           };
         });
+        navigate("/");
     }
   };
 
@@ -160,22 +165,7 @@ export const Boosts = () => {
     return user?.fullEnergyActivates || 0;
   }, [user?.fullEnergyActivates]);
 
-  const boosts = [
-    {
-      id: 1,
-      Icon: <img src="/img/multitap.png" className="w-8" />,
-      title: getLocalization("massTap"),
-      description: getLocalization("massTapDesc"),
-      action: improveClick,
-      buttonLabel: getLocalization("improve"),
-      level: user?.clickPower,
-    }
-  ];
-
-  // alert(`${settings.fullEnergyBoostPerDay} - ${fullEnergyActivates}`);
-  
-  const remainingBoosts =
-    settings.fullEnergyBoostPerDay - fullEnergyActivates 
+  const remainingBoosts = settings.fullEnergyBoostPerDay - fullEnergyActivates;
 
   return (
     <div className="px-3 max-w-4xl mx-auto">
@@ -218,6 +208,30 @@ export const Boosts = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            <TonPayment
+              serviceType="boost_x2"
+              onActivate={() => {
+                webSocket?.emit(
+                  "activatePaidBoost",
+                  JSON.stringify([user?.tgId, "X2"])
+                );
+                navigate("/");
+              }}
+            />
+          </div>
+          <div>
+            <TonPayment
+              serviceType="handicap"
+              onActivate={() => {
+                webSocket?.emit(
+                  "activatePaidBoost",
+                  JSON.stringify([user?.tgId, "HANDICAP"])
+                );
+                navigate("/");
+              }}
+            />
           </div>
         </div>
         {/* <div>

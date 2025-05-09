@@ -12,6 +12,7 @@ import {
 import { Business } from "./business";
 import { Task } from "./task";
 import { BusinessUpgrade } from "./businessUpgrade";
+import { Payment } from "./payment";
 
 @Entity()
 export class User {
@@ -80,6 +81,20 @@ export class User {
   @ManyToMany(() => Business)
   @JoinTable()
   businesses: Business[];
+
+  @ManyToOne(() => Payment, (payment) => payment.user, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  @Column({ default: false })
+  isHandicapActive: boolean = false;
+  @Column({ default: 0 })
+  handicapExpiresAt: number = 0;
+
+  @Column({ default: false })
+  isX2Active: boolean = false;
+  @Column({ default: 0 })
+  x2ExpiresAt: number = 0;
 
   @ManyToOne(() => User, (user) => user.referrals, { nullable: true })
   parent: User;
