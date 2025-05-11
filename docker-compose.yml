@@ -34,7 +34,7 @@ services:
   #     - "traefik.http.routers.frontend.tls.certresolver=myresolver"
 
   backend:
-    image: "bun/back"
+    image: "back"
     container_name: "backend"
     restart: always
     labels:
