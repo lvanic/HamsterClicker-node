@@ -23,15 +23,15 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./acme.json:/letsencrypt/acme.json"
 
-  frontend:
-    image: "bun/front"
-    container_name: "frontend"
-    restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`bun.game.sviazik.com`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+  # frontend:
+  #   image: "bun/front"
+  #   container_name: "frontend"
+  #   restart: always
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.frontend.rule=Host(`bun.game.sviazik.com`)"
+  #     - "traefik.http.routers.frontend.entrypoints=websecure"
+  #     - "traefik.http.routers.frontend.tls.certresolver=myresolver"
 
   backend:
     image: "bun/back"
