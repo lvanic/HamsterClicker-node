@@ -129,7 +129,7 @@ export const Clicker: React.FC = () => {
             onTouchCancel={handleTouchEnd}
             // onClick={handleClickEvent}
             onContextMenu={handleContextMenu}
-            className={`text-lg border-none filter rounded-full max-w-full max-h-full -my-[10px]
+            className={`text-lg border-none filter rounded-full max-w-full max-h-full -my-[10px] h-[92%]
                 ${
                   imageClicked
                     ? "transform scale-90 transition-transform duration-75 ease-in-out"
