@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useClick } from "../../hooks/useClick";
 import NumberSign from "../../components/NumberSign";
 import { EnergyProgress } from "../../components/EnergyProgress";
@@ -21,7 +21,16 @@ export const Clicker: React.FC = () => {
   const [imageClicked, setImageClicked] = useState<boolean>(false);
   const { user } = useUser();
   const isSkeletonLoading = useSkeletonLoading();
-  const [devData, setDevData] = useState<any>(null);
+
+  const [now, setNow] = useState<number>(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleTouchStart = (event: TouchEvent) => {
     const newTouches = new Set<number>(
@@ -86,7 +95,7 @@ export const Clicker: React.FC = () => {
     event.preventDefault();
   };
   const multiplier = useMemo(
-    () => user?.isBoostX2Active ? 2 : user?.isHandicapActive ? 5 : 1,
+    () => (user?.isBoostX2Active ? 2 : user?.isHandicapActive ? 5 : 1),
     [user]
   );
   return (
@@ -135,17 +144,29 @@ export const Clicker: React.FC = () => {
             maxEnergy={user?.maxEnergy}
           />
 
-          {user?.isBoostX2Active && (
-            <div className="bg-[#7437B9BD] px-3 py-2 mt-2 rounded-xl">
-              Boost x2 active
-            </div>
-          )}
+          {user?.isBoostX2Active &&
+            user.x2ExpiresAt &&
+            new Date(user.x2ExpiresAt).getTime() - now > 0 && (
+              <div className="bg-[#7437B9BD] px-3 py-2 mt-2 rounded-xl">
+                Boost x2 active{" "}
+                <span>
+                  {new Date(user.x2ExpiresAt - now).toISOString().substr(11, 8)}
+                </span>
+              </div>
+            )}
 
-          {user?.isHandicapActive && (
-            <div className="bg-[#7437B9BD] px-3 py-2 mt-2 rounded-xl">
-              Boost handicap(x5) active
-            </div>
-          )}
+          {user?.isHandicapActive &&
+            user.handicapExpiresAt &&
+            new Date(user.handicapExpiresAt).getTime() - now > 0 && (
+              <div className="bg-[#7437B9BD] px-3 py-2 mt-2 rounded-xl">
+                Boost handicap(x5) active{" "}
+                <span>
+                  {new Date(user.handicapExpiresAt - now)
+                    .toISOString()
+                    .substr(11, 8)}
+                </span>
+              </div>
+            )}
 
           {numberSignPositions.map((position) => (
             <NumberSign

@@ -26,6 +26,8 @@ export interface User {
   
   isBoostX2Active: boolean;
   isHandicapActive: boolean;
+  x2ExpiresAt: number;
+  handicapExpiresAt: number;
 }
 
 export interface Task {

@@ -227,9 +227,14 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
         ...prev,
         isBoostX2Active: boost == "X2" ? true : boost.isBoostX2Active,
         isHandicapActive: boost == "HANDICAP" ? true : boost.isHandicapActive,
+        x2ExpiresAt: boost == "X2" ? Date.now() + 60 * 2000 : prev.x2ExpiresAt,
+        handicapExpiresAt:
+          boost == "HANDICAP" ?  Date.now() + 60 * 2000 : prev.handicapExpiresAt,
       };
     });
+
   };
+
 
   const handleOnDeactivatePaidBoost = (boost: any) => {
     setUser((prev) => {
@@ -243,7 +248,6 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       };
     });
   };
-
 
   useEffect(() => {
     if (webSocket?.connected) {

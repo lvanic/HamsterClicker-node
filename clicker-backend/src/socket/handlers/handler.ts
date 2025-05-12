@@ -17,39 +17,48 @@ import {
 } from "../../services/userService";
 
 // TODO: replace with redis
-const buffer: Record<string, number> = {};
+const buffer: Record<string, { timestamp: number; multiplier: number }[]> = {};
 const activeBoosts: Map<string, { type: "X2" | "HANDICAP"; expiresAt: number }> = new Map();
+const BOOST_DURATION = 60 * 2000; // 1 minute
 
 export const initSocketsLogic = (io: Socket) => ({
   clickEvent: async (data: string) => {
     try {
       const parsedData = JSON.parse(data);
-      const tgUserId = parsedData["user_id"]; // REVISIT: why is there a user_id in the request body
+      const tgUserId = parsedData["user_id"];
 
       if (!buffer[tgUserId]) {
-        buffer[tgUserId] = 0;
+        buffer[tgUserId] = [];
       }
 
-      const expiresAt = activeBoosts.get(tgUserId)?.expiresAt;
-      const boostType = activeBoosts.get(tgUserId)?.type;
-      let boostMult = boostType == "X2" ? 2 : boostType == "HANDICAP" ? 5 : 1;
+      const userBoost = activeBoosts.get(tgUserId);
+      let boostMult = 1;
 
-      if (expiresAt && expiresAt < Date.now()) {
-        if (boostType === "X2") {
-          await updateUserByTgId(tgUserId, { isX2Active: false });
-        } else if (boostType === "HANDICAP") {
-          await updateUserByTgId(tgUserId, { isHandicapActive: false });
+      if (userBoost) {
+        if (userBoost.expiresAt < Date.now()) {
+          // boost expired
+          if (userBoost.type === "X2") {
+            await updateUserByTgId(tgUserId, { isX2Active: false });
+          } else if (userBoost.type === "HANDICAP") {
+            await updateUserByTgId(tgUserId, { isHandicapActive: false });
+          }
+          activeBoosts.delete(tgUserId);
+          logger.debug("Boost expired", { tgUserId });
+        } else {
+          boostMult = userBoost.type === "X2" ? 2 : userBoost.type === "HANDICAP" ? 5 : 1;
         }
-        boostMult = 1;
-        activeBoosts.delete(tgUserId);
-        logger.debug("Boost expired", { tgUserId });
       }
 
-      buffer[tgUserId] = buffer[tgUserId] + 1 * boostMult;
+      // Добавляем клик в buffer с мультипликатором и временем
+      buffer[tgUserId].push({
+        timestamp: Date.now(),
+        multiplier: boostMult,
+      });
 
       logger.debug("Click processed", {
         tgUserId,
-        currentBuffer: buffer[tgUserId],
+        boostMult,
+        totalClicks: buffer[tgUserId].length,
       });
     } catch (error) {
       logger.error("Error while click processing", error);
@@ -132,10 +141,17 @@ export const initSocketsLogic = (io: Socket) => ({
       }
 
       const secondsOffline = (new Date().getTime() - user.lastOnlineTimeStamp) / 1000;
-      const bufferClicks = buffer[userId] || 0;
+      const bufferClicks =
+        buffer[userId]?.reduce((acc, click) => {
+          if (click.timestamp + 60 * 1000 > Date.now()) {
+            return acc + click.multiplier;
+          }
+          return acc;
+        }, 0) || 0;
+      const clickCount = buffer[userId]?.length || 0;
       const availableEnergy = USER_MAX_ENERGY - user.energy;
 
-      const energyToRestore = Math.min((secondsOffline - bufferClicks) / 2, availableEnergy);
+      const energyToRestore = Math.min((secondsOffline - clickCount) / 2, availableEnergy);
 
       const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
@@ -180,6 +196,8 @@ export const initSocketsLogic = (io: Socket) => ({
         offlineReward,
         isBoostX2Active: user.isX2Active,
         isHandicapActive: user.isHandicapActive,
+        x2ExpiresAt: user.x2ExpiresAt,
+        handicapExpiresAt: user.handicapExpiresAt,
       });
 
       delete buffer[userId];
@@ -247,12 +265,19 @@ export const initSocketsLogic = (io: Socket) => ({
       }
 
       const message = getLang(lang, "energyRestored");
+      const bufferClicks =
+        buffer[tgUserId]?.reduce((acc, click) => {
+          if (click.timestamp + 60 * 1000 > Date.now()) {
+            return acc + click.multiplier;
+          }
+          return acc;
+        }, 0) || 0;
       await updateUserByTgId(tgUserId, {
         lastOnlineTimeStamp: new Date().getTime(),
         energy: USER_MAX_ENERGY,
         fullEnergyActivates: ++user.fullEnergyActivates,
-        score: user.score + (buffer[tgUserId] || 0) * user.level,
-        balance: user.balance + (buffer[tgUserId] || 0) * user.level,
+        score: user.score + bufferClicks * user.level,
+        balance: user.balance + bufferClicks * user.level,
       });
 
       logger.debug("Resetting the user buffer after activating the boost", {
@@ -287,7 +312,14 @@ export const initSocketsLogic = (io: Socket) => ({
         return;
       }
 
-      const score = user.score + (buffer[userId] || 0) * user.level;
+      const bufferClicks =
+        buffer[userId]?.reduce((acc, click) => {
+          if (click.timestamp + 60 * 1000 > Date.now()) {
+            return acc + click.multiplier;
+          }
+          return acc;
+        }, 0) || 0;
+      const score = user.score + bufferClicks * user.level;
 
       const userPlaceInTop = getUserPlaceInTop(score);
 
@@ -320,9 +352,9 @@ export const initSocketsLogic = (io: Socket) => ({
 
         await updateUserByTgId(tgUserId, {
           isX2Active: true,
-          x2ExpiresAt: Date.now() + 60 * 1000,
+          x2ExpiresAt: Date.now() + BOOST_DURATION,
         });
-        activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + 60 * 1000 });
+        activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "X2");
       } else if (boostName === "HANDICAP") {
         if (user.isHandicapActive) {
@@ -333,9 +365,9 @@ export const initSocketsLogic = (io: Socket) => ({
 
         await updateUserByTgId(tgUserId, {
           isHandicapActive: true,
-          handicapExpiresAt: Date.now() + 60 * 1000,
+          handicapExpiresAt: Date.now() + BOOST_DURATION,
         });
-        activeBoosts.set(tgUserId, { type: "HANDICAP", expiresAt: Date.now() + 60 * 1000 });
+        activeBoosts.set(tgUserId, { type: "HANDICAP", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "HANDICAP");
       } else {
         logger.warn("Received a request for an unprocessed boost", parsedData);
@@ -353,7 +385,7 @@ export const initSocketsLogic = (io: Socket) => ({
           activeBoosts.delete(tgUserId);
           io.emit("deactivatedPaidBoost", boost.type);
         }
-      }, 60 * 1000);
+      }, BOOST_DURATION);
     } catch (error) {
       logger.error("Error while attempt to activate paid boost", error);
     }
@@ -368,12 +400,12 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const user = await getUserByTgId(tgUserId);
 
-      if(user.x2ExpiresAt && user.x2ExpiresAt < Date.now()) {
+      if (user.x2ExpiresAt && user.x2ExpiresAt < Date.now()) {
         await updateUserByTgId(tgUserId, { isX2Active: false });
         activeBoosts.delete(tgUserId.toString());
         logger.debug("Boost expired", { tgUserId });
       }
-      if(user.handicapExpiresAt && user.handicapExpiresAt < Date.now()) {
+      if (user.handicapExpiresAt && user.handicapExpiresAt < Date.now()) {
         await updateUserByTgId(tgUserId, { isHandicapActive: false });
         activeBoosts.delete(tgUserId.toString());
         logger.debug("Boost expired", { tgUserId });
@@ -383,9 +415,18 @@ export const initSocketsLogic = (io: Socket) => ({
       const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
       const restoredEnergy = Math.floor(timeDiff / 2);
 
-      if (buffer[tgUserId] > 0) {
-        const balanceIncrement = buffer[tgUserId] * user.level;
-        const userEnergy = Math.min(user.energy - buffer[tgUserId] + restoredEnergy, USER_MAX_ENERGY);
+      const bufferClicks =
+        buffer[tgUserId]?.reduce((acc, click) => {
+          if (click.timestamp + 60 * 1000 > Date.now()) {
+            return acc + click.multiplier;
+          }
+          return acc;
+        }, 0) || 0;
+        
+      if (bufferClicks > 0) {
+        const balanceIncrement = bufferClicks * user.level;
+        const clickCount = buffer[tgUserId]?.length || 0;
+        const userEnergy = Math.min(user.energy + restoredEnergy - clickCount, USER_MAX_ENERGY);
 
         logger.debug("User disconnected (non-empty buffer)", {
           tgId: tgUserId,
