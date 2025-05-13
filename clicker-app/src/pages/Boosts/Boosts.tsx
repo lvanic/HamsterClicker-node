@@ -88,7 +88,7 @@ export const Boosts = () => {
             lastFullEnergyTimestamp: Date.now(),
           };
         });
-        navigate("/");
+      navigate("/");
     }
   };
 
@@ -212,6 +212,8 @@ export const Boosts = () => {
           <div>
             <TonPayment
               serviceType="boost_x2"
+              activationsPerDay={3}
+              remainingBoosts={3 - (user?.X2UsedCount || 0)}
               onActivate={() => {
                 webSocket?.emit(
                   "activatePaidBoost",
@@ -223,6 +225,33 @@ export const Boosts = () => {
           </div>
           <div>
             <TonPayment
+              isFree
+              lastActivation={user?.lastX2FreeUsedAt}
+              serviceType="boost_x2_free"
+              onActivate={() => {
+                webSocket?.emit(
+                  "activatePaidBoost",
+                  JSON.stringify([user?.tgId, "X2_FREE"])
+                );
+                setUser &&
+                  setUser((prev: User | null) => {
+                    if (!prev) {
+                      return prev;
+                    }
+                    return {
+                      ...prev,
+                      lastX2FreeUsedAt: Date.now(),
+                    };
+                  });
+
+                navigate("/");
+              }}
+            />
+          </div>
+          <div>
+            <TonPayment
+              activationsPerDay={5}
+              remainingBoosts={5 - (user?.handicapUsedCount || 0)}
               serviceType="handicap"
               onActivate={() => {
                 webSocket?.emit(

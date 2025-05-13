@@ -12,6 +12,7 @@ import { User, Business, Task } from "../models";
 import { getTelegramUser } from "../services/telegramService";
 import Loader from "../components/Loader/Loader";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface UserContextProps {
   user: User | null;
@@ -225,11 +226,14 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       }
       return {
         ...prev,
-        isBoostX2Active: boost == "X2" ? true : boost.isBoostX2Active,
+        isBoostX2Active: boost == "X2" || boost == "X2_FREE" ? true : boost.isBoostX2Active,
         isHandicapActive: boost == "HANDICAP" ? true : boost.isHandicapActive,
-        x2ExpiresAt: boost == "X2" ? Date.now() + 60 * 2000 : prev.x2ExpiresAt,
+        x2ExpiresAt: boost == "X2" || boost == "X2_FREE" ? Date.now() + 60 * 2000 : prev.x2ExpiresAt,
         handicapExpiresAt:
           boost == "HANDICAP" ?  Date.now() + 60 * 2000 : prev.handicapExpiresAt,
+        lastX2FreeUsedAt: boost == "X2_FREE" ? Date.now() : prev.lastX2FreeUsedAt,
+        X2UsedCount: boost == "X2" ? prev.X2UsedCount + 1 : prev.X2UsedCount,
+        handicapUsedCount: boost == "HANDICAP" ? prev.handicapUsedCount + 1 : prev.handicapUsedCount,
       };
     });
 
@@ -248,6 +252,9 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       };
     });
   };
+  const handleOnErrorActivatePaidBoost = (error: any) => {
+    toast.error("Error activating boost");
+  }
 
   useEffect(() => {
     if (webSocket?.connected) {
@@ -255,12 +262,14 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       webSocket.on("energyRestored", handleRestoreEnergy);
       webSocket.on("activatedPaidBoost", handleOnActivatePaidBoost);
       webSocket.on("deactivatedPaidBoost", handleOnDeactivatePaidBoost);
+      webSocket.on("errorActivatedPaidBoost", handleOnErrorActivatePaidBoost);
     }
     return () => {
       webSocket?.off("reward", handleRewardGet);
       webSocket?.off("energyRestored", handleRestoreEnergy);
       webSocket?.off("activatedPaidBoost", handleOnActivatePaidBoost);
       webSocket?.off("deactivatedPaidBoost", handleOnDeactivatePaidBoost);
+      webSocket?.off("errorActivatedPaidBoost", handleOnErrorActivatePaidBoost);
     };
   }, [webSocket?.connected, isSocketLive]);
 

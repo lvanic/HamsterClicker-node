@@ -111,6 +111,18 @@ export class User {
 
   @Column({ default: 0 })
   scoreLastDay: number;
+
+  @Column({ default: 0 })
+  lastX2FreeUsedAt: number;
+  @Column({ default: 0 })
+  handicapUsedCount: number;
+  @Column({ default: 0 })
+  X2UsedCount: number;
+  @Column({ default: 0 })
+  lastX2UsedAt: number;
+  @Column({ default: 0 })
+  lastHandicapUsedAt: number;
+
 }
 
 @Entity()

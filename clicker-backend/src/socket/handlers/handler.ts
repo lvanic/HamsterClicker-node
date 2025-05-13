@@ -18,7 +18,7 @@ import {
 
 // TODO: replace with redis
 const buffer: Record<string, { timestamp: number; multiplier: number }[]> = {};
-const activeBoosts: Map<string, { type: "X2" | "HANDICAP"; expiresAt: number }> = new Map();
+const activeBoosts: Map<string, { type: "X2" | "X2_FREE" | "HANDICAP"; expiresAt: number }> = new Map();
 const BOOST_DURATION = 60 * 2000; // 1 minute
 
 export const initSocketsLogic = (io: Socket) => ({
@@ -330,10 +330,23 @@ export const initSocketsLogic = (io: Socket) => ({
   },
 
   activatePaidBoost: async (data: string) => {
+    //X2_FREE
     const parsedData = JSON.parse(data);
     const [tgUserId, boostName] = parsedData;
 
     // add check payment
+
+    const now = Date.now();
+
+    const isSameUtcDay = (timestamp: number) => {
+      const date1 = new Date(timestamp);
+      const date2 = new Date(now);
+      return (
+        date1.getUTCFullYear() === date2.getUTCFullYear() &&
+        date1.getUTCMonth() === date2.getUTCMonth() &&
+        date1.getUTCDate() === date2.getUTCDate()
+      );
+    };
 
     try {
       logger.debug("Activating paid boost", {
@@ -350,9 +363,16 @@ export const initSocketsLogic = (io: Socket) => ({
           return;
         }
 
+        if (user.X2UsedCount > 5) {
+          logger.warn("Received a request for activation when the boost is already active", parsedData);
+          io.emit("errorActivatedPaidBoost", "FALSE");
+          return;
+        }
+
         await updateUserByTgId(tgUserId, {
           isX2Active: true,
           x2ExpiresAt: Date.now() + BOOST_DURATION,
+          X2UsedCount: user.X2UsedCount + 1,
         });
         activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "X2");
@@ -363,12 +383,40 @@ export const initSocketsLogic = (io: Socket) => ({
           return;
         }
 
+        if (user.handicapUsedCount > 5) {
+          logger.warn("Received a request for activation when the boost is already active", parsedData);
+          io.emit("errorActivatedPaidBoost", "FALSE");
+          return;
+        }
+
         await updateUserByTgId(tgUserId, {
           isHandicapActive: true,
           handicapExpiresAt: Date.now() + BOOST_DURATION,
+          handicapUsedCount: user.handicapUsedCount + 1,
         });
         activeBoosts.set(tgUserId, { type: "HANDICAP", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "HANDICAP");
+      } else if (boostName === "X2_FREE") {
+        if (user.isHandicapActive) {
+          logger.warn("Received a request for activation when the boost is already active", parsedData);
+          io.emit("activatedPaidBoost", "X2_FREE");
+          return;
+        }
+
+        if (user.lastX2FreeUsedAt && isSameUtcDay(user.lastX2FreeUsedAt)) {
+          logger.warn("Received a request for activation when the boost is already active", parsedData);
+          io.emit("errorActivatedPaidBoost", "FALSE");
+          return;
+        }
+
+        await updateUserByTgId(tgUserId, {
+          isX2Active: true,
+          x2ExpiresAt: Date.now() + BOOST_DURATION,
+          lastX2FreeUsedAt: Date.now(),
+        });
+
+        activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });
+        io.emit("activatedPaidBoost", "X2_FREE");
       } else {
         logger.warn("Received a request for an unprocessed boost", parsedData);
         return;
@@ -377,7 +425,7 @@ export const initSocketsLogic = (io: Socket) => ({
       setTimeout(() => {
         const boost = activeBoosts.get(tgUserId);
         if (boost) {
-          if (boost.type === "X2") {
+          if (boost.type === "X2" || boost.type === "X2_FREE") {
             updateUserByTgId(tgUserId, { isX2Active: false });
           } else if (boost.type === "HANDICAP") {
             updateUserByTgId(tgUserId, { isHandicapActive: false });
@@ -422,7 +470,7 @@ export const initSocketsLogic = (io: Socket) => ({
           }
           return acc;
         }, 0) || 0;
-        
+
       if (bufferClicks > 0) {
         const balanceIncrement = bufferClicks * user.level;
         const clickCount = buffer[tgUserId]?.length || 0;

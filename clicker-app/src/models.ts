@@ -28,6 +28,12 @@ export interface User {
   isHandicapActive: boolean;
   x2ExpiresAt: number;
   handicapExpiresAt: number;
+
+  lastX2FreeUsedAt: number;
+  handicapUsedCount: number;
+  X2UsedCount: number;
+  lastX2UsedAt: number;
+  lastHandicapUsedAt: number;
 }
 
 export interface Task {

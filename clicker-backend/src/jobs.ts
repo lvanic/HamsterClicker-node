@@ -19,6 +19,8 @@ export const restoreFullEnergyBoostJob = CronJob.from({
         {},
         {
           fullEnergyActivates: 0,
+          X2UsedCount: 0,
+          handicapUsedCount: 0,
         },
       );
 

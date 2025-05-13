@@ -15,6 +15,19 @@ export const Airdrop = () => {
   });
 
   useLayoutEffect(() => {
+    const now = new Date();
+    const difference = AIRDROP_DATE.getTime() - now.getTime();
+
+    if (difference > 0) {
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setTimeLeft({ days, hours, minutes, seconds });
+    }
     const interval = setInterval(() => {
       const now = new Date();
       const difference = AIRDROP_DATE.getTime() - now.getTime();
@@ -50,15 +63,17 @@ export const Airdrop = () => {
           alt="Bun Coin"
         />
       </div>
-      
+
       <div className="text-4xl text-[#FF4340B2] z-50 text-center">
         AIRDROP IN
       </div>
       <div
         className="flex items-center gap-1 z-50 mb-4 px-4 py-0.5 rounded-2xl"
-        style={{
-          // backdropFilter: "blur(20px)",
-        }}
+        style={
+          {
+            // backdropFilter: "blur(20px)",
+          }
+        }
       >
         <div className="text-center">
           <div className="text-4xl sm:text-5xl">{timeLeft.days}</div>
