@@ -234,6 +234,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
         lastX2FreeUsedAt: boost == "X2_FREE" ? Date.now() : prev.lastX2FreeUsedAt,
         X2UsedCount: boost == "X2" ? prev.X2UsedCount + 1 : prev.X2UsedCount,
         handicapUsedCount: boost == "HANDICAP" ? prev.handicapUsedCount + 1 : prev.handicapUsedCount,
+        energy: prev.maxEnergy
       };
     });
 

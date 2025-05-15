@@ -373,6 +373,7 @@ export const initSocketsLogic = (io: Socket) => ({
           isX2Active: true,
           x2ExpiresAt: Date.now() + BOOST_DURATION,
           X2UsedCount: user.X2UsedCount + 1,
+          energy: USER_MAX_ENERGY,
         });
         activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "X2");
@@ -393,6 +394,7 @@ export const initSocketsLogic = (io: Socket) => ({
           isHandicapActive: true,
           handicapExpiresAt: Date.now() + BOOST_DURATION,
           handicapUsedCount: user.handicapUsedCount + 1,
+          energy: USER_MAX_ENERGY,
         });
         activeBoosts.set(tgUserId, { type: "HANDICAP", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "HANDICAP");
@@ -413,6 +415,7 @@ export const initSocketsLogic = (io: Socket) => ({
           isX2Active: true,
           x2ExpiresAt: Date.now() + BOOST_DURATION,
           lastX2FreeUsedAt: Date.now(),
+          energy: USER_MAX_ENERGY,
         });
 
         activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });

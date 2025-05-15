@@ -91,7 +91,7 @@ export const LeagueTop = () => {
                       {index + 1}
                     </div>
                     <div className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[calc(100%-6rem)]">
-                      {userL.firstName || "Anonimus"}
+                      {userL.firstName.slice(0, 25) || "Anonimus"}
                     </div>
 
                     <div className="min-w-[4rem]">
