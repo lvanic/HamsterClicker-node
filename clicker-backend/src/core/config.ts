@@ -7,7 +7,7 @@ const configSchema = z.object({
   TG_BOT_TOKEN: z.string(),
   ADMIN_TOKEN: z.string(),
   DB_PATH: z.string().default("db.sqlite"),
-  PORT: z.number().default(3001),
+  PORT: z.string().transform((val) => Number(val)).default("3001"),
   NODE_ENV: z.string().default("development"),
   WEB_APP_URL: z.string(),
   CHAN_URL: z.string(),
