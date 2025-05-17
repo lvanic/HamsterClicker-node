@@ -36,8 +36,13 @@ export const TonPayment = ({
       ? "Boost X2"
       : serviceType === "boost_x2_free"
       ? "Boost X2 free"
-      : "Handicap";
-  const price = serviceType === "boost_x2" ? "0.3 TON" : "1.5 TON";
+      : "Handicap (X5)";
+  const price =
+    serviceType === "boost_x2"
+      ? "0.3 TON"
+      : serviceType === "boost_x2_free"
+      ? null
+      : "1.5 TON";
   const iconSrc =
     serviceType === "boost_x2" ? "/img/x2.png" : "/img/handicap.png";
 
@@ -85,7 +90,7 @@ export const TonPayment = ({
     if (isBlocked) {
       return;
     }
-    
+
     if (isFree) {
       onActivate();
       return;
@@ -166,12 +171,12 @@ export const TonPayment = ({
         )}
 
         <div className="flex justify-between items-center text-sm text-[#F7B84B] pr-4">
-          <span>Цена: {price}</span>
+          {price ? <span>Цена: {price}</span> : <span>Бесплатно</span>}
           {loading ? (
             <Loader2 className="animate-spin w-4 h-4 text-[#F7B84B]" />
           ) : (
             <div className="flex items-center gap-1 text-white">
-              <Wallet className="w-4 h-4" />
+              {price && <Wallet className="w-4 h-4" />}
               <span>
                 {isBlocked
                   ? "Активировано"

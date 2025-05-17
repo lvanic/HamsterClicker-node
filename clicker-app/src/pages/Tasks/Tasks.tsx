@@ -129,7 +129,7 @@ export const Tasks = () => {
               /> */}
                   <div>
                     <span className={"text-xs text-white leading-none"}>
-                      Referral
+                      Referral reward (receive +{appSettigs.referralReward} for every friend)
                     </span>
                     <span className="flex felx-row justify-left ml-2 items-center">
                       <img src="/img/bag.png" className="w-4" />

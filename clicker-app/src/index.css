@@ -29,5 +29,7 @@ body {
 
 #root{
   height: calc(100vh - 89px);
+  /* padding-bottom: 70px; */
   user-select: none;
+  overflow: scroll;
 }

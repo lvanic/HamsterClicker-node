@@ -171,7 +171,7 @@ export const Boosts = () => {
     <div className="px-3 max-w-4xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <img src="/img/boost.png" />
-        <div>
+        <div className="">
           <div className="uppercase text-lg">Your daily Boosters</div>
           <div
             onClick={activateFullEnergyBoost}
@@ -211,20 +211,6 @@ export const Boosts = () => {
           </div>
           <div>
             <TonPayment
-              serviceType="boost_x2"
-              activationsPerDay={3}
-              remainingBoosts={3 - (user?.X2UsedCount || 0)}
-              onActivate={() => {
-                webSocket?.emit(
-                  "activatePaidBoost",
-                  JSON.stringify([user?.tgId, "X2"])
-                );
-                navigate("/");
-              }}
-            />
-          </div>
-          <div>
-            <TonPayment
               isFree
               lastActivation={user?.lastX2FreeUsedAt}
               serviceType="boost_x2_free"
@@ -244,6 +230,20 @@ export const Boosts = () => {
                     };
                   });
 
+                navigate("/");
+              }}
+            />
+          </div>
+          <div>
+            <TonPayment
+              serviceType="boost_x2"
+              activationsPerDay={3}
+              remainingBoosts={3 - (user?.X2UsedCount || 0)}
+              onActivate={() => {
+                webSocket?.emit(
+                  "activatePaidBoost",
+                  JSON.stringify([user?.tgId, "X2"])
+                );
                 navigate("/");
               }}
             />
