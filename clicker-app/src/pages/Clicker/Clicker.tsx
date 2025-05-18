@@ -94,10 +94,19 @@ export const Clicker: React.FC = () => {
   ) => {
     event.preventDefault();
   };
-  const multiplier = useMemo(
-    () => (user?.isBoostX2Active ? 2 : user?.isHandicapActive ? 5 : 1),
-    [user]
-  );
+  const multiplier = useMemo(() => {
+    //user.x2ExpiresAt && new Date(user.x2ExpiresAt).getTime() - now
+    // user.handicapExpiresAt && new Date(user.handicapExpiresAt).getTime() - now
+    if (!user) return 1;
+    const innerNow = Date.now();
+    if (user.isBoostX2Active && user.x2ExpiresAt && user.x2ExpiresAt > innerNow) {
+      return 2;
+    }
+    if (user.isHandicapActive && user.handicapExpiresAt && user.handicapExpiresAt > innerNow) {
+      return 5;
+    }
+    return 1;
+  }, [user]);
   return (
     <div
       className="text-center p-4 pt-0 relative flex flex-col items-center justify-between pb-44 h-full"
