@@ -17,11 +17,14 @@ export const useClick = () => {
   const { setPageLoading } = usePageLoading();
 
   const summaryClickPower = useMemo(() => {
-    const multiplier = user?.isBoostX2Active
-      ? 2
-      : user?.isHandicapActive
-      ? 5
-      : 1;
+    let multiplier = 1;
+    const innerNow = Date.now();
+    if (user?.isBoostX2Active && user.x2ExpiresAt && user.x2ExpiresAt > innerNow) {
+      return 2;
+    }
+    if (user?.isHandicapActive && user.handicapExpiresAt && user.handicapExpiresAt > innerNow) {
+      return 5;
+    }
     return calculateLevel(user?.score || 0) * multiplier;
   }, [user]);
 
