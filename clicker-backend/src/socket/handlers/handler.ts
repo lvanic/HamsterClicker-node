@@ -173,7 +173,7 @@ export const initSocketsLogic = (io: Socket) => ({
         score: user.score + offlineReward + bufferClicks * user.level,
         scoreLastDay: user.scoreLastDay + offlineReward + bufferClicks * user.level,
         addedFromBusinesses: offlineReward,
-        energy: user.energy + energyToRestore,
+        energy: Math.floor(user.energy + energyToRestore),
         lastOnlineTimeStamp: new Date().getTime(),
       });
 
@@ -193,7 +193,7 @@ export const initSocketsLogic = (io: Socket) => ({
         userLevel: user.level,
         energyLevel: 0, // TODO: completely remove energyLevel
         maxEnergy: USER_MAX_ENERGY,
-        energy: user.energy + energyToRestore,
+        energy: Math.floor(user.energy + energyToRestore),
         offlineReward,
         isBoostX2Active: user.isX2Active,
         isHandicapActive: user.isHandicapActive,
@@ -500,7 +500,7 @@ export const initSocketsLogic = (io: Socket) => ({
         return;
       }
 
-      const userEnergy = Math.min(user.energy + restoredEnergy, USER_MAX_ENERGY);
+      const userEnergy = Math.floor(Math.min(user.energy + restoredEnergy, USER_MAX_ENERGY));
 
       logger.debug("User disconnected", {
         tgId: tgUserId,
