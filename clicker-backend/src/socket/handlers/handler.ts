@@ -17,7 +17,7 @@ import {
 } from "../../services/userService";
 
 // TODO: replace with redis
-const buffer: Record<string, { timestamp: number; multiplier: number }[]> = {};
+const buffer: Record<string, { timestamp: number; multiplier: number; ignoreEnergy: boolean }[]> = {};
 const activeBoosts: Map<string, { type: "X2" | "X2_FREE" | "HANDICAP"; expiresAt: number }> = new Map();
 const BOOST_DURATION = 60 * 2000; // 1 minute
 
@@ -53,6 +53,7 @@ export const initSocketsLogic = (io: Socket) => ({
       buffer[tgUserId].push({
         timestamp: Date.now(),
         multiplier: boostMult,
+        ignoreEnergy: userBoost !== undefined,
       });
 
       logger.debug("Click processed", {
@@ -148,7 +149,7 @@ export const initSocketsLogic = (io: Socket) => ({
           }
           return acc;
         }, 0) || 0;
-      const clickCount = buffer[userId]?.length || 0;
+      const clickCount = buffer[userId]?.filter((click) => !click.ignoreEnergy).length || 0;
       const availableEnergy = USER_MAX_ENERGY - user.energy;
 
       const energyToRestore = Math.min((secondsOffline - clickCount) / 2, availableEnergy);
@@ -192,7 +193,7 @@ export const initSocketsLogic = (io: Socket) => ({
         userLevel: user.level,
         energyLevel: 0, // TODO: completely remove energyLevel
         maxEnergy: USER_MAX_ENERGY,
-        energy: Math.floor(user.energy + energyToRestore - bufferClicks),
+        energy: user.energy + energyToRestore,
         offlineReward,
         isBoostX2Active: user.isX2Active,
         isHandicapActive: user.isHandicapActive,
@@ -330,7 +331,6 @@ export const initSocketsLogic = (io: Socket) => ({
   },
 
   activatePaidBoost: async (data: string) => {
-    //X2_FREE
     const parsedData = JSON.parse(data);
     const [tgUserId, boostName] = parsedData;
 
@@ -476,7 +476,8 @@ export const initSocketsLogic = (io: Socket) => ({
 
       if (bufferClicks > 0) {
         const balanceIncrement = bufferClicks * user.level;
-        const clickCount = buffer[tgUserId]?.length || 0;
+        const clickCount = buffer[tgUserId]?.filter((click) => !click.ignoreEnergy).length || 0;
+
         const userEnergy = Math.min(user.energy + restoredEnergy - clickCount, USER_MAX_ENERGY);
 
         logger.debug("User disconnected (non-empty buffer)", {

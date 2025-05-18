@@ -15,9 +15,13 @@ export const useClick = () => {
   const { webSocket } = useWebSocket();
   const { user, setUser } = useUser();
   const { setPageLoading } = usePageLoading();
-  
+
   const summaryClickPower = useMemo(() => {
-    const multiplier = user?.isBoostX2Active ? 2 : user?.isHandicapActive ? 5 : 1;
+    const multiplier = user?.isBoostX2Active
+      ? 2
+      : user?.isHandicapActive
+      ? 5
+      : 1;
     return calculateLevel(user?.score || 0) * multiplier;
   }, [user]);
 
@@ -31,10 +35,19 @@ export const useClick = () => {
         if (!prev) {
           return null;
         }
+        const now = Date.now();
+        const isHandicapActive =
+          prev.isHandicapActive &&
+          prev.handicapExpiresAt &&
+          new Date(prev.handicapExpiresAt).getTime() - now > 0;
+        const isBoostX2Active =
+          prev.isBoostX2Active &&
+          prev.isBoostX2Active &&
+          new Date(prev.x2ExpiresAt).getTime() - now > 0;
 
         const updatedScore = (prev.score || 0) + (summaryClickPower || 1);
         const updatedBalance = prev.balance + (summaryClickPower || 1);
-        const updatedEnergy = prev.energy - 1;
+        const updatedEnergy = prev.energy - (isBoostX2Active || isHandicapActive ? 0 : 1);
 
         if (prev.energy > 0) {
           webAppVibrate();
