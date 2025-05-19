@@ -104,6 +104,10 @@ export const addTask = async (ctx: {
     active: true,
   });
 
+  let settings = await AppSettingsService.getAppSettings();
+  settings.lastTaskAddedAt = Date.now();
+  await appDataSource.getRepository(AppSettings).save(settings);
+
   await appDataSource.getRepository(Task).save(task);
 
   ctx.body = task;

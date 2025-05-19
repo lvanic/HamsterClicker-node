@@ -22,4 +22,5 @@ export const DEFAULT_APP_SETTINGS: Omit<AppSettings, "id"> = {
   isRewardForReferalActive: false,
   referralTaskEndsAt: 0,
   newRefferalsToActivate: 3,
+  lastTaskAddedAt: 0,
 };

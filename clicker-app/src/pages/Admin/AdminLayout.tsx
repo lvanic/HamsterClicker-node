@@ -4,7 +4,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const { pathname } = window.location;
 
   return (
-    <div className="font-sans p-5 max-w-3xl mx-auto">
+    <div className="font-sans p-5 max-w-3xl mx-auto h-screen ">
       <h1 className="text-2xl font-black text-white mb-4 font-mono">
         CLICKER ADMIN
       </h1>

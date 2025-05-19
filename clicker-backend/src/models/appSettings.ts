@@ -57,4 +57,7 @@ export class AppSettings {
 
   @Column({ default: 0, nullable: true })
   newRefferalsToActivate: number
+
+  @Column({ default: 0 })
+  lastTaskAddedAt: number
 }

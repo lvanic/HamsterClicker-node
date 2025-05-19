@@ -25,6 +25,8 @@ export const useSettings = () => {
       isRewardForReferalActive: false,
       referralTaskEndsAt: 0,
       newRefferalsToActivate: 3,
+      lastTaskAddedAt: 0,
+
     };
     return { ...fictSettings };
   }

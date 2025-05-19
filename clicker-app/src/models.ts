@@ -90,4 +90,5 @@ export interface Settings {
   isRewardForReferalActive: boolean;
   referralTaskEndsAt: number;
   newRefferalsToActivate: number;
+  lastTaskAddedAt: number;
 }

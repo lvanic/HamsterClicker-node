@@ -11,10 +11,26 @@ import { FriendSvg } from "./FriendSvg";
 import { WalletSvg } from "./WallerSvg";
 import { HomeSvg } from "./HomeSvg";
 import { MineSvg } from "./MineSvg";
+import { useUser } from "../../hooks/useUser";
+import { useSettings } from "../../hooks/useSettings";
 
 export const Layout = () => {
-  const { isPageLoading } = usePageLoading();
-  const platform = useMemo(() => getPlatform(), [getPlatform]);
+  // const { isPageLoading } = usePageLoading();
+  // const platform = useMemo(() => getPlatform(), [getPlatform]);
+  const { user } = useUser();
+  const { lastTaskAddedAt } = useSettings();
+
+  const isNewTaskAdded = useMemo(() => {
+    if (!lastTaskAddedAt) {
+      return false;
+    }
+    const userLastOnline = user?.lastOnlineTimestamp;
+    if (!userLastOnline) {
+      return false;
+    }
+
+    return userLastOnline < lastTaskAddedAt;
+  }, [lastTaskAddedAt, user?.lastOnlineTimestamp]);
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
 
@@ -69,12 +85,16 @@ export const Layout = () => {
         >
           <Link
             to="/tasks"
-            className={`w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
+            className={`relative w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
               activeTab === "/tasks"
                 ? "border border-[#FFAE4C] border-dashed"
                 : ""
             }`}
           >
+            {isNewTaskAdded && (
+              <div className="w-2 h-2 bg-[#FD6717] animate-pulse absolute right-[4px] top-[4px] rounded-full" />
+            )}
+
             <MineSvg isActive={activeTab === "/tasks"} />
             <span
               className={
