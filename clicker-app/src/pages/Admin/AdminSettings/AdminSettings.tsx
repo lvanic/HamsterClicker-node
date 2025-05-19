@@ -17,7 +17,9 @@ export const AdminSettings = () => {
   const [comboUpdateDayHour, setComboUpdateDayHour] = useState(0);
   const [comboBusinesses, setComboBusinesses] = useState([]);
   const [premiumReferralReward, setPremiumReward] = useState(0);
+  const [referralTaskEndsAt, setReferralTaskEndsAt] = useState(Date.now());
   const [isRewardForReferalActive, setRewardForReferalActive] = useState(false);
+  const [newRefferalsToActivate, setNewRefferalsToActivate] = useState(0);
 
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -47,6 +49,8 @@ export const AdminSettings = () => {
     setComboBusinesses(settings.comboBusinesses);
     setPremiumReward(settings.premiumReferralReward);
     setRewardForReferalActive(settings.isRewardForReferalActive);
+    setReferralTaskEndsAt(settings.referralTaskEndsAt);
+    setNewRefferalsToActivate(settings.newRefferalsToActivate);
   };
 
   const handleSubmit = async () => {
@@ -73,6 +77,8 @@ export const AdminSettings = () => {
         comboUpdateDayHour,
         premiumReferralReward,
         isRewardForReferalActive,
+        referralTaskEndsAt,
+        newRefferalsToActivate,
       }),
     });
 
@@ -139,6 +145,31 @@ export const AdminSettings = () => {
             }
           />
         </div>
+      </div>
+
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">
+          Referral Task Ends At
+        </label>
+        <input
+          type="date"
+          // defaultValue={new Date(referralTaskEndsAt).toISOString().split("T")[0]}
+          value={new Date(referralTaskEndsAt).toISOString().split("T")[0]}
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          onChange={(e) => setReferralTaskEndsAt(new Date(e.target.value).getTime())}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label className="text-xs bg-slate-300 w-2/5">
+          New refferals task to activate
+        </label>
+        <input
+          type="number"
+          value={newRefferalsToActivate}
+          className="bg-slate-50 py-1 px-4 w-full outline-none"
+          onChange={(e) => setNewRefferalsToActivate(+e.target.value)}
+        />
       </div>
 
       <div className="flex flex-col">

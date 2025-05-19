@@ -51,4 +51,10 @@ export class AppSettings {
 
   @Column({ default: false })
   isRewardForReferalActive: boolean
+
+  @Column({ default: 0, nullable: true })
+  referralTaskEndsAt: number
+
+  @Column({ default: 0, nullable: true })
+  newRefferalsToActivate: number
 }

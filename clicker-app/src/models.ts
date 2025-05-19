@@ -23,7 +23,7 @@ export interface User {
   cachedIncome: number;
   lastOnlineTimestamp: number;
   connectedWallet: string;
-  
+
   isBoostX2Active: boolean;
   isHandicapActive: boolean;
   x2ExpiresAt: number;
@@ -34,6 +34,9 @@ export interface User {
   X2UsedCount: number;
   lastX2UsedAt: number;
   lastHandicapUsedAt: number;
+
+  isReferralTaskActive: boolean;
+  newReferrals: number;
 }
 
 export interface Task {
@@ -85,4 +88,6 @@ export interface Settings {
   comboReward: number;
   premiumReferralReward: number;
   isRewardForReferalActive: boolean;
+  referralTaskEndsAt: number;
+  newRefferalsToActivate: number;
 }

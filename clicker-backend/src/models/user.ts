@@ -123,6 +123,10 @@ export class User {
   @Column({ default: 0 })
   lastHandicapUsedAt: number;
 
+  @Column({ default: false })
+  isReferralTaskActive: boolean = false;
+  @Column({ default: 0 })
+  newReferrals: number = 0;
 }
 
 @Entity()

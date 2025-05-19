@@ -23,6 +23,8 @@ export const useSettings = () => {
       comboUpdateDayHour: 0,
       premiumReferralReward: 500,
       isRewardForReferalActive: false,
+      referralTaskEndsAt: 0,
+      newRefferalsToActivate: 3,
     };
     return { ...fictSettings };
   }

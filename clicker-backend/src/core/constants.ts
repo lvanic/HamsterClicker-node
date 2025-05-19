@@ -20,4 +20,6 @@ export const DEFAULT_APP_SETTINGS: Omit<AppSettings, "id"> = {
   lastComboUpdateTimestamp: 0,
   comboBusinesses: [],
   isRewardForReferalActive: false,
+  referralTaskEndsAt: 0,
+  newRefferalsToActivate: 3,
 };

@@ -5,6 +5,7 @@ import { getAppSettings } from "../services/appSettingsService";
 import { appDataSource } from "../core/database";
 import { User } from "../models/user";
 import logger from "../core/logger";
+import { app } from "../adminServer/app";
 
 export const bot = new Telegraf(config.TG_BOT_TOKEN);
 
@@ -63,8 +64,18 @@ We have a cool Airdrop promotion coming up in the future!
 
       if (refId) {
         const refUser = await findUserByTgId(+refId);
-        if (refUser && appSettings.isRewardForReferalActive) {
-          refUser.balance += appSettings.referralReward;
+        if (refUser) {
+          if (appSettings.referralTaskEndsAt > new Date().getTime()) {
+            refUser.newReferrals += 1;
+            if (appSettings.newRefferalsToActivate == refUser.newReferrals) {
+              refUser.balance += appSettings.referralReward;
+              refUser.newReferrals = 0;
+              refUser.isReferralTaskActive = false;
+            }
+          } else {
+            refUser.isReferralTaskActive = false;
+            refUser.newReferrals = 0;
+          }
           updateUserByTgId(+refId, refUser);
         }
         user.parent = refUser!;

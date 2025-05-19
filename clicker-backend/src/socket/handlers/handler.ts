@@ -10,6 +10,7 @@ import { getAppSettings } from "../../services/appSettingsService";
 import { findTaskById } from "../../services/taskService";
 import {
   calculateUsersOfflineReward,
+  findUserByTgId,
   findUserByTgIdWithRelations,
   getUserByTgId,
   getUserPlaceInTop,
@@ -71,6 +72,13 @@ export const initSocketsLogic = (io: Socket) => ({
       const parsedData = JSON.parse(data);
       const [tgUserId, taskId] = parsedData;
 
+      if (taskId === "referral") {
+        await updateUserByTgId(tgUserId, {
+          newReferrals: 0,
+          isReferralTaskActive: true,
+        });
+        return;
+      }
       logger.debug("Checking task status", {
         tgUserId,
         taskId,
@@ -199,6 +207,8 @@ export const initSocketsLogic = (io: Socket) => ({
         isHandicapActive: user.isHandicapActive,
         x2ExpiresAt: user.x2ExpiresAt,
         handicapExpiresAt: user.handicapExpiresAt,
+        isReferralTaskActive: user.isReferralTaskActive,
+        newReferrals: user.newReferrals,
       });
 
       delete buffer[userId];

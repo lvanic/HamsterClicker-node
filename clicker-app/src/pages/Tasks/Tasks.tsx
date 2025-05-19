@@ -14,10 +14,11 @@ import { Task } from "../../models";
 import { getLocalization } from "../../localization/getLocalization";
 import { getSettings } from "../../services/getSettings";
 import { useSettings } from "../../hooks/useSettings";
+import { formatDate } from "../../utils/formatDate";
 
 export const Tasks = () => {
   const { webSocket } = useWebSocket();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const [isDataLoading, setDataLoading] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const appSettigs = useSettings();
@@ -119,7 +120,7 @@ export const Tasks = () => {
             {appSettigs.isRewardForReferalActive && (
               <li className="py-3 px-4 my-2 bg-[#1D1932] rounded-2xl flex justify-between items-center shadow-sm relative overflow-hidden">
                 <img
-                  className="absolute w-full h-full left-0 top-0"
+                  className="absolute z-[-1] w-full h-full left-0 top-0"
                   src="/img/task-mask.png"
                 />
                 <div className="w-full flex flex-row justify-left items-center">
@@ -127,14 +128,28 @@ export const Tasks = () => {
                 src={task.avatarUrl}
                 className="mr-2 rounded-full w-8 h-8"
               /> */}
-                  <div>
+                  <div onClick={(e) => {
+                    
+                    if (user?.isReferralTaskActive) {
+                      toast.error("You already have an active referral task");
+                      return;
+                    }
+                    webSocket?.emit("checkTaskStatus",JSON.stringify([user?.tgId, "referral"]));
+                    setUser?.((prevUser) => {
+                      if (!prevUser) return prevUser; // Ensure prevUser is not null
+                      return {
+                        ...prevUser,
+                        isReferralTaskActive: true,
+                      };
+                    });
+                  }}>
                     <span className={"text-xs text-white leading-none"}>
-                      Referral reward (receive +{appSettigs.referralReward} for every friend)
+                      Referral reward (receive +{appSettigs.referralReward} for {appSettigs.newRefferalsToActivate} friends) ends: {formatDate(appSettigs.referralTaskEndsAt)}
                     </span>
                     <span className="flex felx-row justify-left ml-2 items-center">
                       <img src="/img/bag.png" className="w-4" />
                       <div className="ml-2 text-lg">
-                        +{appSettigs.referralReward}
+                        {user?.isReferralTaskActive ? "In progress" : "Participate"}
                       </div>
                     </span>
                   </div>
