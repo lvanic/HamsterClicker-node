@@ -119,7 +119,7 @@ export const TonPayment = ({
       hash: hash,
       address: tonConnectUI.account?.address ?? "",
     };
-    await WaitForTransaction({ options });
+    // await WaitForTransaction({ options });
     onActivate();
   };
 
