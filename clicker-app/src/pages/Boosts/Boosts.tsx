@@ -171,8 +171,12 @@ export const Boosts = () => {
     <div className="px-3 max-w-4xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <img src="/img/boost.png" />
-        <div className="">
-          <div className="uppercase text-lg">Your daily Boosters</div>
+        <div>
+        <div className="uppercase text-lg">Your daily Boosters</div>
+        <div
+          className=""
+          style={{ maxHeight: window.innerHeight - 309, overflowY: "scroll" }}
+        >
           <div
             onClick={activateFullEnergyBoost}
             className="pl-3 py-2 pr-0 my-1 rounded-md flex items-center shadow-sm w-full relative overflow-hidden gap-2"
@@ -262,6 +266,7 @@ export const Boosts = () => {
               }}
             />
           </div>
+        </div>
         </div>
         {/* <div>
           <div className="uppercase text-lg">Boosts</div>

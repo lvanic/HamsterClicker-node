@@ -44,7 +44,7 @@ export const TonPayment = ({
       ? null
       : "1.5 TON";
   const iconSrc =
-    serviceType === "boost_x2" ? "/img/x2.png" : "/img/handicap.png";
+    serviceType === "boost_x2" ? "/img/lightning.png" : "/img/lightning.png";
 
   useEffect(() => {
     const fetchPayment = async () => {
@@ -100,26 +100,26 @@ export const TonPayment = ({
       tonConnectUI.openModal();
       return;
     }
-    // if (!paymentInfo || !tonConnectUI.connected) return;
+    if (!paymentInfo || !tonConnectUI.connected) return;
 
-    // const transaction = {
-    //   validUntil: Math.floor(Date.now() / 1000) + 60,
-    //   messages: [
-    //     {
-    //       address: process.env.REACT_APP_TON_WALLET!,
-    //       amount: paymentInfo.amount,
-    //       payload: createPayload(paymentInfo.uuid),
-    //     },
-    //   ],
-    // };
+    const transaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 60,
+      messages: [
+        {
+          address: process.env.REACT_APP_TON_WALLET!,
+          amount: paymentInfo.amount,
+          payload: createPayload(paymentInfo.uuid),
+        },
+      ],
+    };
 
-    // const result = await tonConnectUI.sendTransaction(transaction);
-    // const hash = Cell.fromBase64(result.boc).hash().toString("base64");
-    // const options = {
-    //   hash: hash,
-    //   address: tonConnectUI.account?.address ?? "",
-    // };
-    // await WaitForTransaction({ options });
+    const result = await tonConnectUI.sendTransaction(transaction);
+    const hash = Cell.fromBase64(result.boc).hash().toString("base64");
+    const options = {
+      hash: hash,
+      address: tonConnectUI.account?.address ?? "",
+    };
+    await WaitForTransaction({ options });
     onActivate();
   };
 

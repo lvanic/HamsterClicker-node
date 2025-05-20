@@ -164,7 +164,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
-      const offlineReward = calculateUsersOfflineReward(hoursOffline, user.level);
+      const offlineReward = 10 * calculateUsersOfflineReward(hoursOffline, user.level);
       logger.debug("Updating user data", {
         userId,
         offlineReward,
