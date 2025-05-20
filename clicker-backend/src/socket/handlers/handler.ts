@@ -461,12 +461,12 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const user = await getUserByTgId(tgUserId);
 
-      if (user.x2ExpiresAt && user.x2ExpiresAt < Date.now()) {
+      if (user.isX2Active && user.x2ExpiresAt && user.x2ExpiresAt < Date.now()) {
         await updateUserByTgId(tgUserId, { isX2Active: false });
         activeBoosts.delete(tgUserId.toString());
         logger.debug("Boost expired", { tgUserId });
       }
-      if (user.handicapExpiresAt && user.handicapExpiresAt < Date.now()) {
+      if (user.isHandicapActive && user.handicapExpiresAt && user.handicapExpiresAt < Date.now()) {
         await updateUserByTgId(tgUserId, { isHandicapActive: false });
         activeBoosts.delete(tgUserId.toString());
         logger.debug("Boost expired", { tgUserId });
@@ -478,10 +478,9 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const bufferClicks =
         buffer[tgUserId]?.reduce((acc, click) => {
-          if (click.timestamp + 60 * 1000 > Date.now()) {
+          
             return acc + click.multiplier;
-          }
-          return acc;
+      
         }, 0) || 0;
 
       if (bufferClicks > 0) {
@@ -492,7 +491,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
         logger.debug("User disconnected (non-empty buffer)", {
           tgId: tgUserId,
-          userBuffer: buffer[tgUserId],
+          userBuffer: bufferClicks,
           userEnergy: user.energy,
           restoredEnergy: restoredEnergy,
           score: user.score,
