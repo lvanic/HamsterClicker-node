@@ -179,7 +179,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     if (webSocket?.connected && user?.tgId) {
       webSocket.on("liteSync", handleLiteSync);
       webSocket.on("newTask", (message: any) => {
-      console.log("updating user last online time");
+        console.log("updating user last online time");
         setUser((prev) => {
           if (prev) {
             return {
@@ -193,6 +193,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
     }
     return () => {
       webSocket?.off("liteSync", handleLiteSync);
+      webSocket?.off("newTask");
       // webSocket?.emit("unsubscribeLiteSync");
     };
   }, [webSocket?.connected, handleLiteSync, user?.tgId, isSocketLive]);

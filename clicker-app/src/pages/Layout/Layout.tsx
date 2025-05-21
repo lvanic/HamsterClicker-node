@@ -29,6 +29,10 @@ export const Layout = () => {
     if (!userLastOnline) {
       return false;
     }
+    console.log("userLastOnline, lastTaskAddedAt", {
+      userLastOnline,
+      lastTaskAddedAt,
+    });
 
     return userLastOnline < lastTaskAddedAt;
   }, [lastTaskAddedAt, user?.lastOnlineTimeStamp]);
