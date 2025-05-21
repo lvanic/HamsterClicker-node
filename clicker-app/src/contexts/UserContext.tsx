@@ -184,7 +184,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           if (prev) {
             return {
               ...prev,
-              lastOnlineTimeStamp: Date.now() + 1000,
+              lastOnlineTimeStamp: Date.now(),
             };
           }
           return prev;
