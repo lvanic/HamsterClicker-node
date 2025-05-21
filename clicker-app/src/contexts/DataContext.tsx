@@ -74,7 +74,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         }
       });
 
-      webSocket.on("newTask", (task: string) => {
+      webSocket.on("newTask", (message: any) => {
         setSettings((prev) => {
           if (prev) {
             return {

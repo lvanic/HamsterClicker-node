@@ -178,7 +178,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
 
     if (webSocket?.connected && user?.tgId) {
       webSocket.on("liteSync", handleLiteSync);
-      webSocket.on("newTask", (task: string) => {
+      webSocket.on("newTask", (message: any) => {
         setUser((prev) => {
           if (prev) {
             return {
@@ -187,7 +187,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
             };
           }
           return prev;
-        })
+        });
       });
     }
     return () => {
@@ -236,20 +236,26 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
       }
       return {
         ...prev,
-        isBoostX2Active: boost == "X2" || boost == "X2_FREE" ? true : boost.isBoostX2Active,
+        isBoostX2Active:
+          boost == "X2" || boost == "X2_FREE" ? true : boost.isBoostX2Active,
         isHandicapActive: boost == "HANDICAP" ? true : boost.isHandicapActive,
-        x2ExpiresAt: boost == "X2" || boost == "X2_FREE" ? Date.now() + 60 * 2000 : prev.x2ExpiresAt,
+        x2ExpiresAt:
+          boost == "X2" || boost == "X2_FREE"
+            ? Date.now() + 60 * 2000
+            : prev.x2ExpiresAt,
         handicapExpiresAt:
-          boost == "HANDICAP" ?  Date.now() + 60 * 2000 : prev.handicapExpiresAt,
-        lastX2FreeUsedAt: boost == "X2_FREE" ? Date.now() : prev.lastX2FreeUsedAt,
+          boost == "HANDICAP" ? Date.now() + 60 * 2000 : prev.handicapExpiresAt,
+        lastX2FreeUsedAt:
+          boost == "X2_FREE" ? Date.now() : prev.lastX2FreeUsedAt,
         X2UsedCount: boost == "X2" ? prev.X2UsedCount + 1 : prev.X2UsedCount,
-        handicapUsedCount: boost == "HANDICAP" ? prev.handicapUsedCount + 1 : prev.handicapUsedCount,
-        energy: prev.maxEnergy
+        handicapUsedCount:
+          boost == "HANDICAP"
+            ? prev.handicapUsedCount + 1
+            : prev.handicapUsedCount,
+        energy: prev.maxEnergy,
       };
     });
-
   };
-
 
   const handleOnDeactivatePaidBoost = (boost: any) => {
     setUser((prev) => {
@@ -265,7 +271,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
   };
   const handleOnErrorActivatePaidBoost = (error: any) => {
     toast.error("Error activating boost");
-  }
+  };
 
   useEffect(() => {
     if (webSocket?.connected) {
