@@ -45,15 +45,6 @@ export const Layout = () => {
 
   useEffect(() => {
     // if (location.pathname.includes("task")) {
-      setUser?.((prev) => {
-        if (!prev) {
-          return prev;
-        }
-        return {
-          ...prev,
-          lastOnlineTimeStamp: Date.now(),
-        };
-      });
     // }
     setActiveTab(location.pathname);
   }, [location.pathname]);
@@ -101,6 +92,17 @@ export const Layout = () => {
           }}
         >
           <Link
+            onClick={() => {
+              setUser?.((prev) => {
+                if (!prev) {
+                  return prev;
+                }
+                return {
+                  ...prev,
+                  lastOnlineTimeStamp: Date.now(),
+                };
+              });
+            }}
             to="/tasks"
             className={`relative w-14 h-14  text-center flex flex-col items-center justify-center text-sm transition duration-300 px-4 rounded-lg py-1 ${
               activeTab === "/tasks"
