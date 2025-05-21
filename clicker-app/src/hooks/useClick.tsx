@@ -35,7 +35,7 @@ export const useClick = () => {
       return 5;
     }
     return calculateLevel(user?.score || 0) * multiplier;
-  }, [user]);
+  }, [user, calculateLevel]);
 
   const handleClick = (clickData: ClickData) => {
     if (webSocket && (user?.energy || 0) > 0) {
@@ -58,9 +58,9 @@ export const useClick = () => {
           new Date(prev.x2ExpiresAt).getTime() - now > 0;
 
         const updatedScore =
-          (prev.score || 0) + (summaryClickPower || 1) * clickData.multiplier;
+          (prev.score || 0) + (summaryClickPower);
         const updatedBalance =
-          prev.balance + (summaryClickPower || 1) * clickData.multiplier;
+          prev.balance + (summaryClickPower);
         const updatedEnergy =
           prev.energy - (isBoostX2Active || isHandicapActive ? 0 : 1);
 
