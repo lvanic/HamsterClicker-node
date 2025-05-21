@@ -21,7 +21,7 @@ export interface User {
   maxEnergy: number;
   currentComboCompletions: string[];
   cachedIncome: number;
-  lastOnlineTimestamp: number;
+  lastOnlineTimeStamp: number;
   connectedWallet: string;
 
   isBoostX2Active: boolean;

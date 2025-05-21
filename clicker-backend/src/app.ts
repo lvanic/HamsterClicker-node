@@ -13,6 +13,9 @@ import { handleSocketConnection } from "./socket/socket";
 import { AccountSubscription } from "./ton/AccountSubscription";
 import { startTonMonitor, stopTonMonitor } from "./ton/monitor";
 
+let socketServer: Server | null = null;
+
+
 const main = async () => {
   await initializeDatabase();
   await initializeAppSettingsIfNotExists();
@@ -20,7 +23,7 @@ const main = async () => {
   bot.launch();
 
   const server = http.createServer(app.callback());
-  const socketServer = new Server(server, {
+  socketServer = new Server(server, {
     cors: {
       origin: "*",
       credentials: true,
@@ -28,6 +31,7 @@ const main = async () => {
   });
 
   socketServer.on("connection", handleSocketConnection);
+
 
   server.listen(config.PORT, () => {
     logger.info(`Server is running on http://localhost:${config.PORT}`);
@@ -38,6 +42,17 @@ const main = async () => {
 
   startTonMonitor();
 };
+
+export function broadcastSend(message: string) {
+  if (!socketServer) {
+    logger.warn("Socket server not initialized");
+    return;
+  }
+
+  socketServer.emit("newTask", {
+    message,
+  });
+}
 
 main().catch((error) => logger.error("Unexpected error", error));
 

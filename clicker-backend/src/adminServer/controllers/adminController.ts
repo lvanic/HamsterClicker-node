@@ -8,6 +8,7 @@ import { Task } from "../../models/task";
 import { Business } from "../../models/business";
 import { findUserByTgId } from "../../services/userService";
 import logger from "../../core/logger";
+import { broadcastSend } from "../../app";
 
 export const getAppSettings = async (ctx: Context) => {
   const settings = await AppSettingsService.getAppSettings();
@@ -109,6 +110,8 @@ export const addTask = async (ctx: {
   await appDataSource.getRepository(AppSettings).save(settings);
 
   await appDataSource.getRepository(Task).save(task);
+
+  broadcastSend("taskAdded")
 
   ctx.body = task;
 };

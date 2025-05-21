@@ -107,7 +107,7 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
           data.lastFullEnergyTimestamp || prev.lastFullEnergyTimestamp,
         totalIncomePerHour: data.totalIncomePerHour || prev.totalIncomePerHour,
         cachedIncome: prev.cachedIncome,
-        lastOnlineTimestamp: prev.lastOnlineTimestamp,
+        lastOnlineTimeStamp: prev.lastOnlineTimeStamp,
         currentComboCompletions:
           data?.currentComboCompletions != undefined
             ? [
@@ -178,7 +178,17 @@ const UserProvider: FC<UserProviderProps> = ({ children, user_id }) => {
 
     if (webSocket?.connected && user?.tgId) {
       webSocket.on("liteSync", handleLiteSync);
-      // webSocket.emit("subscribeLiteSync", user?.tgId);
+      webSocket.on("newTask", (task: string) => {
+        setUser((prev) => {
+          if (prev) {
+            return {
+              ...prev,
+              lastOnlineTimeStamp: Date.now() + 1000,
+            };
+          }
+          return prev;
+        })
+      });
     }
     return () => {
       webSocket?.off("liteSync", handleLiteSync);

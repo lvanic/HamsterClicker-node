@@ -72,11 +72,11 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!isStartNotifyShowed && userContext?.user?.lastOnlineTimestamp) {
+    if (!isStartNotifyShowed && userContext?.user?.lastOnlineTimeStamp) {
       const MAX_OFFLINE_EARNINGS_HOURS = 3;
 
       const currentTime = new Date().getTime();
-      const offlineTime = currentTime - userContext?.user.lastOnlineTimestamp;
+      const offlineTime = currentTime - userContext?.user.lastOnlineTimeStamp;
       const offlineHours = offlineTime / (1000 * 60 * 60);
 
       if (offlineTime / 1000 / 60 < 5) {
@@ -103,7 +103,7 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
     }
   }, [
     userContext?.user?.cachedIncome,
-    userContext?.user?.lastOnlineTimestamp,
+    userContext?.user?.lastOnlineTimeStamp,
     isStartNotifyShowed,
   ]);
 

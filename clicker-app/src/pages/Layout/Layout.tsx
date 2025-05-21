@@ -17,20 +17,22 @@ import { useSettings } from "../../hooks/useSettings";
 export const Layout = () => {
   // const { isPageLoading } = usePageLoading();
   // const platform = useMemo(() => getPlatform(), [getPlatform]);
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const { lastTaskAddedAt } = useSettings();
 
   const isNewTaskAdded = useMemo(() => {
     if (!lastTaskAddedAt) {
       return false;
     }
-    const userLastOnline = user?.lastOnlineTimestamp;
+
+    const userLastOnline = user?.lastOnlineTimeStamp;
     if (!userLastOnline) {
       return false;
     }
 
     return userLastOnline < lastTaskAddedAt;
-  }, [lastTaskAddedAt, user?.lastOnlineTimestamp]);
+  }, [lastTaskAddedAt, user?.lastOnlineTimeStamp]);
+
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
 
@@ -38,6 +40,17 @@ export const Layout = () => {
   const params = new URLSearchParams(location.search);
 
   useEffect(() => {
+    if (location.pathname.includes("task")) {
+      setUser?.((prev) => {
+        if (!prev) {
+          return prev;
+        }
+        return {
+          ...prev,
+          lastOnlineTimeStamp: Date.now(),
+        };
+      });
+    }
     setActiveTab(location.pathname);
   }, [location.pathname]);
 

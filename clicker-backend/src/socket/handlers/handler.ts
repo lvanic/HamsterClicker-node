@@ -478,9 +478,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const bufferClicks =
         buffer[tgUserId]?.reduce((acc, click) => {
-          
-            return acc + click.multiplier;
-      
+          return acc + click.multiplier;
         }, 0) || 0;
 
       if (bufferClicks > 0) {

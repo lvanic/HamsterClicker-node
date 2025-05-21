@@ -74,10 +74,23 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
         }
       });
 
+      webSocket.on("newTask", (task: string) => {
+        setSettings((prev) => {
+          if (prev) {
+            return {
+              ...prev,
+              lastTaskAddedAt: Date.now(),
+            };
+          }
+          return prev;
+        })
+      });
+
       // setSubscribeDone(true);
       return () => {
         webSocket.off("tasks");
         webSocket.off("businesses");
+        webSocket.off("newTask");
       };
     }
   }, [webSocket, user?.completedTasks]);
