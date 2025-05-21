@@ -44,7 +44,7 @@ export const Layout = () => {
   const params = new URLSearchParams(location.search);
 
   useEffect(() => {
-    if (location.pathname.includes("task")) {
+    // if (location.pathname.includes("task")) {
       setUser?.((prev) => {
         if (!prev) {
           return prev;
@@ -54,7 +54,7 @@ export const Layout = () => {
           lastOnlineTimeStamp: Date.now(),
         };
       });
-    }
+    // }
     setActiveTab(location.pathname);
   }, [location.pathname]);
 
