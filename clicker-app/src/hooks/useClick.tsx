@@ -21,18 +21,16 @@ export const useClick = () => {
     let multiplier = 1;
     const innerNow = Date.now();
     if (
-      user?.isBoostX2Active &&
-      user.x2ExpiresAt &&
+      user?.x2ExpiresAt &&
       user.x2ExpiresAt > innerNow
     ) {
-      return 2;
+      multiplier = 2;
     }
     if (
-      user?.isHandicapActive &&
-      user.handicapExpiresAt &&
+      user?.handicapExpiresAt &&
       user.handicapExpiresAt > innerNow
     ) {
-      return 5;
+      multiplier = 5;
     }
     return calculateLevel(user?.score || 0) * multiplier;
   }, [user, calculateLevel]);
