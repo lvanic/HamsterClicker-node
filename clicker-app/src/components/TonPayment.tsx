@@ -171,7 +171,7 @@ export const TonPayment = ({
         )}
 
         <div className="flex justify-between items-center text-sm text-[#F7B84B] pr-4">
-          {price ? <span>Цена: {price}</span> : <span>Бесплатно</span>}
+          {price ? <span>Price: {price}</span> : <span>Free</span>}
           {loading ? (
             <Loader2 className="animate-spin w-4 h-4 text-[#F7B84B]" />
           ) : (
@@ -179,10 +179,10 @@ export const TonPayment = ({
               {price && <Wallet className="w-4 h-4" />}
               <span>
                 {isBlocked
-                  ? "Активировано"
+                  ? "Activated"
                   : isFree
-                  ? "Активировать"
-                  : "Оплатить"}
+                  ? "Activate"
+                  : "Pay"}
               </span>
             </div>
           )}
