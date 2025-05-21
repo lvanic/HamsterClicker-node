@@ -81,7 +81,7 @@ const DataProvider: FC<DataProviderProps> = ({ children }) => {
           if (prev) {
             return {
               ...prev,
-              lastTaskAddedAt: Date.now() + 10000,
+              lastTaskAddedAt: 10,
             };
           }
           return prev;
