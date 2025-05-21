@@ -65,6 +65,7 @@ export const Clicker: React.FC = () => {
         if (user) {
           handleClick({
             user_id: user.tgId,
+            multiplier: multiplier,
           });
         }
       });
@@ -99,10 +100,18 @@ export const Clicker: React.FC = () => {
     // user.handicapExpiresAt && new Date(user.handicapExpiresAt).getTime() - now
     if (!user) return 1;
     const innerNow = Date.now();
-    if (user.isBoostX2Active && user.x2ExpiresAt && user.x2ExpiresAt > innerNow) {
+    if (
+      user.isBoostX2Active &&
+      user.x2ExpiresAt &&
+      user.x2ExpiresAt > innerNow
+    ) {
       return 2;
     }
-    if (user.isHandicapActive && user.handicapExpiresAt && user.handicapExpiresAt > innerNow) {
+    if (
+      user.isHandicapActive &&
+      user.handicapExpiresAt &&
+      user.handicapExpiresAt > innerNow
+    ) {
       return 5;
     }
     return 1;

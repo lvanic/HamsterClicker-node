@@ -9,6 +9,7 @@ import { calculateLevel } from "../utils/calculateLevel";
 
 interface ClickData {
   user_id: number;
+  multiplier: number;
 }
 
 export const useClick = () => {
@@ -19,10 +20,18 @@ export const useClick = () => {
   const summaryClickPower = useMemo(() => {
     let multiplier = 1;
     const innerNow = Date.now();
-    if (user?.isBoostX2Active && user.x2ExpiresAt && user.x2ExpiresAt > innerNow) {
+    if (
+      user?.isBoostX2Active &&
+      user.x2ExpiresAt &&
+      user.x2ExpiresAt > innerNow
+    ) {
       return 2;
     }
-    if (user?.isHandicapActive && user.handicapExpiresAt && user.handicapExpiresAt > innerNow) {
+    if (
+      user?.isHandicapActive &&
+      user.handicapExpiresAt &&
+      user.handicapExpiresAt > innerNow
+    ) {
       return 5;
     }
     return calculateLevel(user?.score || 0) * multiplier;
@@ -48,9 +57,12 @@ export const useClick = () => {
           prev.isBoostX2Active &&
           new Date(prev.x2ExpiresAt).getTime() - now > 0;
 
-        const updatedScore = (prev.score || 0) + (summaryClickPower || 1);
-        const updatedBalance = prev.balance + (summaryClickPower || 1);
-        const updatedEnergy = prev.energy - (isBoostX2Active || isHandicapActive ? 0 : 1);
+        const updatedScore =
+          (prev.score || 0) + (summaryClickPower || 1) * clickData.multiplier;
+        const updatedBalance =
+          prev.balance + (summaryClickPower || 1) * clickData.multiplier;
+        const updatedEnergy =
+          prev.energy - (isBoostX2Active || isHandicapActive ? 0 : 1);
 
         if (prev.energy > 0) {
           webAppVibrate();
