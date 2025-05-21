@@ -71,41 +71,41 @@ const NotifyProvider: FC<NotifyProviderProps> = ({ children }) => {
     setNotify(notify);
   };
 
-  useEffect(() => {
-    if (!isStartNotifyShowed && userContext?.user?.lastOnlineTimeStamp) {
-      const MAX_OFFLINE_EARNINGS_HOURS = 3;
+  // useEffect(() => {
+  //   if (!isStartNotifyShowed && userContext?.user?.lastOnlineTimeStamp) {
+  //     const MAX_OFFLINE_EARNINGS_HOURS = 3;
 
-      const currentTime = new Date().getTime();
-      const offlineTime = currentTime - userContext?.user.lastOnlineTimeStamp;
-      const offlineHours = offlineTime / (1000 * 60 * 60);
+  //     const currentTime = new Date().getTime();
+  //     const offlineTime = currentTime - userContext?.user.lastOnlineTimeStamp;
+  //     const offlineHours = offlineTime / (1000 * 60 * 60);
 
-      if (offlineTime / 1000 / 60 < 5) {
-        return;
-      }
+  //     if (offlineTime / 1000 / 60 < 5) {
+  //       return;
+  //     }
 
-      let earned = 0;
-      if (offlineHours <= MAX_OFFLINE_EARNINGS_HOURS) {
-        earned = offlineHours * userContext?.user?.cachedIncome;
-      } else {
-        earned = MAX_OFFLINE_EARNINGS_HOURS * userContext?.user?.cachedIncome;
-      }
+  //     let earned = 0;
+  //     if (offlineHours <= MAX_OFFLINE_EARNINGS_HOURS) {
+  //       earned = offlineHours * userContext?.user?.cachedIncome;
+  //     } else {
+  //       earned = MAX_OFFLINE_EARNINGS_HOURS * userContext?.user?.cachedIncome;
+  //     }
 
-      const notify: NotifyMessage = {
-        status: "ok",
-        message: `${getLocalization("youEarned")} ${formatNumber(earned)}`,
-      };
+  //     const notify: NotifyMessage = {
+  //       status: "ok",
+  //       message: `${getLocalization("youEarned")} ${formatNumber(earned)}`,
+  //     };
 
-      if (earned >= 1) {
-        setNotify(notify);
-      }
+  //     if (earned >= 1) {
+  //       setNotify(notify);
+  //     }
 
-      setStartNotifyShowed(true);
-    }
-  }, [
-    userContext?.user?.cachedIncome,
-    userContext?.user?.lastOnlineTimeStamp,
-    isStartNotifyShowed,
-  ]);
+  //     setStartNotifyShowed(true);
+  //   }
+  // }, [
+  //   userContext?.user?.cachedIncome,
+  //   userContext?.user?.lastOnlineTimeStamp,
+  //   isStartNotifyShowed,
+  // ]);
 
   useEffect(() => {
     webSocket?.on("comboCompleted", handleComboCompleted);
