@@ -29,7 +29,7 @@ We have a cool Airdrop promotion coming up in the future!
         reply_markup: {
           inline_keyboard: [
             [{ text: "Channel", url: config.CHAN_URL }],
-            [{ text: "Play", web_app: { url: config.WEB_APP_URL } }],
+            [{ text: "Play", url: config.WEB_APP_URL }],
             [{ text: "Rules", callback_data: "rules" }],
           ],
         },
