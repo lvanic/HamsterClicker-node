@@ -28,9 +28,12 @@ We have a cool Airdrop promotion coming up in the future!
       {
         reply_markup: {
           inline_keyboard: [
+            [{ text: "Website", url: "https://buntoken.pro" }],
             [{ text: "Channel", url: config.CHAN_URL }],
             [{ text: "Play", url: config.WEB_APP_URL }],
-            [{ text: "Rules", callback_data: "rules" }],
+            [{ text: "Rules", url: "https://buntoken.pro/rules" }],
+            [{ text: "Privacy Policy", url: "https://buntoken.pro/privacy-policy" }],
+            [{ text: "Support", url: "https://t.me/BUN_support_bot" }],
           ],
         },
       },

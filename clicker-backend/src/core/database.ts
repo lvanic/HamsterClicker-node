@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 
 import { config } from "./config";
 import logger from "./logger";
+import { User } from "../models/user";
 
 export const appDataSource = new DataSource({
   type: "sqlite",
@@ -22,5 +23,17 @@ export const initializeDatabase = async () => {
     logger.error("Error during database initialization");
 
     throw error;
+  }
+};
+
+export const nullifyUserEnergyIfLessZero = async () => {
+  try {
+    const userRepository = appDataSource.getRepository(User);
+
+    await userRepository.createQueryBuilder().update(User).set({ energy: 0 }).where("energy < 0").execute();
+
+    logger.info("Successfully nullified user energy where less than zero");
+  } catch (error) {
+    logger.error("Error nullifying user energy:", error);
   }
 };

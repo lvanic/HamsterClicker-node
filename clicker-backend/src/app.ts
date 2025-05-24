@@ -5,7 +5,7 @@ import { Server } from "socket.io";
 import { app } from "./adminServer/app";
 import { bot } from "./bot/bot";
 import { config } from "./core/config";
-import { initializeDatabase } from "./core/database";
+import { initializeDatabase, nullifyUserEnergyIfLessZero } from "./core/database";
 import logger from "./core/logger";
 import { restoreFullEnergyBoostJob, rewardReferralsJob } from "./jobs";
 import { initializeAppSettingsIfNotExists } from "./services/appSettingsService";
@@ -15,11 +15,11 @@ import { startTonMonitor, stopTonMonitor } from "./ton/monitor";
 
 let socketServer: Server | null = null;
 
-
 const main = async () => {
   await initializeDatabase();
   await initializeAppSettingsIfNotExists();
-
+  await nullifyUserEnergyIfLessZero();
+  
   bot.launch();
 
   const server = http.createServer(app.callback());
@@ -31,7 +31,6 @@ const main = async () => {
   });
 
   socketServer.on("connection", handleSocketConnection);
-
 
   server.listen(config.PORT, () => {
     logger.info(`Server is running on http://localhost:${config.PORT}`);

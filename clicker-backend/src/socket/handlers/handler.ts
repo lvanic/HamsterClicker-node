@@ -44,6 +44,7 @@ export const initSocketsLogic = (io: Socket) => ({
             await updateUserByTgId(tgUserId, { isHandicapActive: false });
           }
           activeBoosts.delete(tgUserId);
+          io.emit("deactivatedPaidBoost", userBoost.type);
           logger.debug("Boost expired", { tgUserId });
         } else {
           boostMult = userBoost.type === "X2" ? 2 : userBoost.type === "HANDICAP" ? 5 : 1;
@@ -149,14 +150,22 @@ export const initSocketsLogic = (io: Socket) => ({
         return;
       }
 
-      const secondsOffline = (new Date().getTime() - user.lastOnlineTimeStamp) / 1000;
+      const bufferClicksList = buffer[userId] || [];
+
+      const latestClickTimestamp = bufferClicksList.reduce((latest, click) => {
+        return Math.max(latest, click.timestamp || 0);
+      }, 0);
+
+      const lastActivityTimestamp = Math.max(user.lastOnlineTimeStamp, latestClickTimestamp);
+
+      const secondsOffline = (new Date().getTime() - lastActivityTimestamp) / 1000;
       const bufferClicks =
         buffer[userId]?.reduce((acc, click) => {
           if (click.timestamp + 60 * 1000 > Date.now()) {
             return acc + click.multiplier;
           }
           return acc;
-        }, 0) || 0;
+        }, 0) || 0; //test it
       const clickCount = buffer[userId]?.filter((click) => !click.ignoreEnergy).length || 0;
       const availableEnergy = USER_MAX_ENERGY - user.energy;
 
@@ -454,7 +463,6 @@ export const initSocketsLogic = (io: Socket) => ({
 
   disconnect: async (): Promise<void> => {
     try {
-      // TODO: get rid of this type casting
       const tgUserId = Number((io as unknown as { userId: string }).userId);
 
       logger.debug("Disconnecting user", { tgUserId });
@@ -472,28 +480,39 @@ export const initSocketsLogic = (io: Socket) => ({
         logger.debug("Boost expired", { tgUserId });
       }
 
-      const currentTime = new Date().getTime();
+      const currentTime = Date.now();
       const timeDiff = (currentTime - user.lastOnlineTimeStamp) / 1000;
       const restoredEnergy = Math.floor(timeDiff / 2);
 
-      const bufferClicks =
-        buffer[tgUserId]?.reduce((acc, click) => {
-          return acc + click.multiplier;
-        }, 0) || 0;
+      const clicks = buffer[tgUserId] || [];
+      if (clicks.length > 0) {
+        const energyAvailable = user.energy + restoredEnergy;
 
-      if (bufferClicks > 0) {
-        const balanceIncrement = bufferClicks * user.level;
-        const clickCount = buffer[tgUserId]?.filter((click) => !click.ignoreEnergy).length || 0;
+        let usedEnergy = 0;
+        const appliedClicks = [];
 
-        const userEnergy = Math.min(user.energy + restoredEnergy - clickCount, USER_MAX_ENERGY);
+        for (const click of clicks) {
+          const isFree = click.ignoreEnergy;
+          if (isFree || usedEnergy < energyAvailable) {
+            appliedClicks.push(click);
+            if (!isFree) usedEnergy += 1;
+          } else {
+            break;
+          }
+        }
 
-        logger.debug("User disconnected (non-empty buffer)", {
+        const balanceIncrement = appliedClicks.reduce((acc, click) => acc + click.multiplier, 0);
+        const clickCount = appliedClicks.filter((c) => !c.ignoreEnergy).length;
+
+        const userEnergy = Math.min(energyAvailable - clickCount, USER_MAX_ENERGY);
+
+        logger.debug("User disconnected (buffer processed)", {
           tgId: tgUserId,
-          userBuffer: bufferClicks,
+          totalClicks: clicks.length,
+          appliedClicks: appliedClicks.length,
           userEnergy: user.energy,
-          restoredEnergy: restoredEnergy,
+          restoredEnergy,
           score: user.score,
-          scoreLastDay: user.scoreLastDay,
         });
 
         await updateUserByTgId(tgUserId, {
