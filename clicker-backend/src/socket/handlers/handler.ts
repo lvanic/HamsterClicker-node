@@ -493,18 +493,23 @@ export const initSocketsLogic = (io: Socket) => ({
 
         for (const click of clicks) {
           const isFree = click.ignoreEnergy;
-          if (isFree || usedEnergy < energyAvailable) {
+          if (isFree) continue;
+          if (usedEnergy < energyAvailable) {
             appliedClicks.push(click);
-            if (!isFree) usedEnergy += 1;
+            usedEnergy += 1;
           } else {
             break;
           }
         }
+        
+        const clickSum =
+          appliedClicks.reduce((acc, click) => acc + click.multiplier, 0) +
+          clicks.filter((c) => c.ignoreEnergy).reduce((acc, click) => acc + click.multiplier, 0);
 
-        const balanceIncrement = appliedClicks.reduce((acc, click) => acc + click.multiplier, 0);
+        const balanceIncrement = clickSum * user.level;
         const clickCount = appliedClicks.filter((c) => !c.ignoreEnergy).length;
 
-        const userEnergy = Math.min(energyAvailable - clickCount, USER_MAX_ENERGY);
+        const userEnergy = Math.max(0,Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
 
         logger.debug("User disconnected (buffer processed)", {
           tgId: tgUserId,
@@ -526,7 +531,7 @@ export const initSocketsLogic = (io: Socket) => ({
         return;
       }
 
-      const userEnergy = Math.floor(Math.min(user.energy + restoredEnergy, USER_MAX_ENERGY));
+      const userEnergy = Math.max(0, Math.floor(Math.min(user.energy + restoredEnergy, USER_MAX_ENERGY)));
 
       logger.debug("User disconnected", {
         tgId: tgUserId,
