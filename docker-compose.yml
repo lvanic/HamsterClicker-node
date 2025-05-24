@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 
 services:
   traefik:
@@ -23,22 +23,24 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./acme.json:/letsencrypt/acme.json"
 
-  # frontend:
-  #   image: "bun/front"
-  #   container_name: "frontend"
-  #   restart: always
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.frontend.rule=Host(`bun.game.sviazik.com`)"
-  #     - "traefik.http.routers.frontend.entrypoints=websecure"
-  #     - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+  frontend:
+    image: "front"
+    container_name: "frontend"
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`front.buntoken.pro`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
 
   backend:
     image: "back"
     container_name: "backend"
     restart: always
+    volumes:
+      - ./data/db.sqlite:/home/app/db.sqlite
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`bun.api.sviazik.com`)"
+      - "traefik.http.routers.backend.rule=Host(`back.buntoken.pro`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
