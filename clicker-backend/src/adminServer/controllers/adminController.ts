@@ -17,8 +17,12 @@ export const getAppSettings = async (ctx: Context) => {
 
 export const updateAppSettings = async (ctx: Context) => {
   let settings = await AppSettingsService.getAppSettings();
-  const newSettings = ctx.request.body;
+  const newSettings = ctx.request.body as any;
 
+  if (newSettings?.isRewardForReferalActive != settings.isRewardForReferalActive) {
+    broadcastSend("taskAdded");
+    newSettings.lastTaskAddedAt = Date.now();
+  }
   Object.assign(settings, newSettings);
 
   await appDataSource.getRepository(AppSettings).save(settings);
@@ -111,7 +115,7 @@ export const addTask = async (ctx: {
 
   await appDataSource.getRepository(Task).save(task);
 
-  broadcastSend("taskAdded")
+  broadcastSend("taskAdded");
 
   ctx.body = task;
 };
