@@ -38,7 +38,7 @@ services:
     container_name: "backend"
     restart: always
     volumes:
-      - ./data/db.sqlite:/home/app/db.sqlite
+      - ./db.sqlite:/app/db.sqlite
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`back.buntoken.pro`)"
