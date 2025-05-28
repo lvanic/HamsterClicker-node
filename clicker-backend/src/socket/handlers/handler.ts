@@ -487,34 +487,21 @@ export const initSocketsLogic = (io: Socket) => ({
       const clicks = buffer[tgUserId] || [];
       if (clicks.length > 0) {
         const energyAvailable = user.energy + restoredEnergy;
-
-        let usedEnergy = 0;
-        const appliedClicks = [];
-
-        for (const click of clicks) {
-          const isFree = click.ignoreEnergy;
-          if (isFree) continue;
-          if (usedEnergy < energyAvailable) {
-            appliedClicks.push(click);
-            usedEnergy += 1;
-          } else {
-            break;
-          }
-        }
+       
         
         const clickSum =
-          appliedClicks.reduce((acc, click) => acc + click.multiplier, 0) +
+        clicks.reduce((acc, click) => acc + click.multiplier, 0) +
           clicks.filter((c) => c.ignoreEnergy).reduce((acc, click) => acc + click.multiplier, 0);
 
         const balanceIncrement = clickSum * user.level;
-        const clickCount = appliedClicks.filter((c) => !c.ignoreEnergy).length;
+        const clickCount = clicks.filter((c) => !c.ignoreEnergy).length;
 
         const userEnergy = Math.max(0,Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
 
         logger.debug("User disconnected (buffer processed)", {
           tgId: tgUserId,
           totalClicks: clicks.length,
-          appliedClicks: appliedClicks.length,
+          appliedClicks: clickCount,
           userEnergy: user.energy,
           restoredEnergy,
           score: user.score,
