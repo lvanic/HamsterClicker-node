@@ -161,10 +161,7 @@ export const initSocketsLogic = (io: Socket) => ({
       const secondsOffline = (new Date().getTime() - lastActivityTimestamp) / 1000;
       const bufferClicks =
         buffer[userId]?.reduce((acc, click) => {
-          if (click.timestamp + 60 * 1000 > Date.now()) {
-            return acc + click.multiplier;
-          }
-          return acc;
+          return acc + click.multiplier;
         }, 0) || 0; //test it
       const clickCount = buffer[userId]?.filter((click) => !click.ignoreEnergy).length || 0;
       const availableEnergy = USER_MAX_ENERGY - user.energy;
@@ -331,10 +328,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const bufferClicks =
         buffer[userId]?.reduce((acc, click) => {
-          if (click.timestamp + 60 * 1000 > Date.now()) {
-            return acc + click.multiplier;
-          }
-          return acc;
+          return acc + click.multiplier;
         }, 0) || 0;
       const score = user.score + bufferClicks * user.level;
 
@@ -371,10 +365,9 @@ export const initSocketsLogic = (io: Socket) => ({
       });
 
       const bufferClicks =
-      buffer[tgUserId]?.reduce((acc, click) => {
-        return acc + click.multiplier;
-      }, 0) || 0;
-
+        buffer[tgUserId]?.reduce((acc, click) => {
+          return acc + click.multiplier;
+        }, 0) || 0;
 
       const user = await getUserByTgId(tgUserId);
 
@@ -402,7 +395,6 @@ export const initSocketsLogic = (io: Socket) => ({
 
         activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "X2");
-
       } else if (boostName === "HANDICAP") {
         if (user.isHandicapActive) {
           logger.warn("Received a request for activation when the boost is already active", parsedData);
