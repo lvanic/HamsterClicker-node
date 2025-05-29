@@ -39,6 +39,8 @@ services:
     restart: always
     volumes:
       - ./db.sqlite:/app/db.sqlite
+      - ./combined.log:/app/logs/combined.log
+      - ./error.log:/app/logs/error.log
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`back.buntoken.pro`)"

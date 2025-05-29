@@ -287,10 +287,7 @@ export const initSocketsLogic = (io: Socket) => ({
       const message = getLang(lang, "energyRestored");
       const bufferClicks =
         buffer[tgUserId]?.reduce((acc, click) => {
-          if (click.timestamp + 60 * 1000 > Date.now()) {
-            return acc + click.multiplier;
-          }
-          return acc;
+          return acc + click.multiplier;
         }, 0) || 0;
       await updateUserByTgId(tgUserId, {
         lastOnlineTimeStamp: new Date().getTime(),
@@ -373,6 +370,12 @@ export const initSocketsLogic = (io: Socket) => ({
         boostName,
       });
 
+      const bufferClicks =
+      buffer[tgUserId]?.reduce((acc, click) => {
+        return acc + click.multiplier;
+      }, 0) || 0;
+
+
       const user = await getUserByTgId(tgUserId);
 
       if (boostName === "X2") {
@@ -393,9 +396,13 @@ export const initSocketsLogic = (io: Socket) => ({
           x2ExpiresAt: Date.now() + BOOST_DURATION,
           X2UsedCount: user.X2UsedCount + 1,
           energy: USER_MAX_ENERGY,
+          balance: user.balance + bufferClicks * user.level,
+          score: user.score + bufferClicks * user.level,
         });
+
         activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "X2");
+
       } else if (boostName === "HANDICAP") {
         if (user.isHandicapActive) {
           logger.warn("Received a request for activation when the boost is already active", parsedData);
@@ -414,6 +421,8 @@ export const initSocketsLogic = (io: Socket) => ({
           handicapExpiresAt: Date.now() + BOOST_DURATION,
           handicapUsedCount: user.handicapUsedCount + 1,
           energy: USER_MAX_ENERGY,
+          balance: user.balance + bufferClicks * user.level,
+          score: user.score + bufferClicks * user.level,
         });
         activeBoosts.set(tgUserId, { type: "HANDICAP", expiresAt: Date.now() + BOOST_DURATION });
         io.emit("activatedPaidBoost", "HANDICAP");
@@ -435,6 +444,8 @@ export const initSocketsLogic = (io: Socket) => ({
           x2ExpiresAt: Date.now() + BOOST_DURATION,
           lastX2FreeUsedAt: Date.now(),
           energy: USER_MAX_ENERGY,
+          balance: user.balance + bufferClicks * user.level,
+          score: user.score + bufferClicks * user.level,
         });
 
         activeBoosts.set(tgUserId, { type: "X2", expiresAt: Date.now() + BOOST_DURATION });
@@ -487,16 +498,13 @@ export const initSocketsLogic = (io: Socket) => ({
       const clicks = buffer[tgUserId] || [];
       if (clicks.length > 0) {
         const energyAvailable = user.energy + restoredEnergy;
-       
-        
-        const clickSum =
-        clicks.reduce((acc, click) => acc + click.multiplier, 0) +
-          clicks.filter((c) => c.ignoreEnergy).reduce((acc, click) => acc + click.multiplier, 0);
+
+        const clickSum = clicks.reduce((acc, click) => acc + click.multiplier, 0);
 
         const balanceIncrement = clickSum * user.level;
         const clickCount = clicks.filter((c) => !c.ignoreEnergy).length;
 
-        const userEnergy = Math.max(0,Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
+        const userEnergy = Math.max(0, Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
 
         logger.debug("User disconnected (buffer processed)", {
           tgId: tgUserId,
