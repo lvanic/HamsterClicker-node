@@ -159,12 +159,17 @@ export const initSocketsLogic = (io: Socket) => ({
       const lastActivityTimestamp = Math.max(user.lastOnlineTimeStamp, latestClickTimestamp);
 
       const secondsOffline = (new Date().getTime() - lastActivityTimestamp) / 1000;
-      const bufferClicks =
-        buffer[userId]?.reduce((acc, click) => {
-          return acc + click.multiplier;
-        }, 0) || 0; //test it
-      const clickCount = buffer[userId]?.filter((click) => !click.ignoreEnergy).length || 0;
       const availableEnergy = USER_MAX_ENERGY - user.energy;
+
+      const clicks = buffer[userId] ?? [];
+      const bufferClicks =
+        clicks
+          .filter((x) => x.ignoreEnergy === false)
+          .slice(0, availableEnergy)
+          .reduce((acc, click) => acc + click.multiplier, 0) +
+        clicks.filter((x) => x.ignoreEnergy === true).reduce((acc, click) => acc + click.multiplier, 0);
+
+      const clickCount = buffer[userId]?.filter((click) => !click.ignoreEnergy).length || 0;
 
       const energyToRestore = Math.min((secondsOffline - clickCount) / 2, availableEnergy);
 
@@ -282,10 +287,16 @@ export const initSocketsLogic = (io: Socket) => ({
       }
 
       const message = getLang(lang, "energyRestored");
+      const availableEnergy = USER_MAX_ENERGY - user.energy;
+
+      const clicks = buffer[tgUserId] ?? [];
       const bufferClicks =
-        buffer[tgUserId]?.reduce((acc, click) => {
-          return acc + click.multiplier;
-        }, 0) || 0;
+        clicks
+          .filter((x) => x.ignoreEnergy === false)
+          .slice(0, availableEnergy)
+          .reduce((acc, click) => acc + click.multiplier, 0) +
+        clicks.filter((x) => x.ignoreEnergy === true).reduce((acc, click) => acc + click.multiplier, 0);
+
       await updateUserByTgId(tgUserId, {
         lastOnlineTimeStamp: new Date().getTime(),
         energy: USER_MAX_ENERGY,
@@ -364,12 +375,16 @@ export const initSocketsLogic = (io: Socket) => ({
         boostName,
       });
 
-      const bufferClicks =
-        buffer[tgUserId]?.reduce((acc, click) => {
-          return acc + click.multiplier;
-        }, 0) || 0;
-
       const user = await getUserByTgId(tgUserId);
+
+      const availableEnergy = USER_MAX_ENERGY - user.energy;
+      const clicks = buffer[tgUserId] ?? [];
+      const bufferClicks =
+        clicks
+          .filter((x) => x.ignoreEnergy === false)
+          .slice(0, availableEnergy)
+          .reduce((acc, click) => acc + click.multiplier, 0) +
+        clicks.filter((x) => x.ignoreEnergy === true).reduce((acc, click) => acc + click.multiplier, 0);
 
       if (boostName === "X2") {
         if (user.isX2Active) {
@@ -491,9 +506,15 @@ export const initSocketsLogic = (io: Socket) => ({
       if (clicks.length > 0) {
         const energyAvailable = user.energy + restoredEnergy;
 
-        const clickSum = clicks.reduce((acc, click) => acc + click.multiplier, 0);
+        const clicks = buffer[tgUserId] ?? [];
+        const bufferClicks =
+          clicks
+            .filter((x) => x.ignoreEnergy === false)
+            .slice(0, energyAvailable)
+            .reduce((acc, click) => acc + click.multiplier, 0) +
+          clicks.filter((x) => x.ignoreEnergy === true).reduce((acc, click) => acc + click.multiplier, 0);
 
-        const balanceIncrement = clickSum * user.level;
+        const balanceIncrement = bufferClicks * user.level;
         const clickCount = clicks.filter((c) => !c.ignoreEnergy).length;
 
         const userEnergy = Math.max(0, Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
