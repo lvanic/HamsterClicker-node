@@ -159,7 +159,7 @@ export const initSocketsLogic = (io: Socket) => ({
       const lastActivityTimestamp = Math.max(user.lastOnlineTimeStamp, latestClickTimestamp);
 
       const secondsOffline = (new Date().getTime() - lastActivityTimestamp) / 1000;
-      const availableEnergy = USER_MAX_ENERGY - user.energy;
+      const availableEnergy = user.energy;
 
       const clicks = buffer[userId] ?? [];
       const bufferClicks =
@@ -287,7 +287,7 @@ export const initSocketsLogic = (io: Socket) => ({
       }
 
       const message = getLang(lang, "energyRestored");
-      const availableEnergy = USER_MAX_ENERGY - user.energy;
+      const availableEnergy = user.energy;
 
       const clicks = buffer[tgUserId] ?? [];
       const bufferClicks =
@@ -377,7 +377,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const user = await getUserByTgId(tgUserId);
 
-      const availableEnergy = USER_MAX_ENERGY - user.energy;
+      const availableEnergy = user.energy;
       const clicks = buffer[tgUserId] ?? [];
       const bufferClicks =
         clicks
