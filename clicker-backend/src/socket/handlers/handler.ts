@@ -171,7 +171,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const clickCount = buffer[userId]?.filter((click) => !click.ignoreEnergy).length || 0;
 
-      const energyToRestore = Math.min((secondsOffline - clickCount) / 2, availableEnergy);
+      const energyToRestore = Math.min((secondsOffline - clickCount) / 2, USER_MAX_ENERGY - availableEnergy);
 
       const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
@@ -517,7 +517,7 @@ export const initSocketsLogic = (io: Socket) => ({
         const balanceIncrement = bufferClicks * user.level;
         const clickCount = clicks.filter((c) => !c.ignoreEnergy).length;
 
-        const userEnergy = Math.max(0, Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
+        const userEnergy = Math.max(0, Math.min(USER_MAX_ENERGY - availableEnergy - clickCount, USER_MAX_ENERGY));
 
         logger.debug("User disconnected (buffer processed)", {
           tgId: tgUserId,
