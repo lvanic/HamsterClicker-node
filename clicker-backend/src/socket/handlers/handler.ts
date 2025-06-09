@@ -486,7 +486,6 @@ export const initSocketsLogic = (io: Socket) => ({
       logger.debug("Disconnecting user", { tgUserId });
 
       const user = await getUserByTgId(tgUserId);
-      const availableEnergy = user.energy;
 
       if (user.isX2Active && user.x2ExpiresAt && user.x2ExpiresAt < Date.now()) {
         await updateUserByTgId(tgUserId, { isX2Active: false });
@@ -518,7 +517,7 @@ export const initSocketsLogic = (io: Socket) => ({
         const balanceIncrement = bufferClicks * user.level;
         const clickCount = clicks.filter((c) => !c.ignoreEnergy).length;
 
-        const userEnergy = Math.max(0, Math.min(USER_MAX_ENERGY - availableEnergy - clickCount, USER_MAX_ENERGY));
+        const userEnergy = Math.max(0, Math.min(USER_MAX_ENERGY - energyAvailable - clickCount, USER_MAX_ENERGY));
 
         logger.debug("User disconnected (buffer processed)", {
           tgId: tgUserId,
