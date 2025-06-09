@@ -486,6 +486,7 @@ export const initSocketsLogic = (io: Socket) => ({
       logger.debug("Disconnecting user", { tgUserId });
 
       const user = await getUserByTgId(tgUserId);
+      const availableEnergy = user.energy;
 
       if (user.isX2Active && user.x2ExpiresAt && user.x2ExpiresAt < Date.now()) {
         await updateUserByTgId(tgUserId, { isX2Active: false });
