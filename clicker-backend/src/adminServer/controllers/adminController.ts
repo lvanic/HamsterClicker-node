@@ -82,14 +82,18 @@ export const getTasks = async (ctx: Context) => {
 };
 
 export const deactivateTask = async (ctx: { params: { id: any }; body: any }) => {
-  const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
+  const task = await appDataSource.getRepository(Task).findOneOrFail({
+    where: { id: ctx.params.id }
+  });
   task.active = false;
   await appDataSource.getRepository(Task).save(task);
   ctx.body = task;
 };
 
 export const activateTask = async (ctx: { params: { id: any }; body: any }) => {
-  const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
+  const task = await appDataSource.getRepository(Task).findOneOrFail({
+    where: { id: ctx.params.id }
+  });
   task.active = true;
   await appDataSource.getRepository(Task).save(task);
   ctx.body = task;
@@ -121,7 +125,9 @@ export const addTask = async (ctx: {
 };
 
 export const getTaskById = async (ctx: { params: { id: any }; body: any }) => {
-  const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
+  const task = await appDataSource.getRepository(Task).findOneOrFail({
+    where: { id: ctx.params.id }
+  });
   ctx.body = task;
 };
 
@@ -130,7 +136,9 @@ export const updateTask = async (ctx: {
   request: { body: { name: any; description: any; avatarUrl: any; type: any; activateUrl: any; rewardAmount: any } };
   body: any;
 }) => {
-  const task = await appDataSource.getRepository(Task).findOneOrFail(ctx.params.id);
+  const task = await appDataSource.getRepository(Task).findOneOrFail({
+    where: { id: ctx.params.id }
+  });
   task.name = ctx.request.body.name;
   task.description = ctx.request.body.description;
   task.avatarUrl = ctx.request.body.avatarUrl;
