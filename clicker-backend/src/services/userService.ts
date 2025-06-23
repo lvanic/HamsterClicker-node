@@ -71,12 +71,12 @@ export const updateUserByTgId = async(tgId: number, userData: Partial<User>) => 
   }
 
   if (completedTasks) {
-    const taskIds = completedTasks.map((task) => task.id);
+    const taskId = completedTasks.pop();
     await userRepository
       .createQueryBuilder()
       .relation(User, 'completedTasks')
       .of(tgId)
-      .add(taskIds);
+      .add(taskId);
   }
 }
 
