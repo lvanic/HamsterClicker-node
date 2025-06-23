@@ -64,13 +64,15 @@ export const getUserPlaceInTop = async (userScore: number): Promise<number> => {
 export const updateUserByTgId = async(tgId: number, userData: Partial<User>) => {
   const { completedTasks, ...plainUserData } = userData;
 
+   const userRepository = await appDataSource.getRepository(User);
+  
   if (Object.keys(plainUserData).length > 0) {
-    await this.userRepository.update({ tgId }, plainUserData);
+    await userRepository.update({ tgId }, plainUserData);
   }
 
   if (completedTasks) {
     const taskIds = completedTasks.map((task) => task.id);
-    await this.userRepository
+    await userRepository
       .createQueryBuilder()
       .relation(User, 'completedTasks')
       .of(tgId)
