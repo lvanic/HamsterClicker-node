@@ -65,24 +65,26 @@ We have a cool Airdrop promotion coming up in the future!
         scoreLastDay: 0,
       });
 
-      if (refId) {
-        const refUser = await findUserByTgId(+refId);
-        if (refUser) {
-          if (appSettings.referralTaskEndsAt > new Date().getTime()) {
-            refUser.newReferrals += 1;
-            if (appSettings.newRefferalsToActivate == refUser.newReferrals) {
-              refUser.balance += appSettings.referralReward;
-              refUser.newReferrals = 0;
-              refUser.isReferralTaskActive = false;
-            }
-          } else {
-            refUser.isReferralTaskActive = false;
-            refUser.newReferrals = 0;
-          }
-          updateUserByTgId(+refId, refUser);
-        }
-        user.parent = refUser!;
+     if (refId) {
+  const refUser = await findUserByTgId(+refId);
+  if (refUser) {
+    if (appSettings.referralTaskEndsAt > new Date().getTime()) {
+      refUser.newReferrals += 1;
+      if (appSettings.newRefferalsToActivate === refUser.newReferrals) {
+        refUser.balance += appSettings.referralReward;
+        refUser.newReferrals = 0;
+        refUser.isReferralTaskActive = false;
       }
+    } else {
+      refUser.isReferralTaskActive = false;
+      refUser.newReferrals = 0;
+    }
+    await updateUserByTgId(+refId, refUser);
+    user.parent = refUser;
+  } else {
+    logger.warn(`Ref user not found: ${refId}, parent will not be set`);
+  }
+}
 
       await createUser(user);
     }
