@@ -61,15 +61,22 @@ export const getUserPlaceInTop = async (userScore: number): Promise<number> => {
   }
 };
 
-export const updateUserByTgId = async (tgId: number, userData: DeepPartial<User>): Promise<void> => {
-  try {
-    await userRepository.update(tgId, userData);
-  } catch (error) {
-    logger.error("Error while updating user in db", error);
+async updateUserByTgId(tgId: number, userData: Partial<User>) {
+  const { completedTasks, ...plainUserData } = userData;
 
-    throw error;
+  if (Object.keys(plainUserData).length > 0) {
+    await this.userRepository.update({ tgId }, plainUserData);
   }
-};
+
+  if (completedTasks) {
+    const taskIds = completedTasks.map((task) => task.id);
+    await this.userRepository
+      .createQueryBuilder()
+      .relation(User, 'completedTasks')
+      .of(tgId)
+      .add(taskIds);
+  }
+}
 
 export const deleteUserByTgId = async (tgId: number): Promise<void> => {
   await userRepository.delete({ tgId });
