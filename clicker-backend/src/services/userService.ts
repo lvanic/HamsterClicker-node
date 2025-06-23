@@ -61,7 +61,7 @@ export const getUserPlaceInTop = async (userScore: number): Promise<number> => {
   }
 };
 
-async updateUserByTgId(tgId: number, userData: Partial<User>) {
+export const updateUserByTgId = async(tgId: number, userData: Partial<User>) => {
   const { completedTasks, ...plainUserData } = userData;
 
   if (Object.keys(plainUserData).length > 0) {
