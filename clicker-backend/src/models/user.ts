@@ -82,10 +82,11 @@ export class User {
   @JoinTable()
   businesses: Business[];
 
-  @ManyToOne(() => Payment, (payment) => payment.user, {
-    nullable: true,
-    onDelete: "SET NULL",
-  })
+@ManyToOne(() => Payment, (payment) => payment.user, {
+  nullable: true,
+  onDelete: "SET NULL",
+})
+payment: Payment;
   @Column({ default: false })
   isHandicapActive: boolean = false;
   @Column({ default: 0 })
