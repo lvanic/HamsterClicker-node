@@ -4,7 +4,7 @@ import TonButton from "../../components/TonButton/TonButton";
 import { getLocalization } from "../../localization/getLocalization";
 import { BigEggSvg } from "./BigEggSvg";
 
-const AIRDROP_DATE = new Date("2025-07-01T00:00:00Z");
+export const AIRDROP_DATE = new Date("2025-07-01T00:00:00Z");
 
 export const Airdrop = () => {
   const [timeLeft, setTimeLeft] = useState({

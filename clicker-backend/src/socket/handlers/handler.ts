@@ -21,10 +21,17 @@ import {
 const buffer: Record<string, { timestamp: number; multiplier: number; ignoreEnergy: boolean }[]> = {};
 const activeBoosts: Map<string, { type: "X2" | "X2_FREE" | "HANDICAP"; expiresAt: number }> = new Map();
 const BOOST_DURATION = 60 * 2000; // 1 minute
+const AIRDROP_DATE = new Date("2025-07-01T00:00:00Z");
 
 export const initSocketsLogic = (io: Socket) => ({
   clickEvent: async (data: string) => {
     try {
+      const now = new Date();
+      const difference = AIRDROP_DATE.getTime() - now.getTime();
+      if (difference <= 0){
+        return
+      }
+    
       const parsedData = JSON.parse(data);
       const tgUserId = parsedData["user_id"];
 

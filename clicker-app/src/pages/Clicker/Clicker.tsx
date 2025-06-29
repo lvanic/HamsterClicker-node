@@ -8,6 +8,7 @@ import { useSkeletonLoading } from "../../hooks/useSkeletonLoading";
 import { ClickerSkeleton } from "./ClickerSkeleton";
 import "./Clicker.css"; // Создайте и импортируйте CSS файл
 import { calculateLevel } from "../../utils/calculateLevel";
+import { AIRDROP_DATE } from "../Airdrop/Airdrop";
 
 export const Clicker: React.FC = () => {
   const { handleClick } = useClick();
@@ -24,6 +25,10 @@ export const Clicker: React.FC = () => {
 
   const [now, setNow] = useState<number>(Date.now());
 
+  const canClick = useMemo(() => {
+    return new Date(AIRDROP_DATE).getTime() <= now;
+  }, [now]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(Date.now());
@@ -33,6 +38,7 @@ export const Clicker: React.FC = () => {
   }, []);
 
   const handleTouchStart = (event: TouchEvent) => {
+    if (!canClick) return;
     const newTouches = new Set<number>(
       Array.from(event.touches, (touch) => touch.identifier)
     );
