@@ -131,6 +131,12 @@ export const Clicker: React.FC = () => {
       className="text-center p-4 pt-0 relative flex flex-col items-center justify-between pb-44 h-full"
       onScroll={(e) => e.preventDefault()}
     >
+      {!canClick && (
+        <div className="absolute inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+          <div className="text-white text-4xl font-bold">Airdrop now</div>
+        </div>
+      )}
+
       {isSkeletonLoading ? (
         <ClickerSkeleton />
       ) : (
