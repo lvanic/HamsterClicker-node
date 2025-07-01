@@ -28,7 +28,7 @@ export const Clicker: React.FC = () => {
   const canClick = useMemo(() => {
     const localNow = new Date();
     return AIRDROP_DATE.getTime() - localNow.getTime() <= 0;
-  }, [now]);
+  }, [now, AIRDROP_DATE]);
 
   useEffect(() => {
     const interval = setInterval(() => {
