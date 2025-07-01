@@ -132,7 +132,7 @@ export const Clicker: React.FC = () => {
       onScroll={(e) => e.preventDefault()}
     >
       {!canClick && (
-        <div className="absolute inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+        <div className="absolute top-0 bg-black bg-opacity-70 z-50 flex items-center justify-center pb-44">
           <div className="text-white text-4xl font-bold">Airdrop now</div>
         </div>
       )}
