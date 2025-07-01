@@ -27,8 +27,8 @@ export const Clicker: React.FC = () => {
 
   const canClick = useMemo(() => {
     const localNow = new Date();
-    return AIRDROP_DATE.getTime() - localNow.getTime() <= 0;
-  }, [now, AIRDROP_DATE]);
+    return AIRDROP_DATE.getTime() - localNow.getTime() < 0;
+  }, [AIRDROP_DATE]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,6 +40,7 @@ export const Clicker: React.FC = () => {
 
   const handleTouchStart = (event: TouchEvent) => {
     if (!canClick) return;
+
     const newTouches = new Set<number>(
       Array.from(event.touches, (touch) => touch.identifier)
     );
@@ -84,6 +85,7 @@ export const Clicker: React.FC = () => {
   const handleTouchMove = () => {};
 
   const handleTouchEnd = (event: TouchEvent) => {
+    if (!canClick) return;
     event.preventDefault();
     const remainingTouches = new Set<number>(
       Array.from(event.touches, (touch) => touch.identifier)
@@ -92,6 +94,7 @@ export const Clicker: React.FC = () => {
   };
 
   const handleAnimationEnd = (id: number) => {
+    if (!canClick) return;
     setNumberSignPositions((prevPositions) =>
       prevPositions.filter((position) => position.id !== id)
     );
