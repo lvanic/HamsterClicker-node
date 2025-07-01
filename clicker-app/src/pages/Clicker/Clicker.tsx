@@ -131,16 +131,19 @@ export const Clicker: React.FC = () => {
       className="text-center p-4 pt-0 relative flex flex-col items-center justify-between pb-44 h-full"
       onScroll={(e) => e.preventDefault()}
     >
-      {!canClick && (
-        <div className="absolute top-0 bg-black bg-opacity-70 z-50 flex items-center justify-center pb-44">
-          <div className="text-white text-4xl font-bold">Airdrop now</div>
-        </div>
-      )}
 
       {isSkeletonLoading ? (
         <ClickerSkeleton />
       ) : (
         <>
+         {!canClick && (
+            <div className="absolute inset-0 bg-black bg-opacity-70 z-50 flex flex-col items-center justify-center">
+              <div className="text-white text-4xl font-bold mb-4">Airdrop now</div>
+              <div className="text-white text-xl">
+                The airdrop has started! Check your rewards.
+              </div>
+            </div>
+          )}
           <div className="flex flex-col justify-center items-center w-full mb-2 gap-2">
             <ScoreCounter clickCount={user?.score || 0} />
             {/* <League /> */}
