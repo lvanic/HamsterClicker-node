@@ -137,7 +137,7 @@ export const Clicker: React.FC = () => {
       ) : (
         <>
          {!canClick && (
-            <div className="absolute inset-0 bg-black bg-opacity-70 z-50 flex flex-col items-center justify-center">
+            <div className="absolute inset-0 bg-black bg-opacity-70 z-50 pb-14 flex flex-col items-center justify-center">
               <div className="text-white text-4xl font-bold mb-4">Airdrop now</div>
               <div className="text-white text-xl">
                 The airdrop has started! Check your rewards.
