@@ -27,7 +27,7 @@ export const Clicker: React.FC = () => {
 
   const canClick = useMemo(() => {
     const localNow = new Date();
-    return AIRDROP_DATE.getTime() - localNow.getTime() < 0;
+    return AIRDROP_DATE.getTime() - localNow.getTime() > 0;
   }, [AIRDROP_DATE]);
 
   useEffect(() => {
