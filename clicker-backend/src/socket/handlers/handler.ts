@@ -28,10 +28,10 @@ export const initSocketsLogic = (io: Socket) => ({
     try {
       const now = new Date();
       const difference = AIRDROP_DATE.getTime() - now.getTime();
-      if (difference <= 0){
-        return
+      if (difference <= 0) {
+        return;
       }
-    
+
       const parsedData = JSON.parse(data);
       const tgUserId = parsedData["user_id"];
 
@@ -122,6 +122,11 @@ export const initSocketsLogic = (io: Socket) => ({
         };
 
         if (data.ok && data.result && data.result.status !== "left" && data.result.status !== "kicked") {
+          const now = new Date();
+          const difference = AIRDROP_DATE.getTime() - now.getTime();
+          if (difference <= 0) {
+            return;
+          }
           await updateUserByTgId(tgUserId, {
             balance: user.balance + task.rewardAmount,
             score: user.score + task.rewardAmount,
@@ -133,6 +138,11 @@ export const initSocketsLogic = (io: Socket) => ({
           io.emit("taskStatus", { id: task.id, finished: false });
         }
       } else {
+        const now = new Date();
+        const difference = AIRDROP_DATE.getTime() - now.getTime();
+        if (difference <= 0) {
+          return;
+        }
         await updateUserByTgId(tgUserId, {
           balance: user.balance + task.rewardAmount,
           score: user.score + task.rewardAmount,
@@ -182,7 +192,7 @@ export const initSocketsLogic = (io: Socket) => ({
 
       const hoursOffline = Math.min(Math.floor(secondsOffline / 3600), 3);
 
-      const offlineReward = 10 * calculateUsersOfflineReward(hoursOffline, user.level);
+      let offlineReward = 10 * calculateUsersOfflineReward(hoursOffline, user.level);
       logger.debug("Updating user data", {
         userId,
         offlineReward,
@@ -193,6 +203,12 @@ export const initSocketsLogic = (io: Socket) => ({
         bufferClicks,
         secondsOffline,
       });
+
+      const now = new Date();
+      const difference = AIRDROP_DATE.getTime() - now.getTime();
+      if (difference <= 0) {
+        offlineReward = 0;
+      }
 
       await updateUserByTgId(userId, {
         balance: user.balance + offlineReward + bufferClicks * user.level,
@@ -524,7 +540,7 @@ export const initSocketsLogic = (io: Socket) => ({
         const balanceIncrement = bufferClicks * user.level;
         const clickCount = clicks.filter((c) => !c.ignoreEnergy).length;
 
-       const userEnergy = Math.max(0, Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
+        const userEnergy = Math.max(0, Math.min(energyAvailable - clickCount, USER_MAX_ENERGY));
 
         logger.debug("User disconnected (buffer processed)", {
           tgId: tgUserId,
