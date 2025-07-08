@@ -128,8 +128,8 @@ export const initSocketsLogic = (io: Socket) => ({
             return;
           }
           await updateUserByTgId(tgUserId, {
-            balance: user.balance + task.rewardAmount,
-            score: user.score + task.rewardAmount,
+            balance: user.balance, //+ task.rewardAmount
+            score: user.score, //+ task.rewardAmount
             completedTasks: [...user.completedTasks, task],
           });
           io.emit("reward", task.rewardAmount);
@@ -144,8 +144,8 @@ export const initSocketsLogic = (io: Socket) => ({
           return;
         }
         await updateUserByTgId(tgUserId, {
-          balance: user.balance + task.rewardAmount,
-          score: user.score + task.rewardAmount,
+          balance: user.balance, //+ task.rewardAmount
+          score: user.score, // + task.rewardAmount
           completedTasks: [...user.completedTasks, task],
         });
 
@@ -211,10 +211,10 @@ export const initSocketsLogic = (io: Socket) => ({
       }
 
       await updateUserByTgId(userId, {
-        balance: user.balance + offlineReward + bufferClicks * user.level,
-        score: user.score + offlineReward + bufferClicks * user.level,
-        scoreLastDay: user.scoreLastDay + offlineReward + bufferClicks * user.level,
-        addedFromBusinesses: offlineReward,
+        balance: user.balance, //+ offlineReward + bufferClicks * user.level
+        score: user.score,
+        scoreLastDay: user.scoreLastDay,
+        addedFromBusinesses: 0,
         energy: Math.floor(user.energy + energyToRestore),
         lastOnlineTimeStamp: new Date().getTime(),
       });
@@ -224,8 +224,8 @@ export const initSocketsLogic = (io: Socket) => ({
       io.emit("user", {
         id: user.tgId,
         ...user,
-        balance: user.balance + bufferClicks * user.level + offlineReward,
-        score: user.score + bufferClicks * user.level + offlineReward,
+        balance: user.balance,
+        score: user.score,
         referrals: user.referrals,
         clickPower: user.clickPower,
         userPlaceInLeague: userPlaceInTop,
@@ -325,7 +325,7 @@ export const initSocketsLogic = (io: Socket) => ({
         energy: USER_MAX_ENERGY,
         fullEnergyActivates: ++user.fullEnergyActivates,
         score: user.score + bufferClicks * user.level,
-        balance: user.balance + bufferClicks * user.level,
+        balance: user.balance, // + bufferClicks * user.level
       });
 
       logger.debug("Resetting the user buffer after activating the boost", {
@@ -427,7 +427,7 @@ export const initSocketsLogic = (io: Socket) => ({
           x2ExpiresAt: Date.now() + BOOST_DURATION,
           X2UsedCount: user.X2UsedCount + 1,
           energy: USER_MAX_ENERGY,
-          balance: user.balance + bufferClicks * user.level,
+          balance: user.balance, //+ bufferClicks * user.level
           score: user.score + bufferClicks * user.level,
         });
 
@@ -451,7 +451,7 @@ export const initSocketsLogic = (io: Socket) => ({
           handicapExpiresAt: Date.now() + BOOST_DURATION,
           handicapUsedCount: user.handicapUsedCount + 1,
           energy: USER_MAX_ENERGY,
-          balance: user.balance + bufferClicks * user.level,
+          balance: user.balance, // + bufferClicks * user.level
           score: user.score + bufferClicks * user.level,
         });
         activeBoosts.set(tgUserId, { type: "HANDICAP", expiresAt: Date.now() + BOOST_DURATION });
@@ -474,7 +474,7 @@ export const initSocketsLogic = (io: Socket) => ({
           x2ExpiresAt: Date.now() + BOOST_DURATION,
           lastX2FreeUsedAt: Date.now(),
           energy: USER_MAX_ENERGY,
-          balance: user.balance + bufferClicks * user.level,
+          balance: user.balance, //+ bufferClicks * user.level
           score: user.score + bufferClicks * user.level,
         });
 
@@ -552,9 +552,9 @@ export const initSocketsLogic = (io: Socket) => ({
         });
 
         await updateUserByTgId(tgUserId, {
-          balance: user.balance + balanceIncrement,
-          score: user.score + balanceIncrement,
-          scoreLastDay: user.scoreLastDay + balanceIncrement,
+          balance: user.balance, //+ balanceIncrement
+          score: user.score, //+ balanceIncrement
+          scoreLastDay: user.scoreLastDay, //+ balanceIncrement
           lastOnlineTimeStamp: currentTime,
           energy: userEnergy,
         });

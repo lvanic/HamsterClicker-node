@@ -37,7 +37,7 @@ const main = async () => {
   });
 
   restoreFullEnergyBoostJob.start();
-  rewardReferralsJob.start();
+  // rewardReferralsJob.start();
 
   startTonMonitor();
 };
