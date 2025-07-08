@@ -46,3 +46,28 @@ services:
       - "traefik.http.routers.backend.rule=Host(`back.buntoken.pro`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
+
+  time-frontend:
+    image: "time-frontend"
+    container_name: "time-frontend"
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.time-frontend.rule=Host(`app.time.buntoken.pro`)"
+      - "traefik.http.routers.time-frontend.entrypoints=websecure"
+      - "traefik.http.routers.time-frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.time-frontend.loadbalancer.server.port=3001"
+
+  time-backend:
+    image: "time-backend"
+    container_name: "time-backend"
+    restart: always
+    volumes:
+      - /home/bun/bun-backend/src/prisma/dev.db:/app/src/prisma/dev.db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.time-backend.rule=Host(`api.time.buntoken.pro`)"
+      - "traefik.http.routers.time-backend.entrypoints=websecure"
+      - "traefik.http.routers.time-backend.tls.certresolver=myresolver"
+
+
