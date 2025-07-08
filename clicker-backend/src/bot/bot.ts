@@ -71,7 +71,7 @@ We have a cool Airdrop promotion coming up in the future!
     if (appSettings.referralTaskEndsAt > new Date().getTime()) {
       refUser.newReferrals += 1;
       if (appSettings.newRefferalsToActivate === refUser.newReferrals) {
-        refUser.balance += appSettings.referralReward;
+        // refUser.balance += appSettings.referralReward;
         refUser.newReferrals = 0;
         refUser.isReferralTaskActive = false;
       }
