@@ -168,7 +168,7 @@ export const Clicker: React.FC = () => {
             />
           ) : (
             <div className="text-white text-4xl font-bold mb-4">
-              Airdrop now
+              Airdrop now, please connect your wallet
             </div>
           )}
 

@@ -8,6 +8,7 @@ interface Config {
   adminPassword: string;
   tgBotLink: string;
   tonManifest: string;
+  tonWallet: string;
 }
 
 const config: Config = (function () {
@@ -41,12 +42,17 @@ const config: Config = (function () {
     );
   }
 
+  if (!process.env.REACT_APP_TON_WALLET) {
+    throw new Error("REACT_APP_TON_WALLET is not set in .env");
+  }
+
   return {
     serverUrl: process.env.REACT_APP_SERVER_URL,
     adminApiUrl: process.env.REACT_APP_ADMIN_API_URL,
     adminPassword: process.env.REACT_APP_ADMIN_PASSWORD,
     tgBotLink: process.env.REACT_APP_BOT_LINK,
     tonManifest: process.env.REACT_APP_TON_MANIFEST,
+    tonWallet: process.env.REACT_APP_TON_WALLET,
   } as Config;
 })();
 
