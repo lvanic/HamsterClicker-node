@@ -3,21 +3,21 @@ import EthereumButton from "../../components/TonButton/TonButton";
 import TonButton from "../../components/TonButton/TonButton";
 import { getLocalization } from "../../localization/getLocalization";
 import { BigEggSvg } from "./BigEggSvg";
-import { beginCell, toNano, Cell } from "@ton/ton";
-import { useTonConnectUI } from "@tonconnect/ui-react";
+// import { beginCell, toNano, Cell } from "@ton/ton";
+// import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useUser } from "../../hooks/useUser";
 
 export const AIRDROP_DATE = new Date("2025-07-01T00:00:00Z");
 
-const createPayload = (comment: string): string => {
-  const cell = beginCell()
-    .storeUint(0, 32)
-    .storeStringTail(comment)
-    .endCell()
-    .toBoc()
-    .toString("base64");
-  return cell;
-};
+// const createPayload = (comment: string): string => {
+//   const cell = beginCell()
+//     .storeUint(0, 32)
+//     .storeStringTail(comment)
+//     .endCell()
+//     .toBoc()
+//     .toString("base64");
+//   return cell;
+// };
 
 export const Airdrop = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -26,7 +26,7 @@ export const Airdrop = () => {
     minutes: 0,
     seconds: 0,
   });
-  const [tonConnectUI] = useTonConnectUI();
+  // const [tonConnectUI] = useTonConnectUI();
   const user = useUser();
 
   useLayoutEffect(() => {
@@ -67,30 +67,30 @@ export const Airdrop = () => {
   }, []);
 
   const handleDonate = async () => {
-    try {
-      const tonAddress = process.env.REACT_APP_TON_WALLET!;
+    // try {
+    //   const tonAddress = process.env.REACT_APP_TON_WALLET!;
 
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 60,
-        messages: [
-          {
-            address: tonAddress!,
-            amount: "0.5",
-            payload: createPayload("Bun drop gas"),
-          },
-        ],
-      };
+    //   const transaction = {
+    //     validUntil: Math.floor(Date.now() / 1000) + 60,
+    //     messages: [
+    //       {
+    //         address: tonAddress!,
+    //         amount: "0.5",
+    //         payload: createPayload("Bun drop gas"),
+    //       },
+    //     ],
+    //   };
 
-      const result = await tonConnectUI.sendTransaction(transaction);
-      const hash = Cell.fromBase64(result.boc).hash().toString("base64");
-      const options = {
-        hash: hash,
-        address: tonConnectUI.account?.address ?? "",
-      };
-      console.log("Donation sent successfully!");
-    } catch (error) {
-      console.error("Donation failed:", error);
-    }
+    //   const result = await tonConnectUI.sendTransaction(transaction);
+    //   const hash = Cell.fromBase64(result.boc).hash().toString("base64");
+    //   const options = {
+    //     hash: hash,
+    //     address: tonConnectUI.account?.address ?? "",
+    //   };
+    //   console.log("Donation sent successfully!");
+    // } catch (error) {
+    //   console.error("Donation failed:", error);
+    // }
   };
 
   return (
@@ -138,7 +138,9 @@ export const Airdrop = () => {
         </div>
       </div>
       <TonButton className="z-50" />
-      {tonConnectUI.connected && (user.user?.balance || 0) > 1000000 && (
+      {
+      // tonConnectUI.connected && 
+      (user.user?.balance || 0) > 1000000 && (
         <button
           onClick={handleDonate}
           className="z-50 mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
