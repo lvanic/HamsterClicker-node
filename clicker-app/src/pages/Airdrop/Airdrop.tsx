@@ -4,7 +4,6 @@ import TonButton from "../../components/TonButton/TonButton";
 import { getLocalization } from "../../localization/getLocalization";
 import { BigEggSvg } from "./BigEggSvg";
 import { beginCell, toNano, Cell } from "@ton/ton";
-import { getConfig } from "../../utils/config";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useUser } from "../../hooks/useUser";
 
@@ -69,8 +68,7 @@ export const Airdrop = () => {
 
   const handleDonate = async () => {
     try {
-      const tonAddress = getConfig().tonWallet; // Адрес получателя из конфига
-      const amount = toNano("0.5"); // 0.5 TON в нанокоинах
+      const tonAddress = process.env.REACT_APP_TON_WALLET!;
 
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 60,
