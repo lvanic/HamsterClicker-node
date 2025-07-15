@@ -5,12 +5,13 @@ RUN npm install -g serve
 
 WORKDIR /app
 
-COPY package*.json /app/
-RUN npm cache clean --force && npm install
+COPY package.json package-lock.json ./
 
-COPY ./ /app/
+RUN npm ci --no-audit
+
+COPY . .
 
 RUN npm run build
 
 EXPOSE 3000
-CMD serve -s /app/build
+CMD ["serve", "-s", "/app/build"]
