@@ -1,19 +1,19 @@
 import "../utils/setupBuffer.js";
 
+
 import {
   Address,
   Cell,
   Dictionary,
   DictionaryValue,
-  JettonMaster,
-  JettonWallet,
   Sender,
-  TonClient,
   TupleBuilder,
   beginCell,
   storeMessage,
   toNano,
-} from "@ton/ton";
+} from "@ton/core";
+
+import { TonClient } from "@ton/ton"
 
 //https://testnet.toncenter.com/api/v2/jsonRPC testnet
 //https://toncenter.com/api/v2/jsonRPC mainnet

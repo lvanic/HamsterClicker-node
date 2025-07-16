@@ -5,7 +5,7 @@ import { getConfig } from "../utils/config";
 import { getTelegramUser } from "../services/telegramService";
 import { Loader2, Wallet } from "lucide-react";
 import TonWeb from "tonweb";
-import { beginCell, Cell } from "@ton/ton";
+import { beginCell, Cell } from "@ton/core";
 import { WaitForTransaction } from "../services/tonService";
 
 export const TonPayment = ({

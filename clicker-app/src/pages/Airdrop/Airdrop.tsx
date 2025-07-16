@@ -3,7 +3,7 @@ import EthereumButton from "../../components/TonButton/TonButton";
 import TonButton from "../../components/TonButton/TonButton";
 import { getLocalization } from "../../localization/getLocalization";
 import { BigEggSvg } from "./BigEggSvg";
-import { beginCell, toNano, Cell } from "@ton/ton";
+import { beginCell, toNano, Cell } from "@ton/core";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useUser } from "../../hooks/useUser";
 
