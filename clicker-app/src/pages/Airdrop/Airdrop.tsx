@@ -67,31 +67,31 @@ export const Airdrop = () => {
   }, []);
 
   const handleDonate = async () => {
-    try {
-      const tonAddress = process.env.REACT_APP_TON_WALLET!;
+  try {
+    const tonAddress = process.env.REACT_APP_TON_WALLET!;
 
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 60,
-        messages: [
-          {
-            address: tonAddress!,
-            amount: "0.5",
-            payload: createPayload("Bun drop gas"),
-          },
-        ],
-      };
+    const transaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 60,
+      messages: [
+        {
+          address: tonAddress!,
+          amount: toNano("0.5").toString(), // Конвертируем 0.5 TON в нанотоны
+          payload: createPayload("Bun drop gas"),
+        },
+      ],
+    };
 
-      const result = await tonConnectUI.sendTransaction(transaction);
-      const hash = Cell.fromBase64(result.boc).hash().toString("base64");
-      const options = {
-        hash: hash,
-        address: tonConnectUI.account?.address ?? "",
-      };
-      console.log("Donation sent successfully!");
-    } catch (error) {
-      console.error("Donation failed:", error);
-    }
-  };
+    const result = await tonConnectUI.sendTransaction(transaction);
+    const hash = Cell.fromBase64(result.boc).hash().toString("base64");
+    const options = {
+      hash: hash,
+      address: tonConnectUI.account?.address ?? "",
+    };
+    console.log("Donation sent successfully!");
+  } catch (error) {
+    console.error("Donation failed:", error);
+  }
+};
 
   return (
     <div className="flex flex-col items-center justify-between h-full pb-16">
